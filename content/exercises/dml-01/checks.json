@@ -1,0 +1,23 @@
+{
+  "description": "Validerer DML-ændringer på café-data.",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT name, city FROM customers WHERE name = 'Eva Møller'",
+      "expected": [["Eva Møller", "Aarhus"]],
+      "message": "Del 1: Eva Møller er indsat"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT price FROM products WHERE name = 'Te'",
+      "expected": [[27.00]],
+      "message": "Del 2: Te koster 27.00"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM orders WHERE id = 8",
+      "expected": [[0]],
+      "message": "Del 3: Ordre 8 er slettet"
+    }
+  ]
+}

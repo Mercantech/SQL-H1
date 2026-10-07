@@ -1,0 +1,96 @@
+# Dokploy: docker compose up -d --build
+# Lokal: docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-sqlh1}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sqlh1}
+      POSTGRES_DB: ${POSTGRES_DB:-sqlh1}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-sqlh1} -d ${POSTGRES_DB:-sqlh1}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      PORT: ${API_PORT:-3001}
+      DATABASE_URL: ${DATABASE_URL:-postgres://sqlh1:sqlh1@db:5432/sqlh1}
+      ADMIN_DATABASE_URL: ${ADMIN_DATABASE_URL:-postgres://sqlh1:sqlh1@db:5432/postgres}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      CONTENT_ROOT: /content
+      AUTH_ISSUER: ${AUTH_ISSUER:-https://auth.mercantec.tech}
+      AUTH_AUDIENCE: ${AUTH_AUDIENCE:-mercantec-apps}
+      JWKS_URI: ${JWKS_URI:-https://auth.mercantec.tech/.well-known/jwks.json}
+      CORS_ORIGIN: ${CORS_ORIGIN:-https://sqlh1.mercantec.tech}
+    volumes:
+      - ./content:/content:ro
+    networks:
+      - internal
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-fsS",
+          "http://127.0.0.1:3001/api/health",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 25s
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/api}
+        VITE_AUTH_CLIENT_ID: ${VITE_AUTH_CLIENT_ID:-sqlh1}
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - dokploy-network
+      - internal
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=dokploy-network
+      - traefik.http.routers.sqlh1.rule=Host(`sqlh1.mercantec.tech`)
+      - traefik.http.routers.sqlh1.entrypoints=web
+      - traefik.http.routers.sqlh1.service=sqlh1
+      - traefik.http.services.sqlh1.loadbalancer.server.port=3000
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+
+networks:
+  dokploy-network:
+    external: true
+  internal:
+
+volumes:
+  postgres_data:

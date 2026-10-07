@@ -1,0 +1,114 @@
+[
+  {
+    "slug": "select",
+    "title": "SELECT-forespørgsler",
+    "description": "Forespørgsler, sortering, gruppering, filtrering, aggregering og funktioner.",
+    "order": 1,
+    "scaffoldOnly": false,
+    "objectives": [
+      "Anvende SELECT mod en tabel",
+      "Sortere, gruppere og filtrere",
+      "Bruge aggregater og SQL-funktioner"
+    ]
+  },
+  {
+    "slug": "dml",
+    "title": "Data-manipulation (DML)",
+    "description": "INSERT, UPDATE og DELETE.",
+    "order": 2,
+    "scaffoldOnly": false,
+    "objectives": [
+      "Indsætte rækker med INSERT",
+      "Opdatere med UPDATE",
+      "Slette med DELETE"
+    ]
+  },
+  {
+    "slug": "ddl-er",
+    "title": "Tabeller og E/R",
+    "description": "Oprette, redigere og slette tabeller samt dokumentere med E/R-diagram.",
+    "order": 3,
+    "scaffoldOnly": true,
+    "objectives": ["CREATE/ALTER/DROP TABLE", "E/R-diagram"]
+  },
+  {
+    "slug": "relations",
+    "title": "Relationstyper",
+    "description": "1:1, 1:mange, mange:mange med nøgler.",
+    "order": 4,
+    "scaffoldOnly": true,
+    "objectives": ["1:1", "1:n", "n:n", "Primær- og fremmednøgler"]
+  },
+  {
+    "slug": "constraints",
+    "title": "Konsistens og constraints",
+    "description": "Referenceintegritet, relationer og constraints — praksis og baggrund.",
+    "order": 5,
+    "scaffoldOnly": true,
+    "objectives": ["Constraints", "Referenceintegritet", "Konsistenskrav"]
+  },
+  {
+    "slug": "joins-subqueries",
+    "title": "JOIN og subqueries",
+    "description": "Forespørgsler på tværs af flere tabeller.",
+    "order": 6,
+    "scaffoldOnly": true,
+    "objectives": ["JOIN", "SUBQUERY"]
+  },
+  {
+    "slug": "databases",
+    "title": "Databaser",
+    "description": "Oprette og slette en database.",
+    "order": 7,
+    "scaffoldOnly": true,
+    "objectives": ["CREATE DATABASE", "DROP DATABASE"]
+  },
+  {
+    "slug": "views",
+    "title": "Views",
+    "description": "Oprette views og begrunde sikkerhedsaspektet.",
+    "order": 8,
+    "scaffoldOnly": true,
+    "objectives": ["CREATE VIEW", "Sikkerhed"]
+  },
+  {
+    "slug": "advanced",
+    "title": "Avanceret SQL",
+    "description": "Parametre, kontrolstrukturer, rettighedsstyring o.l.",
+    "order": 9,
+    "scaffoldOnly": true,
+    "objectives": ["Parametre", "Kontrolstrukturer", "Rettigheder"]
+  },
+  {
+    "slug": "procedures",
+    "title": "Stored Procedures",
+    "description": "Oprette, redigere og slette procedures til administration og databehandling.",
+    "order": 10,
+    "scaffoldOnly": true,
+    "objectives": ["CREATE/ALTER/DROP PROCEDURE"]
+  },
+  {
+    "slug": "triggers",
+    "title": "Triggers",
+    "description": "Triggers til at holde databasen konsistent.",
+    "order": 11,
+    "scaffoldOnly": true,
+    "objectives": ["CREATE TRIGGER", "Konsistens"]
+  },
+  {
+    "slug": "adonet",
+    "title": "ADO.NET",
+    "description": "Kommer senere — dataadgang med ADO.NET.",
+    "order": 12,
+    "scaffoldOnly": true,
+    "objectives": ["Connection", "Command", "DataReader"]
+  },
+  {
+    "slug": "dapper",
+    "title": "Dapper",
+    "description": "Kommer senere — micro-ORM med Dapper.",
+    "order": 13,
+    "scaffoldOnly": true,
+    "objectives": ["Query", "Execute", "Mapping"]
+  }
+]
