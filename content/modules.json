@@ -2,7 +2,7 @@
   {
     "slug": "select",
     "title": "SELECT-forespørgsler",
-    "description": "Forespørgsler, sortering, gruppering, filtrering, aggregering og funktioner.",
+    "description": "Hent data med SELECT: kolonner, WHERE, ORDER BY, GROUP BY, aggregater og funktioner — teori og tre opgaver.",
     "order": 1,
     "scaffoldOnly": false,
     "objectives": [

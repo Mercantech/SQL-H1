@@ -15,6 +15,7 @@ public class ContentService
     private readonly IDeserializer _yaml;
     private List<ModuleCatalogItem>? _modules;
     private Dictionary<string, ContentItem>? _items;
+    private DateTime _loadedAtUtc = DateTime.MinValue;
     private readonly object _lock = new();
 
     public ContentService(IOptions<ContentOptions> options)
@@ -74,12 +75,27 @@ public class ContentService
 
     private void EnsureLoaded()
     {
-        if (_modules is not null && _items is not null) return;
+        var stamp = NewestContentWriteUtc();
+        if (_modules is not null && _items is not null && stamp <= _loadedAtUtc) return;
         lock (_lock)
         {
-            if (_modules is not null && _items is not null) return;
+            stamp = NewestContentWriteUtc();
+            if (_modules is not null && _items is not null && stamp <= _loadedAtUtc) return;
             Load();
+            _loadedAtUtc = stamp;
         }
+    }
+
+    private DateTime NewestContentWriteUtc()
+    {
+        if (!Directory.Exists(_root)) return DateTime.MinValue;
+        var newest = DateTime.MinValue;
+        foreach (var file in Directory.EnumerateFiles(_root, "*", SearchOption.AllDirectories))
+        {
+            var t = File.GetLastWriteTimeUtc(file);
+            if (t > newest) newest = t;
+        }
+        return newest;
     }
 
     private void Load()

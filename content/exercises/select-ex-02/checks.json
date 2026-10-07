@@ -1,0 +1,37 @@
+{
+  "description": "SELECT — sortering og filtre",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT name, price FROM products WHERE category = 'Drikke' ORDER BY price DESC, name",
+      "expected": [
+        ["Smoothie", 42.00],
+        ["Latte", 35.00],
+        ["Espresso", 28.00],
+        ["Te", 25.00]
+      ],
+      "message": "Del 1: Drikke efter pris"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT name, price FROM products ORDER BY price ASC, name LIMIT 3",
+      "expected": [
+        ["Chokoladebolle", 18.00],
+        ["Croissant", 22.50],
+        ["Te", 25.00]
+      ],
+      "message": "Del 2: Tre billigste produkter"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT name, city FROM customers WHERE name LIKE '%sen' ORDER BY name",
+      "expected": [
+        ["Anna Jensen", "Viborg"],
+        ["Bo Nielsen", "Aarhus"],
+        ["Eva Mikkelsen", "Aarhus"],
+        ["Freja Olsen", "Viborg"]
+      ],
+      "message": "Del 3: Navne der ender på sen"
+    }
+  ]
+}

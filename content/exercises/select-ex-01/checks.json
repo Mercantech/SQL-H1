@@ -1,0 +1,32 @@
+{
+  "description": "SELECT — kolonner og WHERE",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT name, city FROM customers WHERE city = 'Viborg' ORDER BY name",
+      "expected": [
+        ["Anna Jensen", "Viborg"],
+        ["Clara Holm", "Viborg"],
+        ["Freja Olsen", "Viborg"]
+      ],
+      "message": "Del 1: Kunder i Viborg"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT name, price FROM products WHERE category = 'Mad' ORDER BY name",
+      "expected": [
+        ["Saladsandwich", 52.00],
+        ["Sandwich", 48.00]
+      ],
+      "message": "Del 2: Produkter i Mad"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT name, email FROM customers WHERE email IS NULL ORDER BY name",
+      "expected": [
+        ["Clara Holm", null]
+      ],
+      "message": "Del 3: Kunder uden e-mail"
+    }
+  ]
+}
