@@ -1,15 +1,15 @@
 services:
-  db:
+  sqlh1-db:
     ports:
       - "5432:5432"
 
-  api:
+  sqlh1-api:
     ports:
       - "3001:3001"
     environment:
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173}
 
-  web:
+  sqlh1-web:
     ports:
       - "3000:3000"
     networks:

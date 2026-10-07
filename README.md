@@ -6,7 +6,7 @@ SQL-læringsplatform til H1: teori, praktiske opgaver og egen Postgres-database 
 
 - **web** — Vite + React (TypeScript), nginx
 - **api** — .NET Web API, Mercantec Auth (JWT/JWKS), content-as-code
-- **db** — Postgres 16 (platform-DB `sqlh1` + elev-DB’er `s_<hash>`)
+- **sqlh1-db** — Postgres 16 (platform-DB `sqlh1` + elev-DB’er `s_<hash>`)
 
 ## Lokal udvikling
 
@@ -29,11 +29,13 @@ Kopiér [`.env.example`](.env.example) til `.env` ved behov.
 
 Mercantec Auth (authorization code + PKCE). SPA-klient `sqlh1`.
 
-Redirect-URIs der skal være registreret:
+OAuth-klient `sqlh1` er oprettet. Tilføj manuelt i [Auth Admin → Klienter](https://auth.mercantec.tech/Admin/Clients) (MCP `auth_add_redirect_uri` fejlede med 500):
 
 - `http://localhost:5173/auth/callback`
 - `http://localhost:3000/auth/callback`
 - `https://sqlh1.mercantec.tech/auth/callback`
+
+Prod: https://sqlh1.mercantec.tech (Dokploy compose `SQL-H1` under Hovedforløb Repos).
 
 ## Indhold
 
