@@ -10,7 +10,7 @@ objectives:
 sandbox:
   seed: seeds/shop.sql
   allowWrite: false
-  starterSql: SELECT * FROM customers;
+  starterSql: "SELECT * FROM customers;"
 ---
 
 # Velkommen til SELECT

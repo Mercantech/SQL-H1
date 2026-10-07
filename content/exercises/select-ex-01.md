@@ -11,10 +11,10 @@ sandbox:
   seed: seeds/shop.sql
   allowWrite: false
   checks: exercises/select-ex-01/checks.json
-  starterSql: -- Del 1: Vis name og city for kunder i Viborg
-SELECT name, city
-FROM customers
-WHERE city = 'Viborg';
+  starterSql: |
+    SELECT name, city
+    FROM customers
+    WHERE city = 'Viborg';
 ---
 
 # Opgave A — Kolonner og WHERE

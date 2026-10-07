@@ -9,8 +9,8 @@ sandbox:
   seed: seeds/shop.sql
   allowWrite: true
   checks: exercises/dml-01/checks.json
-  starterSql: -- Indsæt en ny kunde 'Eva Møller' i Aarhus
-INSERT INTO customers (name, city) VALUES ('Eva Møller', 'Aarhus');
+  starterSql: |
+    INSERT INTO customers (name, city) VALUES ('Eva Møller', 'Aarhus');
 ---
 
 # Opgaver — DML

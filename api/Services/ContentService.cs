@@ -115,9 +115,16 @@ public class ContentService
             if (!Directory.Exists(folder)) continue;
             foreach (var file in Directory.EnumerateFiles(folder, "*.md", SearchOption.AllDirectories))
             {
-                var item = ParseMarkdownFile(file);
-                if (item is not null)
-                    _items[item.Slug] = item;
+                try
+                {
+                    var item = ParseMarkdownFile(file);
+                    if (item is not null)
+                        _items[item.Slug] = item;
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException($"Kunne ikke parse content-fil: {file}", ex);
+                }
             }
         }
     }

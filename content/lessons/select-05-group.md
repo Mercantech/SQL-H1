@@ -11,7 +11,7 @@ objectives:
 sandbox:
   seed: seeds/shop.sql
   allowWrite: false
-  starterSql: SELECT category, COUNT(*) AS antal, AVG(price) AS snitpris FROM products GROUP BY category;
+  starterSql: "SELECT category, COUNT(*) AS antal, AVG(price) AS snitpris FROM products GROUP BY category;"
 ---
 
 # Gruppering og aggregering

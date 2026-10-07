@@ -11,11 +11,11 @@ sandbox:
   seed: seeds/shop.sql
   allowWrite: false
   checks: exercises/select-ex-02/checks.json
-  starterSql: -- Del 1: Drikke sorteret dyreste først
-SELECT name, price
-FROM products
-WHERE category = 'Drikke'
-ORDER BY price DESC;
+  starterSql: |
+    SELECT name, price
+    FROM products
+    WHERE category = 'Drikke'
+    ORDER BY price DESC;
 ---
 
 # Opgave B — Sortering og filtre

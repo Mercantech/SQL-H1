@@ -12,11 +12,11 @@ sandbox:
   seed: seeds/shop.sql
   allowWrite: false
   checks: exercises/select-ex-03/checks.json
-  starterSql: -- Del 1: Antal ordrer pr. kunde
-SELECT customer_id, COUNT(*)::int AS antal
-FROM orders
-GROUP BY customer_id
-ORDER BY customer_id;
+  starterSql: |
+    SELECT customer_id, COUNT(*)::int AS antal
+    FROM orders
+    GROUP BY customer_id
+    ORDER BY customer_id;
 ---
 
 # Opgave C — Aggregater og funktioner
