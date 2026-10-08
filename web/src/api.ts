@@ -27,6 +27,14 @@ export type ContentDto = {
   } | null;
 };
 
+export type ResultSet = {
+  label: string;
+  columns: string[];
+  rows: unknown[][];
+  rowsAffected?: number;
+  truncated?: boolean;
+};
+
 export type ExecuteResult = {
   ok: boolean;
   columns: string[];
@@ -34,6 +42,7 @@ export type ExecuteResult = {
   rowsAffected?: number;
   error?: string;
   truncated?: boolean;
+  sets?: ResultSet[];
 };
 
 export type ProgressRow = {

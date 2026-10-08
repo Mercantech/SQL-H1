@@ -91,14 +91,49 @@ public class SandboxService(
         }
 
         var statements = SqlGuard.SplitStatements(request.Sql);
+        var sets = new List<ResultSet>();
         ExecuteResult? last = null;
+        var selectIndex = 0;
         foreach (var stmt in statements)
         {
             last = await RunOneAsync(conn, stmt, ct);
-            if (!last.Ok) return last;
+            if (!last.Ok)
+            {
+                last.Sets = sets;
+                return last;
+            }
+
+            if (last.Columns.Length > 0)
+            {
+                selectIndex++;
+                sets.Add(new ResultSet
+                {
+                    Label = $"SELECT {selectIndex}",
+                    Columns = last.Columns,
+                    Rows = last.Rows,
+                    Truncated = last.Truncated
+                });
+            }
+            else if (last.RowsAffected is not null && statements.Count == 1)
+            {
+                sets.Add(new ResultSet
+                {
+                    Label = "Resultat",
+                    RowsAffected = last.RowsAffected
+                });
+            }
         }
 
-        return last ?? new ExecuteResult { Ok = true };
+        var primary = sets.LastOrDefault(s => s.Columns.Length > 0) ?? sets.LastOrDefault();
+        return new ExecuteResult
+        {
+            Ok = true,
+            Columns = primary?.Columns ?? [],
+            Rows = primary?.Rows ?? [],
+            RowsAffected = primary?.RowsAffected ?? last?.RowsAffected,
+            Truncated = primary?.Truncated ?? false,
+            Sets = sets
+        };
     }
 
     public async Task ResetAsync(Guid userSub, string? contentSlug, CancellationToken ct = default)

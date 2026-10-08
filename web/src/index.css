@@ -699,6 +699,39 @@ body.is-resizing-split .lesson {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  gap: 0.45rem;
+}
+
+.result-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  flex: 0 0 auto;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.35rem;
+}
+
+.result-tab {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.result-tab:hover {
+  color: var(--ink);
+  background: rgba(21, 32, 24, 0.05);
+}
+
+.result-tab.active {
+  color: var(--accent);
+  background: rgba(31, 107, 74, 0.1);
 }
 
 .table-wrap {

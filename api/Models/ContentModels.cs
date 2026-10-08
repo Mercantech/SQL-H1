@@ -52,6 +52,15 @@ public class ExecuteRequest
     public bool? AllowWrite { get; set; }
 }
 
+public class ResultSet
+{
+    public string Label { get; set; } = "";
+    public string[] Columns { get; set; } = [];
+    public List<object?[]> Rows { get; set; } = [];
+    public int? RowsAffected { get; set; }
+    public bool Truncated { get; set; }
+}
+
 public class ExecuteResult
 {
     public bool Ok { get; set; }
@@ -60,6 +69,7 @@ public class ExecuteResult
     public int? RowsAffected { get; set; }
     public string? Error { get; set; }
     public bool Truncated { get; set; }
+    public List<ResultSet> Sets { get; set; } = [];
 }
 
 public class CheckRequest
