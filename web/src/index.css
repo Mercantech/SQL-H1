@@ -842,21 +842,46 @@ body.is-resizing-split .lesson {
   flex: 0 0 auto;
 }
 
+.sql-zoom {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.sql-zoom-btn {
+  min-width: 2.1rem;
+  padding: 0.3rem 0.45rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.sql-zoom-reset {
+  min-width: 3.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
 .sql-editor {
   flex: 1 1 45%;
   min-height: 160px;
   border: 1px solid var(--line);
   border-radius: 12px;
   overflow: hidden;
+  --sql-font-size: 14px;
 }
 
 .sql-editor .cm-editor,
 .sql-editor .cm-editor.cm-focused {
   height: 100% !important;
+  font-size: var(--sql-font-size);
 }
 
 .sql-editor .cm-scroller {
   overflow: auto !important;
+  font-family: var(--font-mono);
+  line-height: 1.45;
 }
 
 .sandbox .login-nudge,

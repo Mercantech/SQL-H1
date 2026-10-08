@@ -36,6 +36,19 @@ function normalizeSets(result: ExecuteResult): ResultSet[] {
   return [];
 }
 
+const ZOOM_KEY = "sqlh1_editor_zoom";
+const ZOOM_MIN = 80;
+const ZOOM_MAX = 180;
+const ZOOM_STEP = 10;
+const ZOOM_DEFAULT = 100;
+
+function readZoom() {
+  if (typeof window === "undefined") return ZOOM_DEFAULT;
+  const n = Number(localStorage.getItem(ZOOM_KEY));
+  if (!Number.isFinite(n)) return ZOOM_DEFAULT;
+  return Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Math.round(n / ZOOM_STEP) * ZOOM_STEP));
+}
+
 function ResultTable({ set }: { set: ResultSet }) {
   if (set.rowsAffected != null && set.columns.length === 0) {
     return <p>{set.rowsAffected} række(r) påvirket.</p>;
@@ -80,9 +93,11 @@ export function SqlEditor({
   checkPassed,
 }: Props) {
   const [tab, setTab] = useState(0);
+  const [zoom, setZoom] = useState(readZoom);
   const sets = result && !result.error ? normalizeSets(result) : [];
   const onRunRef = useRef(onRun);
   const runningRef = useRef(running);
+  const zoomRef = useRef(zoom);
 
   useEffect(() => {
     onRunRef.current = onRun;
@@ -93,8 +108,17 @@ export function SqlEditor({
   }, [running]);
 
   useEffect(() => {
+    zoomRef.current = zoom;
+    localStorage.setItem(ZOOM_KEY, String(zoom));
+  }, [zoom]);
+
+  useEffect(() => {
     setTab(0);
   }, [result]);
+
+  const bumpZoom = (delta: number) => {
+    setZoom((z) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, z + delta)));
+  };
 
   const extensions = useMemo(
     () => [
@@ -114,6 +138,34 @@ export function SqlEditor({
               return true;
             },
           },
+          {
+            key: "Mod-=",
+            run: () => {
+              bumpZoom(ZOOM_STEP);
+              return true;
+            },
+          },
+          {
+            key: "Mod-Plus",
+            run: () => {
+              bumpZoom(ZOOM_STEP);
+              return true;
+            },
+          },
+          {
+            key: "Mod-",
+            run: () => {
+              bumpZoom(-ZOOM_STEP);
+              return true;
+            },
+          },
+          {
+            key: "Mod-0",
+            run: () => {
+              setZoom(ZOOM_DEFAULT);
+              return true;
+            },
+          },
         ]),
       ),
     ],
@@ -121,6 +173,7 @@ export function SqlEditor({
   );
 
   const active = sets[Math.min(tab, Math.max(sets.length - 1, 0))];
+  const fontPx = (14 * zoom) / 100;
 
   return (
     <div className="sql-panel">
@@ -138,6 +191,37 @@ export function SqlEditor({
             Tjek svar
           </button>
         )}
+        <div className="sql-zoom" role="group" aria-label="Zoom i editor">
+          <button
+            type="button"
+            className="btn sql-zoom-btn"
+            onClick={() => bumpZoom(-ZOOM_STEP)}
+            disabled={zoom <= ZOOM_MIN}
+            title="Mindre kode (Ctrl+-)"
+            aria-label="Mindsk kode"
+          >
+            A−
+          </button>
+          <button
+            type="button"
+            className="btn sql-zoom-btn sql-zoom-reset"
+            onClick={() => setZoom(ZOOM_DEFAULT)}
+            title="Nulstil zoom (Ctrl+0)"
+            aria-label={`Zoom ${zoom} procent, klik for at nulstille`}
+          >
+            {zoom}%
+          </button>
+          <button
+            type="button"
+            className="btn sql-zoom-btn"
+            onClick={() => bumpZoom(ZOOM_STEP)}
+            disabled={zoom >= ZOOM_MAX}
+            title="Større kode (Ctrl+=)"
+            aria-label="Forøg kode"
+          >
+            A+
+          </button>
+        </div>
       </div>
       <CodeMirror
         value={value}
@@ -146,6 +230,7 @@ export function SqlEditor({
         onChange={onChange}
         basicSetup={{ lineNumbers: true }}
         className="sql-editor"
+        style={{ ["--sql-font-size" as string]: `${fontPx}px` }}
       />
       {result && (
         <div className={`sql-result ${result.ok ? "ok" : "err"}`}>
