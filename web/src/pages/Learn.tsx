@@ -176,20 +176,13 @@ export function Learn() {
                 onKeyDown={split.onKeyDown}
               />
               <aside className="sandbox">
-                {!isLoggedIn() && (
-                  <p className="login-nudge">
-                    <button type="button" className="btn primary" onClick={() => beginLogin()}>
-                      Log ind
-                    </button>{" "}
-                    for at køre SQL i din egen database.
-                  </p>
-                )}
                 <SqlEditor
                   value={sql}
                   onChange={setSql}
                   onRun={onRun}
                   onReset={onReset}
                   onCheck={item.kind === "exercise" ? onCheck : undefined}
+                  onLogin={isLoggedIn() ? undefined : () => beginLogin()}
                   running={running}
                   result={result}
                   checkMessages={checkMessages}

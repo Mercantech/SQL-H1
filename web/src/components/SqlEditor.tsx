@@ -12,6 +12,8 @@ type Props = {
   onRun: (sqlToRun?: string) => void;
   onReset?: () => void;
   onCheck?: () => void;
+  /** Når sat, vises "Log ind" i stedet for "Kør SQL". */
+  onLogin?: () => void;
   running?: boolean;
   result?: ExecuteResult | null;
   checkMessages?: string[] | null;
@@ -87,6 +89,7 @@ export function SqlEditor({
   onRun,
   onReset,
   onCheck,
+  onLogin,
   running,
   result,
   checkMessages,
@@ -176,15 +179,21 @@ export function SqlEditor({
   return (
     <div className="sql-panel">
       <div className="sql-toolbar">
-        <button type="button" className="btn primary" onClick={() => onRun()} disabled={running}>
-          {running ? "Kører…" : "Kør SQL"}
-        </button>
-        {onReset && (
+        {onLogin ? (
+          <button type="button" className="btn primary" onClick={onLogin}>
+            Log ind
+          </button>
+        ) : (
+          <button type="button" className="btn primary" onClick={() => onRun()} disabled={running}>
+            {running ? "Kører…" : "Kør SQL"}
+          </button>
+        )}
+        {onReset && !onLogin && (
           <button type="button" className="btn" onClick={onReset} disabled={running}>
             Nulstil data
           </button>
         )}
-        {onCheck && (
+        {onCheck && !onLogin && (
           <button type="button" className="btn accent" onClick={onCheck} disabled={running}>
             Tjek svar
           </button>
