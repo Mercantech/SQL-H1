@@ -155,6 +155,26 @@ export async function fetchSandboxInspect(contentSlug?: string): Promise<Inspect
   return res.json();
 }
 
+export type QueryHistoryItem = {
+  id: number;
+  sql: string;
+  contentSlug?: string | null;
+  ok: boolean;
+  error?: string | null;
+  createdAt: string;
+};
+
+export async function fetchQueryHistory(limit = 40): Promise<QueryHistoryItem[]> {
+  const res = await apiFetch(`/sandbox/history?limit=${limit}`);
+  if (!res.ok) throw new Error("Kunne ikke hente SQL-historik");
+  return res.json();
+}
+
+export async function deleteQueryHistoryItem(id: number) {
+  const res = await apiFetch(`/sandbox/history/${id}`, { method: "DELETE" });
+  if (!res.ok) throw new Error("Kunne ikke slette historik");
+}
+
 export async function fetchProgress(): Promise<ProgressRow[]> {
   const res = await apiFetch("/progress");
   if (!res.ok) throw new Error("Kunne ikke hente progress");

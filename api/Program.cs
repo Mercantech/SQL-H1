@@ -98,6 +98,21 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await db.Database.EnsureCreatedAsync();
+    // EnsureCreated opdaterer ikke eksisterende DB — tilføj query_history eksplicit
+    await db.Database.ExecuteSqlRawAsync(
+        """
+        CREATE TABLE IF NOT EXISTS query_history (
+          id BIGSERIAL PRIMARY KEY,
+          user_sub UUID NOT NULL REFERENCES users(sub) ON DELETE CASCADE,
+          sql_text TEXT NOT NULL,
+          content_slug VARCHAR(200),
+          ok BOOLEAN NOT NULL DEFAULT FALSE,
+          error TEXT,
+          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        );
+        CREATE INDEX IF NOT EXISTS ix_query_history_user_created
+          ON query_history (user_sub, created_at DESC);
+        """);
 }
 
 app.UseCors();
@@ -190,11 +205,71 @@ api.MapPost("/sandbox/provision", async (HttpContext ctx, UserService users, San
     return Results.Json(new { status = db.Status, dbName = db.DbName });
 }).RequireAuthorization();
 
-api.MapPost("/sandbox/execute", async (HttpContext ctx, UserService users, SandboxService sandbox, ExecuteRequest body) =>
+api.MapPost("/sandbox/execute", async (HttpContext ctx, UserService users, SandboxService sandbox, AppDbContext db, ExecuteRequest body) =>
 {
     var user = await users.EnsureUserAsync(ctx.User);
     var result = await sandbox.ExecuteAsync(user.Sub, body);
+
+    var sqlText = (body.Sql ?? "").Trim();
+    if (sqlText.Length > 0)
+    {
+        if (sqlText.Length > 20_000) sqlText = sqlText[..20_000];
+        db.QueryHistory.Add(new QueryHistoryEntry
+        {
+            UserSub = user.Sub,
+            SqlText = sqlText,
+            ContentSlug = string.IsNullOrWhiteSpace(body.ContentSlug) ? null : body.ContentSlug,
+            Ok = result.Ok,
+            Error = result.Error,
+            CreatedAt = DateTimeOffset.UtcNow
+        });
+        await db.SaveChangesAsync();
+
+        // Behold seneste 100 pr. bruger
+        var oldIds = await db.QueryHistory
+            .Where(x => x.UserSub == user.Sub)
+            .OrderByDescending(x => x.CreatedAt)
+            .Skip(100)
+            .Select(x => x.Id)
+            .ToListAsync();
+        if (oldIds.Count > 0)
+        {
+            await db.QueryHistory.Where(x => oldIds.Contains(x.Id)).ExecuteDeleteAsync();
+        }
+    }
+
     return Results.Json(result);
+}).RequireAuthorization();
+
+api.MapGet("/sandbox/history", async (HttpContext ctx, UserService users, AppDbContext db, int? limit) =>
+{
+    var user = await users.EnsureUserAsync(ctx.User);
+    var take = Math.Clamp(limit ?? 40, 1, 100);
+    var rows = await db.QueryHistory
+        .Where(x => x.UserSub == user.Sub)
+        .OrderByDescending(x => x.CreatedAt)
+        .Take(take)
+        .Select(x => new QueryHistoryDto
+        {
+            Id = x.Id,
+            Sql = x.SqlText,
+            ContentSlug = x.ContentSlug,
+            Ok = x.Ok,
+            Error = x.Error,
+            CreatedAt = x.CreatedAt
+        })
+        .ToListAsync();
+    return Results.Json(rows);
+}).RequireAuthorization();
+
+api.MapDelete("/sandbox/history/{id:long}", async (long id, HttpContext ctx, UserService users, AppDbContext db) =>
+{
+    var user = await users.EnsureUserAsync(ctx.User);
+    var row = await db.QueryHistory.FirstOrDefaultAsync(x => x.Id == id && x.UserSub == user.Sub);
+    if (row is null) return Results.NotFound();
+    db.QueryHistory.Remove(row);
+    await db.SaveChangesAsync();
+    return Results.Json(new { ok = true });
 }).RequireAuthorization();
 
 api.MapPost("/sandbox/reset", async (HttpContext ctx, UserService users, SandboxService sandbox, ResetBody? body) =>

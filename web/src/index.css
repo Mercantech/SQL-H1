@@ -846,6 +846,128 @@ body.is-resizing-split .lesson {
   flex: 0 0 auto;
 }
 
+.sql-history-toggle.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.sql-history {
+  flex: 0 1 auto;
+  max-height: 220px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(247, 250, 245, 0.9);
+  overflow: hidden;
+}
+
+.sql-history-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.45rem 0.65rem;
+  border-bottom: 1px solid var(--line);
+  flex: 0 0 auto;
+}
+
+.sql-history-head strong {
+  font-size: 0.85rem;
+}
+
+.sql-history-refresh {
+  padding: 0.2rem 0.45rem;
+  font-size: 0.8rem;
+}
+
+.sql-history-empty {
+  margin: 0;
+  padding: 0.75rem 0.85rem;
+  font-size: 0.88rem;
+}
+
+.sql-history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.35rem;
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.sql-history-item {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.5rem 0.6rem 0.55rem;
+  background: #fff;
+}
+
+.sql-history-item.err {
+  border-color: rgba(161, 40, 40, 0.28);
+}
+
+.sql-history-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.65rem;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+
+.sql-history-status {
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+}
+
+.sql-history-status.ok {
+  color: var(--ok);
+  background: rgba(27, 107, 58, 0.1);
+}
+
+.sql-history-status.err {
+  color: var(--danger);
+  background: rgba(161, 40, 40, 0.1);
+}
+
+.sql-history-sql {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--ink);
+  line-height: 1.35;
+}
+
+.sql-history-error {
+  margin: 0.3rem 0 0;
+  font-size: 0.78rem;
+  color: var(--danger);
+}
+
+.sql-history-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+}
+
+.sql-history-actions .btn {
+  padding: 0.28rem 0.55rem;
+  font-size: 0.78rem;
+}
+
 .sql-zoom {
   margin-left: auto;
   display: inline-flex;

@@ -148,3 +148,13 @@ public class InspectResult
     public List<string> BaselineOnlyTables { get; set; } = [];
     public List<InspectRelationDto> Relations { get; set; } = [];
 }
+
+public class QueryHistoryDto
+{
+    public long Id { get; set; }
+    public string Sql { get; set; } = "";
+    public string? ContentSlug { get; set; }
+    public bool Ok { get; set; }
+    public string? Error { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
+}

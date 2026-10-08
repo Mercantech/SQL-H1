@@ -1,15 +1,21 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { sql } from "@codemirror/lang-sql";
 import { Prec } from "@codemirror/state";
 import { keymap } from "@codemirror/view";
-import type { ExecuteResult, ResultSet } from "../api";
+import {
+  deleteQueryHistoryItem,
+  fetchQueryHistory,
+  type ExecuteResult,
+  type QueryHistoryItem,
+  type ResultSet,
+} from "../api";
 
 type Props = {
   value: string;
   onChange: (v: string) => void;
   /** Kør SQL. Uden argument = hele editoren; med argument = det markerede (eller eksplicit tekst). */
-  onRun: (sqlToRun?: string) => void;
+  onRun: (sqlToRun?: string) => void | Promise<void>;
   onReset?: () => void;
   onCheck?: () => void;
   /** Når sat, vises "Log ind" i stedet for "Kør SQL". */
@@ -49,6 +55,24 @@ function readZoom() {
   const n = Number(localStorage.getItem(ZOOM_KEY));
   if (!Number.isFinite(n)) return ZOOM_DEFAULT;
   return Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Math.round(n / ZOOM_STEP) * ZOOM_STEP));
+}
+
+function formatWhen(iso: string) {
+  try {
+    return new Date(iso).toLocaleString("da-DK", {
+      day: "2-digit",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return iso;
+  }
+}
+
+function previewSql(sqlText: string) {
+  const one = sqlText.replace(/\s+/g, " ").trim();
+  return one.length > 96 ? `${one.slice(0, 96)}…` : one;
 }
 
 function ResultTable({ set }: { set: ResultSet }) {
@@ -97,9 +121,28 @@ export function SqlEditor({
 }: Props) {
   const [tab, setTab] = useState(0);
   const [zoom, setZoom] = useState(readZoom);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [history, setHistory] = useState<QueryHistoryItem[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [copiedId, setCopiedId] = useState<number | null>(null);
   const sets = result && !result.error ? normalizeSets(result) : [];
   const onRunRef = useRef(onRun);
   const runningRef = useRef(running);
+
+  const loadHistory = useCallback(async () => {
+    if (onLogin) {
+      setHistory([]);
+      return;
+    }
+    setHistoryLoading(true);
+    try {
+      setHistory(await fetchQueryHistory(40));
+    } catch {
+      setHistory([]);
+    } finally {
+      setHistoryLoading(false);
+    }
+  }, [onLogin]);
 
   useEffect(() => {
     onRunRef.current = onRun;
@@ -117,9 +160,43 @@ export function SqlEditor({
     setTab(0);
   }, [result]);
 
+  useEffect(() => {
+    loadHistory();
+  }, [loadHistory]);
+
+  useEffect(() => {
+    if (!running && !onLogin) {
+      const t = window.setTimeout(() => loadHistory(), 250);
+      return () => window.clearTimeout(t);
+    }
+  }, [running, result, onLogin, loadHistory]);
+
   const bumpZoom = (delta: number) => {
     setZoom((z) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, z + delta)));
   };
+
+  async function runSql(sqlText?: string) {
+    await onRun(sqlText);
+  }
+
+  async function copyHistory(item: QueryHistoryItem) {
+    try {
+      await navigator.clipboard.writeText(item.sql);
+      setCopiedId(item.id);
+      window.setTimeout(() => setCopiedId((id) => (id === item.id ? null : id)), 1400);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  async function removeHistory(id: number) {
+    try {
+      await deleteQueryHistoryItem(id);
+      setHistory((rows) => rows.filter((r) => r.id !== id));
+    } catch {
+      /* ignore */
+    }
+  }
 
   const extensions = useMemo(
     () => [
@@ -131,11 +208,9 @@ export function SqlEditor({
             run: (view) => {
               if (runningRef.current) return true;
               const sel = view.state.selection.main;
-              const selected = sel.empty
-                ? ""
-                : view.state.sliceDoc(sel.from, sel.to);
+              const selected = sel.empty ? "" : view.state.sliceDoc(sel.from, sel.to);
               const sqlText = selected.trim().length > 0 ? selected : view.state.doc.toString();
-              onRunRef.current(sqlText);
+              void onRunRef.current(sqlText);
               return true;
             },
           },
@@ -184,7 +259,7 @@ export function SqlEditor({
             Log ind
           </button>
         ) : (
-          <button type="button" className="btn primary" onClick={() => onRun()} disabled={running}>
+          <button type="button" className="btn primary" onClick={() => void runSql()} disabled={running}>
             {running ? "Kører…" : "Kør SQL"}
           </button>
         )}
@@ -196,6 +271,19 @@ export function SqlEditor({
         {onCheck && !onLogin && (
           <button type="button" className="btn accent" onClick={onCheck} disabled={running}>
             Tjek svar
+          </button>
+        )}
+        {!onLogin && (
+          <button
+            type="button"
+            className={`btn sql-history-toggle ${historyOpen ? "active" : ""}`}
+            onClick={() => {
+              setHistoryOpen((v) => !v);
+              if (!historyOpen) void loadHistory();
+            }}
+            aria-expanded={historyOpen}
+          >
+            Historik{history.length > 0 ? ` (${history.length})` : ""}
           </button>
         )}
         <div className="sql-zoom" title="Zoom i editor (Ctrl+= / Ctrl+- / Ctrl+0)">
@@ -219,6 +307,71 @@ export function SqlEditor({
           <span className="sql-zoom-value">{zoom}%</span>
         </div>
       </div>
+
+      {historyOpen && !onLogin && (
+        <div className="sql-history">
+          <div className="sql-history-head">
+            <strong>Tidligere SQL</strong>
+            <button type="button" className="btn ghost sql-history-refresh" onClick={() => void loadHistory()}>
+              Opdater
+            </button>
+          </div>
+          {historyLoading && <p className="muted sql-history-empty">Henter historik…</p>}
+          {!historyLoading && history.length === 0 && (
+            <p className="muted sql-history-empty">Ingen kørsler endnu — kør noget SQL for at fylde historikken.</p>
+          )}
+          {!historyLoading && history.length > 0 && (
+            <ul className="sql-history-list">
+              {history.map((item) => (
+                <li key={item.id} className={`sql-history-item ${item.ok ? "ok" : "err"}`}>
+                  <div className="sql-history-meta">
+                    <span className={`sql-history-status ${item.ok ? "ok" : "err"}`}>
+                      {item.ok ? "OK" : "Fejl"}
+                    </span>
+                    <time dateTime={item.createdAt}>{formatWhen(item.createdAt)}</time>
+                    {item.contentSlug && <span className="muted">{item.contentSlug}</span>}
+                  </div>
+                  <pre className="sql-history-sql">{previewSql(item.sql)}</pre>
+                  {item.error && <p className="sql-history-error">{item.error}</p>}
+                  <div className="sql-history-actions">
+                    <button
+                      type="button"
+                      className="btn primary"
+                      disabled={running}
+                      onClick={() => {
+                        onChange(item.sql);
+                        void runSql(item.sql);
+                      }}
+                    >
+                      Kør igen
+                    </button>
+                    <button
+                      type="button"
+                      className="btn"
+                      onClick={() => onChange(item.sql)}
+                      title="Erstat editorens indhold"
+                    >
+                      Indsæt i editor
+                    </button>
+                    <button type="button" className="btn" onClick={() => void copyHistory(item)}>
+                      {copiedId === item.id ? "Kopieret" : "Kopiér"}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn ghost"
+                      onClick={() => void removeHistory(item.id)}
+                      aria-label="Slet fra historik"
+                    >
+                      Slet
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
       <CodeMirror
         value={value}
         height="100%"

@@ -29,3 +29,15 @@ public class ProgressEntry
     public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
     public AppUser? User { get; set; }
 }
+
+public class QueryHistoryEntry
+{
+    public long Id { get; set; }
+    public Guid UserSub { get; set; }
+    public string SqlText { get; set; } = "";
+    public string? ContentSlug { get; set; }
+    public bool Ok { get; set; }
+    public string? Error { get; set; }
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public AppUser? User { get; set; }
+}

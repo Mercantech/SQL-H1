@@ -8,6 +8,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<AppUser> Users => Set<AppUser>();
     public DbSet<StudentDatabase> StudentDatabases => Set<StudentDatabase>();
     public DbSet<ProgressEntry> Progress => Set<ProgressEntry>();
+    public DbSet<QueryHistoryEntry> QueryHistory => Set<QueryHistoryEntry>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -45,6 +46,21 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.Property(x => x.PayloadJson).HasColumnName("payload_json").HasColumnType("jsonb");
             e.Property(x => x.UpdatedAt).HasColumnName("updated_at");
             e.HasIndex(x => new { x.UserSub, x.ContentSlug, x.PartIndex }).IsUnique();
+            e.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserSub);
+        });
+
+        modelBuilder.Entity<QueryHistoryEntry>(e =>
+        {
+            e.ToTable("query_history");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Id).HasColumnName("id");
+            e.Property(x => x.UserSub).HasColumnName("user_sub");
+            e.Property(x => x.SqlText).HasColumnName("sql_text");
+            e.Property(x => x.ContentSlug).HasColumnName("content_slug").HasMaxLength(200);
+            e.Property(x => x.Ok).HasColumnName("ok");
+            e.Property(x => x.Error).HasColumnName("error");
+            e.Property(x => x.CreatedAt).HasColumnName("created_at");
+            e.HasIndex(x => new { x.UserSub, x.CreatedAt });
             e.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserSub);
         });
     }
