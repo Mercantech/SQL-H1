@@ -52,12 +52,14 @@ export function Learn() {
     return true;
   }
 
-  async function onRun() {
+  async function onRun(sqlToRun?: string) {
     if (!(await ensureReady()) || !item) return;
+    const query = (sqlToRun ?? sql).trim();
+    if (!query) return;
     setRunning(true);
     setError(null);
     try {
-      const res = await executeSql(sql, item.slug, item.sandbox?.allowWrite);
+      const res = await executeSql(query, item.slug, item.sandbox?.allowWrite);
       setResult(res);
       await putProgress(item.slug, "started").catch(() => undefined);
     } catch (e) {

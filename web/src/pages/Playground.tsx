@@ -65,11 +65,13 @@ export function Playground() {
         allowWrite
         running={running}
         result={result}
-        onRun={async () => {
+        onRun={async (sqlToRun) => {
+          const query = (sqlToRun ?? sql).trim();
+          if (!query) return;
           setRunning(true);
           setError(null);
           try {
-            setResult(await executeSql(sql, undefined, true));
+            setResult(await executeSql(query, undefined, true));
           } catch (e) {
             setError(e instanceof Error ? e.message : "Fejl");
           } finally {

@@ -1,12 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { sql } from "@codemirror/lang-sql";
+import { Prec } from "@codemirror/state";
+import { keymap } from "@codemirror/view";
 import type { ExecuteResult, ResultSet } from "../api";
 
 type Props = {
   value: string;
   onChange: (v: string) => void;
-  onRun: () => void;
+  /** Kør SQL. Uden argument = hele editoren; med argument = det markerede (eller eksplicit tekst). */
+  onRun: (sqlToRun?: string) => void;
   onReset?: () => void;
   onCheck?: () => void;
   running?: boolean;
@@ -66,6 +69,11 @@ function ResultTable({ set }: { set: ResultSet }) {
   );
 }
 
+function isMac() {
+  if (typeof navigator === "undefined") return false;
+  return /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent);
+}
+
 export function SqlEditor({
   value,
   onChange,
@@ -80,17 +88,52 @@ export function SqlEditor({
 }: Props) {
   const [tab, setTab] = useState(0);
   const sets = result && !result.error ? normalizeSets(result) : [];
+  const onRunRef = useRef(onRun);
+  const runningRef = useRef(running);
+
+  useEffect(() => {
+    onRunRef.current = onRun;
+  }, [onRun]);
+
+  useEffect(() => {
+    runningRef.current = running;
+  }, [running]);
 
   useEffect(() => {
     setTab(0);
   }, [result]);
 
+  const extensions = useMemo(
+    () => [
+      sql(),
+      Prec.high(
+        keymap.of([
+          {
+            key: "Mod-Enter",
+            run: (view) => {
+              if (runningRef.current) return true;
+              const sel = view.state.selection.main;
+              const selected = sel.empty
+                ? ""
+                : view.state.sliceDoc(sel.from, sel.to);
+              const sqlText = selected.trim().length > 0 ? selected : view.state.doc.toString();
+              onRunRef.current(sqlText);
+              return true;
+            },
+          },
+        ]),
+      ),
+    ],
+    [],
+  );
+
   const active = sets[Math.min(tab, Math.max(sets.length - 1, 0))];
+  const runShortcut = isMac() ? "⌘↵" : "Ctrl+Enter";
 
   return (
     <div className="sql-panel">
       <div className="sql-toolbar">
-        <button type="button" className="btn primary" onClick={onRun} disabled={running}>
+        <button type="button" className="btn primary" onClick={() => onRun()} disabled={running}>
           {running ? "Kører…" : "Kør SQL"}
         </button>
         {onReset && (
@@ -105,12 +148,16 @@ export function SqlEditor({
         )}
         <span className="sql-hint">
           {allowWrite ? "Skrivning tilladt" : "Kun SELECT"}
+          {" · "}
+          <kbd className="sql-kbd">{runShortcut}</kbd> kør
+          {" · "}
+          markering = kun det
         </span>
       </div>
       <CodeMirror
         value={value}
         height="100%"
-        extensions={[sql()]}
+        extensions={extensions}
         onChange={onChange}
         basicSetup={{ lineNumbers: true }}
         className="sql-editor"

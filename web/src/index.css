@@ -808,6 +808,18 @@ body.is-resizing-split .lesson {
   font-size: 0.85rem;
 }
 
+.sql-kbd {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  font-weight: 600;
+  padding: 0.05em 0.35em;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: rgba(21, 32, 24, 0.04);
+  color: var(--ink);
+}
+
 .sql-editor {
   flex: 1 1 45%;
   min-height: 160px;
