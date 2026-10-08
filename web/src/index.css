@@ -942,12 +942,61 @@ body.is-resizing-split .lesson {
 
 .sql-history-sql {
   margin: 0;
+  padding: 0.45rem 0.55rem;
+  border-radius: 8px;
+  background: #122018;
+  color: #d7f0e2;
+  overflow: auto;
+  max-height: 7.5rem;
+}
+
+.sql-history-sql code.hljs {
+  display: block;
+  padding: 0;
+  background: transparent;
+  color: inherit;
   font-family: var(--font-mono);
   font-size: 0.78rem;
   white-space: pre-wrap;
   word-break: break-word;
-  color: var(--ink);
-  line-height: 1.35;
+  line-height: 1.4;
+}
+
+.sql-history-sql .hljs-keyword,
+.sql-history-sql .hljs-built_in,
+.sql-history-sql .hljs-type,
+.sql-history-sql .hljs-literal {
+  color: #7dd3a8;
+  font-weight: 500;
+}
+
+.sql-history-sql .hljs-string,
+.sql-history-sql .hljs-doctag {
+  color: #f0c48a;
+}
+
+.sql-history-sql .hljs-number,
+.sql-history-sql .hljs-symbol {
+  color: #9ec5ff;
+}
+
+.sql-history-sql .hljs-comment,
+.sql-history-sql .hljs-quote {
+  color: #7a9484;
+  font-style: italic;
+}
+
+.sql-history-sql .hljs-title,
+.sql-history-sql .hljs-section,
+.sql-history-sql .hljs-name,
+.sql-history-sql .hljs-selector-tag {
+  color: #b8e6cf;
+}
+
+.sql-history-sql .hljs-meta,
+.sql-history-sql .hljs-attr,
+.sql-history-sql .hljs-attribute {
+  color: #c5d4a8;
 }
 
 .sql-history-error {

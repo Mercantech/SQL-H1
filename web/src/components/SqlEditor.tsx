@@ -3,6 +3,8 @@ import CodeMirror from "@uiw/react-codemirror";
 import { sql } from "@codemirror/lang-sql";
 import { Prec } from "@codemirror/state";
 import { keymap } from "@codemirror/view";
+import hljs from "highlight.js/lib/core";
+import sqlLang from "highlight.js/lib/languages/sql";
 import {
   deleteQueryHistoryItem,
   fetchQueryHistory,
@@ -10,6 +12,8 @@ import {
   type QueryHistoryItem,
   type ResultSet,
 } from "../api";
+
+hljs.registerLanguage("sql", sqlLang);
 
 type Props = {
   value: string;
@@ -71,8 +75,27 @@ function formatWhen(iso: string) {
 }
 
 function previewSql(sqlText: string) {
-  const one = sqlText.replace(/\s+/g, " ").trim();
-  return one.length > 96 ? `${one.slice(0, 96)}…` : one;
+  const trimmed = sqlText.replace(/\r\n/g, "\n").trim();
+  const lines = trimmed.split("\n");
+  const clipped = lines.length > 6 ? `${lines.slice(0, 6).join("\n")}\n…` : trimmed;
+  return clipped.length > 280 ? `${clipped.slice(0, 280)}…` : clipped;
+}
+
+function escapeHtml(text: string) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function highlightSqlPreview(sqlText: string) {
+  const preview = previewSql(sqlText);
+  try {
+    return hljs.highlight(preview, { language: "sql" }).value;
+  } catch {
+    return escapeHtml(preview);
+  }
 }
 
 function ResultTable({ set }: { set: ResultSet }) {
@@ -331,7 +354,12 @@ export function SqlEditor({
                     <time dateTime={item.createdAt}>{formatWhen(item.createdAt)}</time>
                     {item.contentSlug && <span className="muted">{item.contentSlug}</span>}
                   </div>
-                  <pre className="sql-history-sql">{previewSql(item.sql)}</pre>
+                  <pre className="sql-history-sql">
+                    <code
+                      className="hljs language-sql"
+                      dangerouslySetInnerHTML={{ __html: highlightSqlPreview(item.sql) }}
+                    />
+                  </pre>
                   {item.error && <p className="sql-history-error">{item.error}</p>}
                   <div className="sql-history-actions">
                     <button
