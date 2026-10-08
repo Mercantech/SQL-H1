@@ -97,7 +97,6 @@ export function SqlEditor({
   const sets = result && !result.error ? normalizeSets(result) : [];
   const onRunRef = useRef(onRun);
   const runningRef = useRef(running);
-  const zoomRef = useRef(zoom);
 
   useEffect(() => {
     onRunRef.current = onRun;
@@ -108,7 +107,6 @@ export function SqlEditor({
   }, [running]);
 
   useEffect(() => {
-    zoomRef.current = zoom;
     localStorage.setItem(ZOOM_KEY, String(zoom));
   }, [zoom]);
 
