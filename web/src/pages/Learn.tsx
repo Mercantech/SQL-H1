@@ -36,6 +36,10 @@ export function Learn() {
         setResult(null);
         setCheckMessages(null);
         setCheckPassed(null);
+        // Teori tæller som gennemført når eleven har åbnet siden
+        if (c.kind === "theory" && isLoggedIn()) {
+          putProgress(c.slug, "completed").catch(() => undefined);
+        }
       })
       .catch((e) => setError(e.message));
   }, [slug]);

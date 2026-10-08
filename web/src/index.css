@@ -227,6 +227,44 @@ input {
   font-size: 0.85rem;
 }
 
+.curriculum-list {
+  max-height: 11.5rem;
+  overflow: auto;
+  margin-bottom: 0.35rem;
+  padding-right: 0.15rem;
+}
+
+.curriculum-link .module-nav-status {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  min-width: 2rem;
+}
+
+.curriculum-link.done .module-nav-status {
+  color: var(--ok);
+}
+
+.curriculum-link.scaffold {
+  opacity: 0.7;
+}
+
+.module-nav-next-module {
+  display: block;
+  margin-top: 1rem;
+  padding: 0.65rem 0.7rem;
+  border-radius: 10px;
+  border: 1px dashed var(--accent);
+  color: var(--accent);
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.module-nav-next-module:hover {
+  background: rgba(31, 107, 74, 0.08);
+}
+
 .module-nav-toggle,
 .module-nav-backdrop {
   display: none;
@@ -449,6 +487,10 @@ input {
   font-style: normal;
   color: var(--accent-2);
   font-size: 0.85rem;
+}
+
+.module-list em.module-progress-em {
+  color: var(--accent);
 }
 
 .pill {

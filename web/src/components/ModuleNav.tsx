@@ -15,20 +15,55 @@ type Props = {
   onNavigate?: () => void;
 };
 
+type FlatStep = {
+  moduleSlug: string;
+  moduleTitle: string;
+  moduleOrder: number;
+  item: ModuleDto["items"][number];
+};
+
+function buildFlatPath(modules: ModuleDto[]): FlatStep[] {
+  const sorted = [...modules].sort((a, b) => a.order - b.order);
+  const steps: FlatStep[] = [];
+  for (const mod of sorted) {
+    const items = [...mod.items].sort((a, b) => a.order - b.order);
+    for (const item of items) {
+      steps.push({
+        moduleSlug: mod.slug,
+        moduleTitle: mod.title,
+        moduleOrder: mod.order,
+        item,
+      });
+    }
+  }
+  return steps;
+}
+
+function progressMap(rows: ProgressRow[]) {
+  const map = new Map<string, string>();
+  for (const row of rows) {
+    const prev = map.get(row.contentSlug);
+    if (row.status === "completed" || !prev) map.set(row.contentSlug, row.status);
+  }
+  return map;
+}
+
+function moduleDoneCount(mod: ModuleDto, statusBySlug: Map<string, string>) {
+  return mod.items.filter((i) => statusBySlug.get(i.slug) === "completed").length;
+}
+
 export function ModuleNav({
   moduleSlug,
   currentSlug,
   mobileOpen,
   onNavigate,
 }: Props) {
-  const [mod, setMod] = useState<ModuleDto | null>(null);
+  const [modules, setModules] = useState<ModuleDto[]>([]);
   const [progress, setProgress] = useState<ProgressRow[]>([]);
 
   useEffect(() => {
-    fetchModules().then((list) =>
-      setMod(list.find((m) => m.slug === moduleSlug) || null),
-    );
-  }, [moduleSlug]);
+    fetchModules().then(setModules).catch(() => setModules([]));
+  }, []);
 
   useEffect(() => {
     if (!isLoggedIn()) {
@@ -40,14 +75,19 @@ export function ModuleNav({
       .catch(() => setProgress([]));
   }, [moduleSlug, currentSlug]);
 
-  const statusBySlug = useMemo(() => {
-    const map = new Map<string, string>();
-    for (const row of progress) {
-      const prev = map.get(row.contentSlug);
-      if (row.status === "completed" || !prev) map.set(row.contentSlug, row.status);
-    }
-    return map;
-  }, [progress]);
+  const statusBySlug = useMemo(() => progressMap(progress), [progress]);
+  const mod = modules.find((m) => m.slug === moduleSlug) || null;
+  const sortedModules = useMemo(
+    () => [...modules].sort((a, b) => a.order - b.order),
+    [modules],
+  );
+  const flat = useMemo(() => buildFlatPath(modules), [modules]);
+  const flatIndex = flat.findIndex((s) => s.item.slug === currentSlug);
+  const nextModule = useMemo(() => {
+    const idx = sortedModules.findIndex((m) => m.slug === moduleSlug);
+    if (idx < 0) return null;
+    return sortedModules.slice(idx + 1).find((m) => m.items.length > 0) || null;
+  }, [sortedModules, moduleSlug]);
 
   if (!mod) {
     return (
@@ -59,16 +99,16 @@ export function ModuleNav({
 
   const theory = mod.items.filter((i) => i.kind !== "exercise");
   const exercises = mod.items.filter((i) => i.kind === "exercise");
-  const currentIndex = mod.items.findIndex((i) => i.slug === currentSlug);
-  const doneCount = mod.items.filter(
-    (i) => statusBySlug.get(i.slug) === "completed",
+  const doneCount = moduleDoneCount(mod, statusBySlug);
+  const curriculumDone = flat.filter(
+    (s) => statusBySlug.get(s.item.slug) === "completed",
   ).length;
 
   return (
     <aside className={`module-nav ${mobileOpen ? "open" : ""}`}>
       <div className="module-nav-head">
         <Link to="/modules" className="module-nav-back" onClick={onNavigate}>
-          Alle moduler
+          Pensum-overblik
         </Link>
         <h2>
           <Link to={`/modules/${mod.slug}`} onClick={onNavigate}>
@@ -76,14 +116,15 @@ export function ModuleNav({
           </Link>
         </h2>
         <p className="module-nav-progress">
-          {doneCount}/{mod.items.length} gennemført
+          Modul: {doneCount}/{mod.items.length} · Pensum: {curriculumDone}/
+          {flat.length}
         </p>
         <div
           className="module-nav-bar"
           role="progressbar"
           aria-valuenow={doneCount}
           aria-valuemin={0}
-          aria-valuemax={mod.items.length}
+          aria-valuemax={mod.items.length || 1}
         >
           <span
             style={{
@@ -93,9 +134,52 @@ export function ModuleNav({
         </div>
       </div>
 
+      <div className="module-nav-section">
+        <p className="module-nav-label">Alle moduler</p>
+        <ol className="module-nav-list curriculum-list">
+          {sortedModules.map((m) => {
+            const done = moduleDoneCount(m, statusBySlug);
+            const active = m.slug === moduleSlug;
+            const first = m.items[0];
+            const target = first
+              ? `/learn/${first.slug}`
+              : `/modules/${m.slug}`;
+            return (
+              <li key={m.slug}>
+                <Link
+                  to={target}
+                  className={[
+                    "module-nav-link curriculum-link",
+                    active ? "active" : "",
+                    done === m.items.length && m.items.length > 0 ? "done" : "",
+                    m.scaffoldOnly ? "scaffold" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                  onClick={onNavigate}
+                >
+                  <span className="module-nav-index">
+                    {String(m.order).padStart(2, "0")}
+                  </span>
+                  <span className="module-nav-title">
+                    {m.title}
+                    {m.scaffoldOnly ? " · snart" : ""}
+                  </span>
+                  <span className="module-nav-status">
+                    {m.items.length
+                      ? `${done}/${m.items.length}`
+                      : "—"}
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+
       {theory.length > 0 && (
         <NavSection
-          label="Teori"
+          label="I dette modul · Teori"
           items={theory}
           currentSlug={currentSlug}
           statusBySlug={statusBySlug}
@@ -104,7 +188,7 @@ export function ModuleNav({
       )}
       {exercises.length > 0 && (
         <NavSection
-          label="Opgaver"
+          label="I dette modul · Opgaver"
           items={exercises}
           currentSlug={currentSlug}
           statusBySlug={statusBySlug}
@@ -113,10 +197,24 @@ export function ModuleNav({
         />
       )}
 
-      {currentSlug && currentIndex >= 0 && (
+      {currentSlug && flatIndex >= 0 && (
         <p className="module-nav-step muted">
-          Trin {currentIndex + 1} af {mod.items.length}
+          Pensumtrin {flatIndex + 1} af {flat.length}
         </p>
+      )}
+
+      {nextModule && (
+        <Link
+          to={
+            nextModule.items[0]
+              ? `/learn/${nextModule.items[0].slug}`
+              : `/modules/${nextModule.slug}`
+          }
+          className="module-nav-next-module"
+          onClick={onNavigate}
+        >
+          Næste modul: {nextModule.title}
+        </Link>
       )}
     </aside>
   );
@@ -174,49 +272,55 @@ function NavSection({
   );
 }
 
-export function useModuleItems(moduleSlug: string | undefined) {
-  const [mod, setMod] = useState<ModuleDto | null>(null);
-  useEffect(() => {
-    if (!moduleSlug) return;
-    fetchModules().then((list) =>
-      setMod(list.find((m) => m.slug === moduleSlug) || null),
-    );
-  }, [moduleSlug]);
-  return mod;
-}
-
 export function LearnPager({
-  moduleSlug,
   currentSlug,
 }: {
-  moduleSlug: string;
+  moduleSlug?: string;
   currentSlug: string;
 }) {
-  const mod = useModuleItems(moduleSlug);
-  if (!mod) return null;
-  const idx = mod.items.findIndex((i) => i.slug === currentSlug);
-  if (idx < 0) return null;
-  const prev = idx > 0 ? mod.items[idx - 1] : null;
-  const next = idx < mod.items.length - 1 ? mod.items[idx + 1] : null;
+  const [modules, setModules] = useState<ModuleDto[]>([]);
+
+  useEffect(() => {
+    fetchModules().then(setModules).catch(() => setModules([]));
+  }, []);
+
+  const flat = useMemo(() => buildFlatPath(modules), [modules]);
+  const idx = flat.findIndex((s) => s.item.slug === currentSlug);
+  if (idx < 0 || flat.length === 0) return null;
+
+  const prev = idx > 0 ? flat[idx - 1] : null;
+  const next = idx < flat.length - 1 ? flat[idx + 1] : null;
+  const current = flat[idx];
+  const crossingForward =
+    next && next.moduleSlug !== current.moduleSlug;
+  const crossingBack =
+    prev && prev.moduleSlug !== current.moduleSlug;
 
   return (
     <nav className="learn-pager" aria-label="Gå til forrige eller næste">
       {prev ? (
-        <Link to={`/learn/${prev.slug}`} className="pager-link prev">
-          <span className="pager-dir">Forrige</span>
-          <span className="pager-title">{prev.title}</span>
+        <Link to={`/learn/${prev.item.slug}`} className="pager-link prev">
+          <span className="pager-dir">
+            {crossingBack ? `Forrige · ${prev.moduleTitle}` : "Forrige"}
+          </span>
+          <span className="pager-title">{prev.item.title}</span>
         </Link>
       ) : (
-        <span />
+        <Link to="/modules" className="pager-link prev">
+          <span className="pager-dir">Start</span>
+          <span className="pager-title">Alle moduler</span>
+        </Link>
       )}
       {next ? (
-        <Link to={`/learn/${next.slug}`} className="pager-link next">
-          <span className="pager-dir">Næste</span>
-          <span className="pager-title">{next.title}</span>
+        <Link to={`/learn/${next.item.slug}`} className="pager-link next">
+          <span className="pager-dir">
+            {crossingForward ? `Næste modul · ${next.moduleTitle}` : "Næste"}
+          </span>
+          <span className="pager-title">{next.item.title}</span>
         </Link>
       ) : (
-        <Link to={`/modules/${moduleSlug}`} className="pager-link next">
-          <span className="pager-dir">Modul færdigt</span>
+        <Link to="/modules" className="pager-link next">
+          <span className="pager-dir">Pensum færdigt</span>
           <span className="pager-title">Tilbage til overblik</span>
         </Link>
       )}
