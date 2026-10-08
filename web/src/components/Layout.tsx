@@ -10,7 +10,7 @@ export function Layout() {
     /^\/modules\/[^/]+$/.test(pathname);
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell${flushLearn ? " app-shell--locked" : ""}`}>
       <header className="topbar">
         <Link to="/" className="brand">
           SQL-H1

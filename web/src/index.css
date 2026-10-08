@@ -47,9 +47,13 @@ input {
 
 .app-shell {
   min-height: 100vh;
-  height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+/* Lås viewport kun på learn/modul (split-view) — øvrige sider skal kunne scrolle */
+.app-shell--locked {
+  height: 100vh;
   overflow: hidden;
 }
 
@@ -102,7 +106,7 @@ input {
   flex: 1;
   width: min(1280px, 100%);
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 1.5rem 1.5rem 3rem;
 }
 
 .main.main--flush {
@@ -1015,9 +1019,8 @@ body.is-resizing-split .lesson {
 }
 
 @media (max-width: 1100px) {
-  .app-shell {
+  .app-shell--locked {
     height: auto;
-    min-height: 100vh;
     overflow: visible;
   }
 
