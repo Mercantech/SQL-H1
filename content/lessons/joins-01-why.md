@@ -33,6 +33,14 @@ SELECT name FROM products WHERE id = 1;
 
 Det skalerer ikke. I stedet **kobler** du tabellerne i én forespørgsel med `JOIN`.
 
+## Se nøglerne i aktion
+
+Klik rundt i diagrammet: hver streg er et match på `customer_id`. Clara har ingen ordrer — det bliver vigtigt ved LEFT JOIN.
+
+```join-viz
+match
+```
+
 ## Nøglerne
 
 | Tabel | Primærnøgle | Fremmednøgle |
@@ -41,4 +49,4 @@ Det skalerer ikke. I stedet **kobler** du tabellerne i én forespørgsel med `JO
 | `products` | `id` | — |
 | `orders` | `id` | `customer_id` → customers, `product_id` → products |
 
-Næste lektion: `INNER JOIN`.
+Næste lektion: `INNER JOIN` — kun de rækker, hvor nøglerne matcher.

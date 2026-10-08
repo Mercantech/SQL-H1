@@ -24,7 +24,13 @@ sandbox:
 
 Alle rækker fra **venstre** tabel, plus match fra højre. Mangler match → `NULL`.
 
-Find produkter **uden** ordrer:
+Skift mellem join-typerne, og prøv fanen **Produkter ⋈ Ordrer** — Croissant har ingen ordrer og bliver `NULL`.
+
+```join-viz
+types
+```
+
+## Find produkter uden ordrer
 
 ```sql
 SELECT p.name
@@ -33,7 +39,7 @@ LEFT JOIN orders o ON o.product_id = p.id
 WHERE o.id IS NULL;
 ```
 
-Antal ordrer pr. produkt (inkl. 0):
+## Antal ordrer pr. produkt (inkl. 0)
 
 ```sql
 SELECT p.name, COUNT(o.id) AS antal_ordrer
@@ -51,7 +57,7 @@ Spejlvendt `LEFT JOIN` (alle fra højre). Mindre brugt — de fleste skriver om 
 
 ## FULL OUTER JOIN
 
-Alle fra begge sider. Sjældent i hverdagen, men nyttigt at kende.
+Alle fra begge sider. Sjældent i hverdagen, men nyttigt at kende — se **FULL** i diagrammet ovenfor.
 
 ## Prøv selv
 

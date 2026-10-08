@@ -1,9 +1,11 @@
+import { isValidElement, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import sql from "highlight.js/lib/languages/sql";
 import type { PluggableList } from "unified";
 import { CodeBlock } from "./CodeBlock";
+import { JoinViz, parseJoinVizFence } from "./join/JoinViz";
 
 type Props = {
   children: string;
@@ -24,15 +26,39 @@ const rehypePlugins: PluggableList = [
   ],
 ];
 
+function getText(node: ReactNode): string {
+  if (node == null || typeof node === "boolean") return "";
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(getText).join("");
+  if (isValidElement<{ children?: ReactNode }>(node)) return getText(node.props.children);
+  return "";
+}
+
+function getFenceLang(preChildren: ReactNode): string | null {
+  const nodes = Array.isArray(preChildren) ? preChildren : [preChildren];
+  for (const node of nodes) {
+    if (!isValidElement<{ className?: string }>(node)) continue;
+    const cls = node.props.className ?? "";
+    const m = /\blanguage-([^\s]+)/.exec(cls);
+    if (m) return m[1];
+  }
+  return null;
+}
+
 export function Markdown({ children, onInsertCode }: Props) {
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
       rehypePlugins={rehypePlugins}
       components={{
-        pre: ({ children: preChildren }) => (
-          <CodeBlock onInsert={onInsertCode}>{preChildren}</CodeBlock>
-        ),
+        pre: ({ children: preChildren }) => {
+          const lang = getFenceLang(preChildren);
+          if (lang === "join-viz") {
+            const raw = getText(preChildren).replace(/\n$/, "");
+            return <JoinViz config={parseJoinVizFence(raw)} onInsert={onInsertCode} />;
+          }
+          return <CodeBlock onInsert={onInsertCode}>{preChildren}</CodeBlock>;
+        },
       }}
     >
       {children}

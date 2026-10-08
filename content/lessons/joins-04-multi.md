@@ -21,6 +21,16 @@ sandbox:
 
 # Flere tabeller og aggregering
 
+En ordre kender kun id’er. For at få *navne* skal du joine **to** gange: først kunden, så produktet.
+
+## Følg en ordre gennem kæden
+
+Vælg en ordre og se, hvordan `customer_id` og `product_id` binder tabellerne sammen.
+
+```join-viz
+chain
+```
+
 ## Omsætning pr. by
 
 ```sql

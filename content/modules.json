@@ -26,11 +26,11 @@
   {
     "slug": "joins-subqueries",
     "title": "JOIN, subqueries og WITH",
-    "description": "Forespørgsler på tværs af tabeller: INNER/LEFT JOIN, subqueries, EXISTS og CTE (WITH).",
+    "description": "Forespørgsler på tværs af tabeller med interaktive diagrammer: INNER/LEFT JOIN, subqueries, EXISTS og CTE (WITH).",
     "order": 3,
     "scaffoldOnly": false,
     "objectives": [
-      "Joine flere tabeller",
+      "Joine flere tabeller visuelt og i SQL",
       "Bruge subqueries og EXISTS",
       "Skrive CTE’er med WITH"
     ]

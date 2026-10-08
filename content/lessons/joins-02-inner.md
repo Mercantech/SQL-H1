@@ -20,7 +20,17 @@ sandbox:
 
 # INNER JOIN
 
-`INNER JOIN` returnerer kun rækker, hvor nøglerne **matcher** i begge tabeller.
+`INNER JOIN` returnerer kun rækker, hvor nøglerne **matcher** i begge tabeller. Alt uden match forsvinder.
+
+## Visuelt: hvad overlever?
+
+Vælg **INNER** og se, at Clara (uden ordrer) ikke findes i resultatet. Skift til LEFT for at sammenligne.
+
+```join-viz
+types
+```
+
+## Syntaks
 
 ```sql
 SELECT c.name AS kunde, p.name AS produkt, o.quantity
