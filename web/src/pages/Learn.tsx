@@ -14,6 +14,7 @@ import {
 import { beginLogin, isLoggedIn } from "../auth";
 import { LearnPager, ModuleNav } from "../components/ModuleNav";
 import { SqlEditor } from "../components/SqlEditor";
+import { useLearnSplit } from "../hooks/useLearnSplit";
 import { useModuleNavOpen } from "../hooks/useModuleNavOpen";
 
 export function Learn() {
@@ -26,6 +27,7 @@ export function Learn() {
   const [checkPassed, setCheckPassed] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [navOpen, setNavOpen] = useModuleNavOpen();
+  const split = useLearnSplit();
 
   useEffect(() => {
     if (!slug) return;
@@ -125,7 +127,17 @@ export function Learn() {
       />
 
       <div className="learn-body">
-        <div className={`learn-main ${showSandbox ? "with-sandbox" : ""}`}>
+        <div
+          ref={showSandbox ? split.containerRef : undefined}
+          className={`learn-main ${showSandbox ? "with-sandbox" : ""}`}
+          style={
+            showSandbox
+              ? {
+                  gridTemplateColumns: `minmax(0, ${split.percent}fr) 10px minmax(0, ${100 - split.percent}fr)`,
+                }
+              : undefined
+          }
+        >
           <article className="lesson">
             <p className="eyebrow">
               <Link to={`/modules/${item.module}`}>Modul</Link>
@@ -141,29 +153,43 @@ export function Learn() {
           </article>
 
           {showSandbox && (
-            <aside className="sandbox">
-              <h2>Prøv selv</h2>
-              {!isLoggedIn() && (
-                <p className="login-nudge">
-                  <button type="button" className="btn primary" onClick={() => beginLogin()}>
-                    Log ind
-                  </button>{" "}
-                  for at køre SQL i din egen database.
-                </p>
-              )}
-              <SqlEditor
-                value={sql}
-                onChange={setSql}
-                onRun={onRun}
-                onReset={onReset}
-                onCheck={item.kind === "exercise" ? onCheck : undefined}
-                running={running}
-                result={result}
-                checkMessages={checkMessages}
-                checkPassed={checkPassed}
-                allowWrite={item.sandbox?.allowWrite}
+            <>
+              <div
+                className="learn-split"
+                role="separator"
+                aria-orientation="vertical"
+                aria-label="Træk for at justere bredde mellem teori og emulator"
+                aria-valuenow={Math.round(split.percent)}
+                aria-valuemin={22}
+                aria-valuemax={78}
+                tabIndex={0}
+                onPointerDown={split.onPointerDown}
+                onKeyDown={split.onKeyDown}
               />
-            </aside>
+              <aside className="sandbox">
+                <h2>Prøv selv</h2>
+                {!isLoggedIn() && (
+                  <p className="login-nudge">
+                    <button type="button" className="btn primary" onClick={() => beginLogin()}>
+                      Log ind
+                    </button>{" "}
+                    for at køre SQL i din egen database.
+                  </p>
+                )}
+                <SqlEditor
+                  value={sql}
+                  onChange={setSql}
+                  onRun={onRun}
+                  onReset={onReset}
+                  onCheck={item.kind === "exercise" ? onCheck : undefined}
+                  running={running}
+                  result={result}
+                  checkMessages={checkMessages}
+                  checkPassed={checkPassed}
+                  allowWrite={item.sandbox?.allowWrite}
+                />
+              </aside>
+            </>
           )}
         </div>
       </div>

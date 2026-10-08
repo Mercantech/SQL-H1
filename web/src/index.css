@@ -322,7 +322,7 @@ input {
 }
 
 .learn-main.with-sandbox {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 10px minmax(0, 1fr);
   align-items: stretch;
 }
 
@@ -332,8 +332,47 @@ input {
   padding: 1.25rem 1.5rem 2rem;
 }
 
-.learn-main.with-sandbox > .lesson {
-  border-right: 1px solid var(--line);
+.learn-split {
+  position: relative;
+  z-index: 5;
+  width: 10px;
+  margin: 0 -1px;
+  cursor: col-resize;
+  touch-action: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  outline: none;
+}
+
+.learn-split::before {
+  content: "";
+  position: absolute;
+  inset: 0 3px;
+  background: var(--line);
+  border-radius: 2px;
+  transition: background 0.15s ease, inset 0.15s ease;
+}
+
+.learn-split:hover::before,
+.learn-split:focus-visible::before {
+  inset: 0 2px;
+  background: var(--accent);
+}
+
+.learn-split:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+body.is-resizing-split {
+  cursor: col-resize;
+  user-select: none;
+}
+
+body.is-resizing-split .sql-editor,
+body.is-resizing-split .lesson {
+  pointer-events: none;
 }
 
 .learn-pager {
@@ -747,12 +786,15 @@ input {
   }
 
   .learn-main.with-sandbox {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
     height: auto;
   }
 
+  .learn-split {
+    display: none;
+  }
+
   .learn-main.with-sandbox > .lesson {
-    border-right: 0;
     border-bottom: 1px solid var(--line);
     max-height: none;
   }
