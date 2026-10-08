@@ -108,6 +108,43 @@ export async function checkExercise(contentSlug: string) {
   return (await res.json()) as { passed: boolean; messages: string[] };
 }
 
+export type InspectColumn = {
+  name: string;
+  dataType: string;
+  nullable: boolean;
+};
+
+export type InspectTable = {
+  name: string;
+  columns: InspectColumn[];
+  rowCount: number;
+  baselineRowCount?: number | null;
+  diffStatus: "unchanged" | "changed" | "extra" | "missing" | string;
+  previewColumns: string[];
+  previewRows: unknown[][];
+  previewTruncated?: boolean;
+  addedColumns?: string[] | null;
+  addedRows?: unknown[][] | null;
+  removedColumns?: string[] | null;
+  removedRows?: unknown[][] | null;
+};
+
+export type InspectResult = {
+  dbName: string;
+  status: string;
+  baselineLabel: string;
+  matchesBaseline: boolean;
+  tables: InspectTable[];
+  baselineOnlyTables: string[];
+};
+
+export async function fetchSandboxInspect(contentSlug?: string): Promise<InspectResult> {
+  const q = contentSlug ? `?contentSlug=${encodeURIComponent(contentSlug)}` : "";
+  const res = await apiFetch(`/sandbox/inspect${q}`);
+  if (!res.ok) throw new Error("Kunne ikke hente database-overblik");
+  return res.json();
+}
+
 export async function fetchProgress(): Promise<ProgressRow[]> {
   const res = await apiFetch("/progress");
   if (!res.ok) throw new Error("Kunne ikke hente progress");

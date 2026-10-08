@@ -142,34 +142,217 @@ public class SandboxService(
         await ApplySeedAsync(studentDb, contentSlug, ct);
     }
 
-    private async Task ApplySeedAsync(StudentDatabase studentDb, string? contentSlug, CancellationToken ct)
+    public async Task<InspectResult> InspectAsync(Guid userSub, string? contentSlug, CancellationToken ct = default)
     {
-        string seedSql;
+        var studentDb = await EnsureProvisionedAsync(userSub, ct);
+        await using var conn = new NpgsqlConnection(StudentConnection(studentDb));
+        await conn.OpenAsync(ct);
+
+        const string refSchema = "_sqlh1_ref";
+        var seedSql = ResolveSeedSql(contentSlug);
+        var baselineLabel = string.IsNullOrWhiteSpace(contentSlug) ? "Café-start (shop)" : $"Seed: {contentSlug}";
+
+        try
+        {
+            await using (var drop = new NpgsqlCommand($"DROP SCHEMA IF EXISTS {refSchema} CASCADE; CREATE SCHEMA {refSchema};", conn))
+                await drop.ExecuteNonQueryAsync(ct);
+
+            var body = StripSchemaBootstrap(seedSql);
+            await using (var path = new NpgsqlCommand($"SET search_path TO {refSchema}", conn))
+                await path.ExecuteNonQueryAsync(ct);
+            await using (var seed = new NpgsqlCommand(body, conn))
+                await seed.ExecuteNonQueryAsync(ct);
+            await using (var path = new NpgsqlCommand("SET search_path TO public", conn))
+                await path.ExecuteNonQueryAsync(ct);
+
+            var publicTables = await ListTablesAsync(conn, "public", ct);
+            var baselineTables = await ListTablesAsync(conn, refSchema, ct);
+            var result = new InspectResult
+            {
+                DbName = studentDb.DbName,
+                Status = studentDb.Status,
+                BaselineLabel = baselineLabel,
+                BaselineOnlyTables = baselineTables.Where(t => !publicTables.Contains(t)).OrderBy(t => t).ToList()
+            };
+
+            foreach (var table in publicTables.OrderBy(t => t))
+            {
+                if (!IsSafeIdent(table)) continue;
+                var columns = await ListColumnsAsync(conn, "public", table, ct);
+                var rowCount = await CountRowsAsync(conn, "public", table, ct);
+                long? baselineCount = null;
+                var diffStatus = "extra";
+                string[]? addedCols = null;
+                List<object?[]>? addedRows = null;
+                string[]? removedCols = null;
+                List<object?[]>? removedRows = null;
+
+                if (baselineTables.Contains(table))
+                {
+                    baselineCount = await CountRowsAsync(conn, refSchema, table, ct);
+                    var (added, removed) = await DiffRowsAsync(conn, table, refSchema, ct);
+                    addedCols = added.Columns;
+                    addedRows = added.Rows;
+                    removedCols = removed.Columns;
+                    removedRows = removed.Rows;
+                    var sameCount = rowCount == baselineCount;
+                    var noRowDiff = added.Rows.Count == 0 && removed.Rows.Count == 0;
+                    diffStatus = sameCount && noRowDiff ? "unchanged" : "changed";
+                }
+
+                var preview = await PreviewAsync(conn, "public", table, 40, ct);
+                result.Tables.Add(new InspectTableDto
+                {
+                    Name = table,
+                    Columns = columns,
+                    RowCount = rowCount,
+                    BaselineRowCount = baselineCount,
+                    DiffStatus = diffStatus,
+                    PreviewColumns = preview.Columns,
+                    PreviewRows = preview.Rows,
+                    PreviewTruncated = preview.Truncated,
+                    AddedColumns = addedCols,
+                    AddedRows = addedRows,
+                    RemovedColumns = removedCols,
+                    RemovedRows = removedRows
+                });
+            }
+
+            result.MatchesBaseline = result.Tables.All(t => t.DiffStatus == "unchanged")
+                                     && result.BaselineOnlyTables.Count == 0;
+            return result;
+        }
+        finally
+        {
+            try
+            {
+                await using var cleanup = new NpgsqlCommand($"DROP SCHEMA IF EXISTS {refSchema} CASCADE; SET search_path TO public;", conn);
+                await cleanup.ExecuteNonQueryAsync(ct);
+            }
+            catch (Exception ex)
+            {
+                logger.LogDebug(ex, "Kunne ikke rydde {Schema}", refSchema);
+            }
+        }
+    }
+
+    private string ResolveSeedSql(string? contentSlug)
+    {
         if (!string.IsNullOrWhiteSpace(contentSlug))
         {
             var item = content.GetContent(contentSlug);
             var fromItem = item is null ? null : content.ReadSeedSql(item);
-            seedSql = !string.IsNullOrWhiteSpace(fromItem)
-                ? fromItem
-                : """
-                  DROP SCHEMA public CASCADE;
-                  CREATE SCHEMA public;
-                  GRANT ALL ON SCHEMA public TO PUBLIC;
-                  """ + "\n" + DefaultShopSeed();
-        }
-        else
-        {
-            seedSql = """
-                DROP SCHEMA public CASCADE;
-                CREATE SCHEMA public;
-                GRANT ALL ON SCHEMA public TO PUBLIC;
-                """ + "\n" + DefaultShopSeed();
+            if (!string.IsNullOrWhiteSpace(fromItem))
+                return fromItem;
         }
 
+        var shop = content.ReadSeedFile("seeds/shop.sql");
+        if (!string.IsNullOrWhiteSpace(shop))
+            return shop;
+
+        return """
+            DROP SCHEMA public CASCADE;
+            CREATE SCHEMA public;
+            GRANT ALL ON SCHEMA public TO PUBLIC;
+            """ + "\n" + DefaultShopSeed();
+    }
+
+    private async Task ApplySeedAsync(StudentDatabase studentDb, string? contentSlug, CancellationToken ct)
+    {
+        var seedSql = ResolveSeedSql(contentSlug);
         await using var conn = new NpgsqlConnection(StudentConnection(studentDb));
         await conn.OpenAsync(ct);
         await using var cmd = new NpgsqlCommand(seedSql, conn);
         await cmd.ExecuteNonQueryAsync(ct);
+    }
+
+    private static string StripSchemaBootstrap(string seedSql)
+    {
+        var lines = seedSql.Split('\n');
+        var kept = new List<string>();
+        foreach (var line in lines)
+        {
+            var t = line.TrimStart();
+            if (t.StartsWith("DROP SCHEMA", StringComparison.OrdinalIgnoreCase)) continue;
+            if (t.StartsWith("CREATE SCHEMA", StringComparison.OrdinalIgnoreCase)) continue;
+            if (t.StartsWith("GRANT ALL ON SCHEMA", StringComparison.OrdinalIgnoreCase)) continue;
+            kept.Add(line);
+        }
+        return string.Join('\n', kept);
+    }
+
+    private static bool IsSafeIdent(string name) =>
+        System.Text.RegularExpressions.Regex.IsMatch(name, @"^[a-zA-Z_][a-zA-Z0-9_]*$");
+
+    private static async Task<List<string>> ListTablesAsync(NpgsqlConnection conn, string schema, CancellationToken ct)
+    {
+        await using var cmd = new NpgsqlCommand(
+            """
+            SELECT table_name
+            FROM information_schema.tables
+            WHERE table_schema = @s AND table_type = 'BASE TABLE'
+            ORDER BY table_name
+            """, conn);
+        cmd.Parameters.AddWithValue("s", schema);
+        var list = new List<string>();
+        await using var reader = await cmd.ExecuteReaderAsync(ct);
+        while (await reader.ReadAsync(ct))
+            list.Add(reader.GetString(0));
+        return list;
+    }
+
+    private static async Task<List<InspectColumnDto>> ListColumnsAsync(
+        NpgsqlConnection conn, string schema, string table, CancellationToken ct)
+    {
+        await using var cmd = new NpgsqlCommand(
+            """
+            SELECT column_name, data_type, is_nullable
+            FROM information_schema.columns
+            WHERE table_schema = @s AND table_name = @t
+            ORDER BY ordinal_position
+            """, conn);
+        cmd.Parameters.AddWithValue("s", schema);
+        cmd.Parameters.AddWithValue("t", table);
+        var list = new List<InspectColumnDto>();
+        await using var reader = await cmd.ExecuteReaderAsync(ct);
+        while (await reader.ReadAsync(ct))
+        {
+            list.Add(new InspectColumnDto
+            {
+                Name = reader.GetString(0),
+                DataType = reader.GetString(1),
+                Nullable = reader.GetString(2) == "YES"
+            });
+        }
+        return list;
+    }
+
+    private static async Task<long> CountRowsAsync(NpgsqlConnection conn, string schema, string table, CancellationToken ct)
+    {
+        await using var cmd = new NpgsqlCommand($"SELECT COUNT(*)::bigint FROM {schema}.\"{table}\"", conn);
+        var val = await cmd.ExecuteScalarAsync(ct);
+        return val is long l ? l : Convert.ToInt64(val);
+    }
+
+    private async Task<(ExecuteResult Added, ExecuteResult Removed)> DiffRowsAsync(
+        NpgsqlConnection conn, string table, string refSchema, CancellationToken ct)
+    {
+        var added = await RunOneAsync(conn,
+            $"""SELECT * FROM public."{table}" EXCEPT SELECT * FROM {refSchema}."{table}" LIMIT 30""", ct);
+        var removed = await RunOneAsync(conn,
+            $"""SELECT * FROM {refSchema}."{table}" EXCEPT SELECT * FROM public."{table}" LIMIT 30""", ct);
+        return (added, removed);
+    }
+
+    private async Task<(string[] Columns, List<object?[]> Rows, bool Truncated)> PreviewAsync(
+        NpgsqlConnection conn, string schema, string table, int limit, CancellationToken ct)
+    {
+        var result = await RunOneAsync(conn, $"""SELECT * FROM {schema}."{table}" LIMIT {limit + 1}""", ct);
+        if (!result.Ok)
+            return ([], [], false);
+        var truncated = result.Rows.Count > limit;
+        var rows = truncated ? result.Rows.Take(limit).ToList() : result.Rows;
+        return (result.Columns, rows, truncated);
     }
 
     public async Task<CheckResult> CheckAsync(Guid userSub, string contentSlug, CancellationToken ct = default)

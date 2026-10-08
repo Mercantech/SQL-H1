@@ -18,6 +18,7 @@ export function Layout() {
         <nav>
           <NavLink to="/modules">Moduler</NavLink>
           <NavLink to="/playground">Playground</NavLink>
+          <NavLink to="/database">Database</NavLink>
           <NavLink to="/progress">Progress</NavLink>
         </nav>
         <div className="auth-slot">

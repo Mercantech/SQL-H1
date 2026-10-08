@@ -121,7 +121,6 @@ export function SqlEditor({
   );
 
   const active = sets[Math.min(tab, Math.max(sets.length - 1, 0))];
-  const runShortcut = isMac() ? "⌘↵" : "Ctrl+Enter";
 
   return (
     <div className="sql-panel">

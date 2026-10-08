@@ -211,6 +211,13 @@ api.MapPost("/sandbox/check", async (HttpContext ctx, UserService users, Sandbox
     return Results.Json(result);
 }).RequireAuthorization();
 
+api.MapGet("/sandbox/inspect", async (HttpContext ctx, UserService users, SandboxService sandbox, string? contentSlug) =>
+{
+    var user = await users.EnsureUserAsync(ctx.User);
+    var result = await sandbox.InspectAsync(user.Sub, contentSlug);
+    return Results.Json(result);
+}).RequireAuthorization();
+
 api.MapGet("/progress", async (HttpContext ctx, UserService users, AppDbContext db) =>
 {
     var user = await users.EnsureUserAsync(ctx.User);

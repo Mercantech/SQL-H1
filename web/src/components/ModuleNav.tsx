@@ -128,7 +128,12 @@ export function ModuleNav({
   const connected = dbStatus === "ready" && Boolean(dbName);
 
   const dbFooter = (
-    <div className="module-nav-db" title={dbName || undefined}>
+    <Link
+      to="/database"
+      className="module-nav-db"
+      title={dbName ? `Åbn database: ${dbName}` : "Åbn database-overblik"}
+      onClick={onNavigate}
+    >
       <span
         className={`module-nav-db-diode ${connected ? "on" : "off"}`}
         role="status"
@@ -154,7 +159,7 @@ export function ModuleNav({
                 : "Ikke forbundet"}
         </span>
       </div>
-    </div>
+    </Link>
   );
 
   if (!mod) {

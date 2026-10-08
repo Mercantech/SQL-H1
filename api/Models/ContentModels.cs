@@ -103,3 +103,37 @@ public class SandboxStatusDto
     public string Status { get; set; } = "none";
     public string? DbName { get; set; }
 }
+
+public class InspectColumnDto
+{
+    public string Name { get; set; } = "";
+    public string DataType { get; set; } = "";
+    public bool Nullable { get; set; }
+}
+
+public class InspectTableDto
+{
+    public string Name { get; set; } = "";
+    public List<InspectColumnDto> Columns { get; set; } = [];
+    public long RowCount { get; set; }
+    public long? BaselineRowCount { get; set; }
+    /// <summary>unchanged | changed | extra | missing</summary>
+    public string DiffStatus { get; set; } = "unchanged";
+    public string[] PreviewColumns { get; set; } = [];
+    public List<object?[]> PreviewRows { get; set; } = [];
+    public bool PreviewTruncated { get; set; }
+    public string[]? AddedColumns { get; set; }
+    public List<object?[]>? AddedRows { get; set; }
+    public string[]? RemovedColumns { get; set; }
+    public List<object?[]>? RemovedRows { get; set; }
+}
+
+public class InspectResult
+{
+    public string DbName { get; set; } = "";
+    public string Status { get; set; } = "ready";
+    public string BaselineLabel { get; set; } = "Start-seed";
+    public bool MatchesBaseline { get; set; }
+    public List<InspectTableDto> Tables { get; set; } = [];
+    public List<string> BaselineOnlyTables { get; set; } = [];
+}

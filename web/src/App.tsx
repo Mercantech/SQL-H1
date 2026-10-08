@@ -5,6 +5,7 @@ import { Home } from "./pages/Home";
 import { Learn } from "./pages/Learn";
 import { ModuleDetail } from "./pages/ModuleDetail";
 import { Modules } from "./pages/Modules";
+import { Database } from "./pages/Database";
 import { Playground } from "./pages/Playground";
 import { Progress } from "./pages/Progress";
 
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="modules/:slug" element={<ModuleDetail />} />
           <Route path="learn/:slug" element={<Learn />} />
           <Route path="playground" element={<Playground />} />
+          <Route path="database" element={<Database />} />
           <Route path="progress" element={<Progress />} />
           <Route path="auth/callback" element={<AuthCallback />} />
           <Route path="*" element={<Navigate to="/" replace />} />

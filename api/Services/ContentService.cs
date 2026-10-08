@@ -73,6 +73,12 @@ public class ContentService
         return path is null ? null : File.ReadAllText(path);
     }
 
+    public string? ReadSeedFile(string relativePath)
+    {
+        var path = Path.Combine(_root, relativePath.Replace('/', Path.DirectorySeparatorChar));
+        return File.Exists(path) ? File.ReadAllText(path) : null;
+    }
+
     private void EnsureLoaded()
     {
         var stamp = NewestContentWriteUtc();
