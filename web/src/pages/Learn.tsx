@@ -14,6 +14,7 @@ import {
 import { beginLogin, isLoggedIn } from "../auth";
 import { LearnPager, ModuleNav } from "../components/ModuleNav";
 import { SqlEditor } from "../components/SqlEditor";
+import { useModuleNavOpen } from "../hooks/useModuleNavOpen";
 
 export function Learn() {
   const { slug } = useParams();
@@ -24,11 +25,10 @@ export function Learn() {
   const [checkMessages, setCheckMessages] = useState<string[] | null>(null);
   const [checkPassed, setCheckPassed] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [navOpen, setNavOpen] = useState(false);
+  const [navOpen, setNavOpen] = useModuleNavOpen();
 
   useEffect(() => {
     if (!slug) return;
-    setNavOpen(false);
     fetchContent(slug)
       .then((c) => {
         setItem(c);
@@ -36,7 +36,6 @@ export function Learn() {
         setResult(null);
         setCheckMessages(null);
         setCheckPassed(null);
-        // Teori tæller som gennemført når eleven har åbnet siden
         if (c.kind === "theory" && isLoggedIn()) {
           putProgress(c.slug, "completed").catch(() => undefined);
         }
@@ -100,20 +99,12 @@ export function Learn() {
   }
 
   if (error && !item) return <p className="error-text">{error}</p>;
-  if (!item) return <p className="muted">Henter lektion…</p>;
+  if (!item) return <p className="muted learn-loading">Henter lektion…</p>;
 
   const showSandbox = Boolean(item.sandbox);
 
   return (
-    <div className="learn-shell">
-      <button
-        type="button"
-        className="module-nav-toggle"
-        onClick={() => setNavOpen((v) => !v)}
-        aria-expanded={navOpen}
-      >
-        {navOpen ? "Luk overblik" : "Moduloverblik"}
-      </button>
+    <div className={`learn-shell ${navOpen ? "nav-open" : "nav-closed"}`}>
       {navOpen && (
         <button
           type="button"
@@ -127,49 +118,66 @@ export function Learn() {
         moduleSlug={item.module}
         currentSlug={item.slug}
         mobileOpen={navOpen}
-        onNavigate={() => setNavOpen(false)}
+        onNavigate={() => {
+          if (window.matchMedia("(max-width: 900px)").matches) setNavOpen(false);
+        }}
+        onClose={() => setNavOpen(false)}
       />
 
-      <div className={`learn-main ${showSandbox ? "with-sandbox" : ""}`}>
-        <article className="lesson">
-          <p className="eyebrow">
-            <Link to={`/modules/${item.module}`}>Modul</Link>
-            {" · "}
-            {item.kind === "exercise" ? "Opgave" : "Teori"}
-          </p>
-          <h1>{item.title}</h1>
-          <div className="md">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{item.markdown}</ReactMarkdown>
-          </div>
-          {error && <p className="error-text">{error}</p>}
-          <LearnPager moduleSlug={item.module} currentSlug={item.slug} />
-        </article>
+      <div className="learn-body">
+        <div className="learn-toolbar">
+          <button
+            type="button"
+            className="module-nav-toggle"
+            onClick={() => setNavOpen((v) => !v)}
+            aria-expanded={navOpen}
+            aria-controls="module-nav"
+          >
+            {navOpen ? "Skjul oversigt" : "Vis oversigt"}
+          </button>
+        </div>
 
-        {showSandbox && (
-          <aside className="sandbox">
-            <h2>Prøv selv</h2>
-            {!isLoggedIn() && (
-              <p className="login-nudge">
-                <button type="button" className="btn primary" onClick={() => beginLogin()}>
-                  Log ind
-                </button>{" "}
-                for at køre SQL i din egen database.
-              </p>
-            )}
-            <SqlEditor
-              value={sql}
-              onChange={setSql}
-              onRun={onRun}
-              onReset={onReset}
-              onCheck={item.kind === "exercise" ? onCheck : undefined}
-              running={running}
-              result={result}
-              checkMessages={checkMessages}
-              checkPassed={checkPassed}
-              allowWrite={item.sandbox?.allowWrite}
-            />
-          </aside>
-        )}
+        <div className={`learn-main ${showSandbox ? "with-sandbox" : ""}`}>
+          <article className="lesson">
+            <p className="eyebrow">
+              <Link to={`/modules/${item.module}`}>Modul</Link>
+              {" · "}
+              {item.kind === "exercise" ? "Opgave" : "Teori"}
+            </p>
+            <h1>{item.title}</h1>
+            <div className="md">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{item.markdown}</ReactMarkdown>
+            </div>
+            {error && <p className="error-text">{error}</p>}
+            <LearnPager moduleSlug={item.module} currentSlug={item.slug} />
+          </article>
+
+          {showSandbox && (
+            <aside className="sandbox">
+              <h2>Prøv selv</h2>
+              {!isLoggedIn() && (
+                <p className="login-nudge">
+                  <button type="button" className="btn primary" onClick={() => beginLogin()}>
+                    Log ind
+                  </button>{" "}
+                  for at køre SQL i din egen database.
+                </p>
+              )}
+              <SqlEditor
+                value={sql}
+                onChange={setSql}
+                onRun={onRun}
+                onReset={onReset}
+                onCheck={item.kind === "exercise" ? onCheck : undefined}
+                running={running}
+                result={result}
+                checkMessages={checkMessages}
+                checkPassed={checkPassed}
+                allowWrite={item.sandbox?.allowWrite}
+              />
+            </aside>
+          )}
+        </div>
       </div>
     </div>
   );

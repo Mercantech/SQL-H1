@@ -11,8 +11,10 @@ import { isLoggedIn } from "../auth";
 type Props = {
   moduleSlug: string;
   currentSlug?: string;
+  /** Om sidemenuen er synlig (desktop + mobil). */
   mobileOpen?: boolean;
   onNavigate?: () => void;
+  onClose?: () => void;
 };
 
 type FlatStep = {
@@ -57,6 +59,7 @@ export function ModuleNav({
   currentSlug,
   mobileOpen,
   onNavigate,
+  onClose,
 }: Props) {
   const [modules, setModules] = useState<ModuleDto[]>([]);
   const [progress, setProgress] = useState<ProgressRow[]>([]);
@@ -89,7 +92,7 @@ export function ModuleNav({
 
   if (!mod) {
     return (
-      <aside className={`module-nav ${mobileOpen ? "open" : ""}`}>
+      <aside id="module-nav" className={`module-nav ${mobileOpen ? "open" : ""}`}>
         <p className="muted">Henter indhold…</p>
       </aside>
     );
@@ -103,11 +106,23 @@ export function ModuleNav({
     currentIndex >= 0 && currentIndex === mod.items.length - 1;
 
   return (
-    <aside className={`module-nav ${mobileOpen ? "open" : ""}`}>
+    <aside id="module-nav" className={`module-nav ${mobileOpen ? "open" : ""}`}>
       <div className="module-nav-head">
-        <Link to="/modules" className="module-nav-back" onClick={onNavigate}>
-          Alle moduler
-        </Link>
+        <div className="module-nav-head-row">
+          <Link to="/modules" className="module-nav-back" onClick={onNavigate}>
+            Alle moduler
+          </Link>
+          {onClose && (
+            <button
+              type="button"
+              className="module-nav-collapse"
+              onClick={onClose}
+              aria-label="Skjul oversigt"
+            >
+              ✕
+            </button>
+          )}
+        </div>
         <h2>
           <Link to={`/modules/${mod.slug}`} onClick={onNavigate}>
             {mod.title}
@@ -147,7 +162,6 @@ export function ModuleNav({
           currentSlug={currentSlug}
           statusBySlug={statusBySlug}
           onNavigate={onNavigate}
-          startIndex={theory.length}
         />
       )}
 
@@ -180,7 +194,6 @@ function NavSection({
   currentSlug,
   statusBySlug,
   onNavigate,
-  startIndex = 0,
 }: {
   label: string;
   items: ModuleDto["items"];
@@ -193,7 +206,7 @@ function NavSection({
     <div className="module-nav-section">
       <p className="module-nav-label">{label}</p>
       <ol className="module-nav-list">
-        {items.map((item, i) => {
+        {items.map((item) => {
           const status = statusBySlug.get(item.slug);
           const active = item.slug === currentSlug;
           return (
@@ -212,7 +225,6 @@ function NavSection({
                 }
                 onClick={onNavigate}
               >
-                <span className="module-nav-index">{startIndex + i + 1}</span>
                 <span className="module-nav-title">{item.title}</span>
                 <span className="module-nav-status" aria-hidden="true">
                   {status === "completed" ? "✓" : status === "started" ? "·" : ""}

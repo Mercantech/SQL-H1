@@ -1,9 +1,13 @@
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { beginLogin, getUserProfile, isLoggedIn, logout } from "../auth";
 
 export function Layout() {
   const loggedIn = isLoggedIn();
   const profile = getUserProfile();
+  const { pathname } = useLocation();
+  const flushLearn =
+    pathname.startsWith("/learn/") ||
+    /^\/modules\/[^/]+$/.test(pathname);
 
   return (
     <div className="app-shell">
@@ -31,7 +35,7 @@ export function Layout() {
           )}
         </div>
       </header>
-      <main className="main">
+      <main className={flushLearn ? "main main--flush" : "main"}>
         <Outlet />
       </main>
     </div>
