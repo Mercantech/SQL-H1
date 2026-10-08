@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import {
+  fetchMe,
   fetchModules,
   fetchProgress,
   type ModuleDto,
   type ProgressRow,
 } from "../api";
 import { isLoggedIn } from "../auth";
+import postgresLogo from "../assets/postgresql.svg";
 
 type Props = {
   moduleSlug: string;
@@ -63,6 +65,8 @@ export function ModuleNav({
 }: Props) {
   const [modules, setModules] = useState<ModuleDto[]>([]);
   const [progress, setProgress] = useState<ProgressRow[]>([]);
+  const [dbName, setDbName] = useState<string | null>(null);
+  const [dbStatus, setDbStatus] = useState<"idle" | "loading" | "ready" | "guest">("idle");
 
   useEffect(() => {
     fetchModules().then(setModules).catch(() => setModules([]));
@@ -71,11 +75,28 @@ export function ModuleNav({
   useEffect(() => {
     if (!isLoggedIn()) {
       setProgress([]);
+      setDbName(null);
+      setDbStatus("guest");
       return;
     }
+    setDbStatus("loading");
     fetchProgress()
       .then(setProgress)
       .catch(() => setProgress([]));
+    fetchMe()
+      .then((me) => {
+        if (me.sandbox.status === "ready" && me.sandbox.dbName) {
+          setDbName(me.sandbox.dbName);
+          setDbStatus("ready");
+        } else {
+          setDbName(null);
+          setDbStatus("idle");
+        }
+      })
+      .catch(() => {
+        setDbName(null);
+        setDbStatus("idle");
+      });
   }, [moduleSlug, currentSlug]);
 
   const statusBySlug = useMemo(() => progressMap(progress), [progress]);
@@ -104,11 +125,39 @@ export function ModuleNav({
     </button>
   ) : null;
 
+  const dbFooter = (
+    <div className="module-nav-db" title={dbName || undefined}>
+      <img
+        src={postgresLogo}
+        alt=""
+        width={22}
+        height={22}
+        className="module-nav-db-logo"
+        aria-hidden="true"
+      />
+      <div className="module-nav-db-text">
+        <span className="module-nav-db-label">PostgreSQL</span>
+        <span className="module-nav-db-name">
+          {dbStatus === "guest"
+            ? "Ikke logget ind"
+            : dbStatus === "loading"
+              ? "Henter…"
+              : dbStatus === "ready" && dbName
+                ? dbName
+                : "Ikke forbundet"}
+        </span>
+      </div>
+    </div>
+  );
+
   if (!mod) {
     return (
       <div className={`module-nav-dock ${mobileOpen ? "open" : "closed"}`}>
         <aside id="module-nav" className={`module-nav ${mobileOpen ? "open" : ""}`}>
-          <p className="muted">Henter indhold…</p>
+          <div className="module-nav-scroll">
+            <p className="muted">Henter indhold…</p>
+          </div>
+          {dbFooter}
         </aside>
         {foldButton}
       </div>
@@ -125,71 +174,74 @@ export function ModuleNav({
   return (
     <div className={`module-nav-dock ${mobileOpen ? "open" : "closed"}`}>
       <aside id="module-nav" className={`module-nav ${mobileOpen ? "open" : ""}`}>
-        <div className="module-nav-head">
-          <Link to="/modules" className="module-nav-back" onClick={onNavigate}>
-            Alle moduler
-          </Link>
-          <h2>
-            <Link to={`/modules/${mod.slug}`} onClick={onNavigate}>
-              {mod.title}
+        <div className="module-nav-scroll">
+          <div className="module-nav-head">
+            <Link to="/modules" className="module-nav-back" onClick={onNavigate}>
+              Alle moduler
             </Link>
-          </h2>
-          <p className="module-nav-progress">
-            {doneCount}/{mod.items.length} gennemført
-          </p>
-          <div
-            className="module-nav-bar"
-            role="progressbar"
-            aria-valuenow={doneCount}
-            aria-valuemin={0}
-            aria-valuemax={mod.items.length || 1}
-          >
-            <span
-              style={{
-                width: `${mod.items.length ? (doneCount / mod.items.length) * 100 : 0}%`,
-              }}
-            />
+            <h2>
+              <Link to={`/modules/${mod.slug}`} onClick={onNavigate}>
+                {mod.title}
+              </Link>
+            </h2>
+            <p className="module-nav-progress">
+              {doneCount}/{mod.items.length} gennemført
+            </p>
+            <div
+              className="module-nav-bar"
+              role="progressbar"
+              aria-valuenow={doneCount}
+              aria-valuemin={0}
+              aria-valuemax={mod.items.length || 1}
+            >
+              <span
+                style={{
+                  width: `${mod.items.length ? (doneCount / mod.items.length) * 100 : 0}%`,
+                }}
+              />
+            </div>
           </div>
+
+          {theory.length > 0 && (
+            <NavSection
+              label="Teori"
+              items={theory}
+              currentSlug={currentSlug}
+              statusBySlug={statusBySlug}
+              onNavigate={onNavigate}
+            />
+          )}
+          {exercises.length > 0 && (
+            <NavSection
+              label="Opgaver"
+              items={exercises}
+              currentSlug={currentSlug}
+              statusBySlug={statusBySlug}
+              onNavigate={onNavigate}
+            />
+          )}
+
+          {currentSlug && currentIndex >= 0 && (
+            <p className="module-nav-step muted">
+              Trin {currentIndex + 1} af {mod.items.length}
+            </p>
+          )}
+
+          {onLastItem && nextModule && (
+            <Link
+              to={
+                nextModule.items[0]
+                  ? `/learn/${nextModule.items[0].slug}`
+                  : `/modules/${nextModule.slug}`
+              }
+              className="module-nav-next-module"
+              onClick={onNavigate}
+            >
+              Næste modul: {nextModule.title}
+            </Link>
+          )}
         </div>
-
-      {theory.length > 0 && (
-        <NavSection
-          label="Teori"
-          items={theory}
-          currentSlug={currentSlug}
-          statusBySlug={statusBySlug}
-          onNavigate={onNavigate}
-        />
-      )}
-      {exercises.length > 0 && (
-        <NavSection
-          label="Opgaver"
-          items={exercises}
-          currentSlug={currentSlug}
-          statusBySlug={statusBySlug}
-          onNavigate={onNavigate}
-        />
-      )}
-
-      {currentSlug && currentIndex >= 0 && (
-        <p className="module-nav-step muted">
-          Trin {currentIndex + 1} af {mod.items.length}
-        </p>
-      )}
-
-      {onLastItem && nextModule && (
-        <Link
-          to={
-            nextModule.items[0]
-              ? `/learn/${nextModule.items[0].slug}`
-              : `/modules/${nextModule.slug}`
-          }
-          className="module-nav-next-module"
-          onClick={onNavigate}
-        >
-          Næste modul: {nextModule.title}
-        </Link>
-      )}
+        {dbFooter}
       </aside>
       {foldButton}
     </div>

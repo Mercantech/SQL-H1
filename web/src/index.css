@@ -141,11 +141,63 @@ input {
 .module-nav {
   width: 280px;
   height: 100%;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   border-right: 1px solid var(--line);
   background: var(--panel);
-  padding: 1rem 0.9rem 1.25rem;
-  transition: width 220ms ease, padding 220ms ease, border-color 220ms ease;
+  padding: 0;
+  transition: width 220ms ease, border-color 220ms ease;
+}
+
+.module-nav-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 1rem 0.9rem 0.75rem;
+}
+
+.module-nav-db {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0.7rem 0.9rem 0.85rem;
+  border-top: 1px solid var(--line);
+  background: rgba(51, 103, 145, 0.06);
+  min-width: 0;
+}
+
+.module-nav-db-logo {
+  flex: 0 0 auto;
+  display: block;
+}
+
+.module-nav-db-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+}
+
+.module-nav-db-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #336791;
+  line-height: 1.2;
+}
+
+.module-nav-db-name {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink);
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .learn-shell.nav-closed .module-nav,
