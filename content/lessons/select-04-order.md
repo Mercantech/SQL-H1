@@ -18,13 +18,17 @@ sandbox:
 Uden `ORDER BY` er rækkefølgen ikke garanteret. Sortér eksplicit:
 
 ```sql
+-- Billigste først (ASC er standard)
 SELECT name, price
 FROM products
-ORDER BY price ASC;   -- billigste først (ASC er standard)
+ORDER BY price ASC;
+```
 
+```sql
+-- Dyreste først
 SELECT name, price
 FROM products
-ORDER BY price DESC;  -- dyreste først
+ORDER BY price DESC;
 ```
 
 ## Flere sorteringsnøgler

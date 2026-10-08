@@ -48,8 +48,10 @@ WHERE city = 'Viborg' OR city = 'Aarhus';
 ```sql
 SELECT name, city FROM customers WHERE city IN ('Viborg', 'Aarhus');
 SELECT name, price FROM products WHERE price BETWEEN 20 AND 40;
-SELECT name FROM customers WHERE name LIKE 'A%';   -- starter med A
-SELECT name FROM customers WHERE name LIKE '%sen'; -- ender på sen
+-- Starter med A
+SELECT name FROM customers WHERE name LIKE 'A%';
+-- Ender på sen
+SELECT name FROM customers WHERE name LIKE '%sen';
 ```
 
 ## NULL
