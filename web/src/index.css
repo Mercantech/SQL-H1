@@ -227,28 +227,6 @@ input {
   font-size: 0.85rem;
 }
 
-.curriculum-list {
-  max-height: 11.5rem;
-  overflow: auto;
-  margin-bottom: 0.35rem;
-  padding-right: 0.15rem;
-}
-
-.curriculum-link .module-nav-status {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--muted);
-  min-width: 2rem;
-}
-
-.curriculum-link.done .module-nav-status {
-  color: var(--ok);
-}
-
-.curriculum-link.scaffold {
-  opacity: 0.7;
-}
-
 .module-nav-next-module {
   display: block;
   margin-top: 1rem;

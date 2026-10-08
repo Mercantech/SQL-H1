@@ -81,8 +81,6 @@ export function ModuleNav({
     () => [...modules].sort((a, b) => a.order - b.order),
     [modules],
   );
-  const flat = useMemo(() => buildFlatPath(modules), [modules]);
-  const flatIndex = flat.findIndex((s) => s.item.slug === currentSlug);
   const nextModule = useMemo(() => {
     const idx = sortedModules.findIndex((m) => m.slug === moduleSlug);
     if (idx < 0) return null;
@@ -99,16 +97,16 @@ export function ModuleNav({
 
   const theory = mod.items.filter((i) => i.kind !== "exercise");
   const exercises = mod.items.filter((i) => i.kind === "exercise");
+  const currentIndex = mod.items.findIndex((i) => i.slug === currentSlug);
   const doneCount = moduleDoneCount(mod, statusBySlug);
-  const curriculumDone = flat.filter(
-    (s) => statusBySlug.get(s.item.slug) === "completed",
-  ).length;
+  const onLastItem =
+    currentIndex >= 0 && currentIndex === mod.items.length - 1;
 
   return (
     <aside className={`module-nav ${mobileOpen ? "open" : ""}`}>
       <div className="module-nav-head">
         <Link to="/modules" className="module-nav-back" onClick={onNavigate}>
-          Pensum-overblik
+          Alle moduler
         </Link>
         <h2>
           <Link to={`/modules/${mod.slug}`} onClick={onNavigate}>
@@ -116,8 +114,7 @@ export function ModuleNav({
           </Link>
         </h2>
         <p className="module-nav-progress">
-          Modul: {doneCount}/{mod.items.length} · Pensum: {curriculumDone}/
-          {flat.length}
+          {doneCount}/{mod.items.length} gennemført
         </p>
         <div
           className="module-nav-bar"
@@ -134,52 +131,9 @@ export function ModuleNav({
         </div>
       </div>
 
-      <div className="module-nav-section">
-        <p className="module-nav-label">Alle moduler</p>
-        <ol className="module-nav-list curriculum-list">
-          {sortedModules.map((m) => {
-            const done = moduleDoneCount(m, statusBySlug);
-            const active = m.slug === moduleSlug;
-            const first = m.items[0];
-            const target = first
-              ? `/learn/${first.slug}`
-              : `/modules/${m.slug}`;
-            return (
-              <li key={m.slug}>
-                <Link
-                  to={target}
-                  className={[
-                    "module-nav-link curriculum-link",
-                    active ? "active" : "",
-                    done === m.items.length && m.items.length > 0 ? "done" : "",
-                    m.scaffoldOnly ? "scaffold" : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
-                  onClick={onNavigate}
-                >
-                  <span className="module-nav-index">
-                    {String(m.order).padStart(2, "0")}
-                  </span>
-                  <span className="module-nav-title">
-                    {m.title}
-                    {m.scaffoldOnly ? " · snart" : ""}
-                  </span>
-                  <span className="module-nav-status">
-                    {m.items.length
-                      ? `${done}/${m.items.length}`
-                      : "—"}
-                  </span>
-                </Link>
-              </li>
-            );
-          })}
-        </ol>
-      </div>
-
       {theory.length > 0 && (
         <NavSection
-          label="I dette modul · Teori"
+          label="Teori"
           items={theory}
           currentSlug={currentSlug}
           statusBySlug={statusBySlug}
@@ -188,7 +142,7 @@ export function ModuleNav({
       )}
       {exercises.length > 0 && (
         <NavSection
-          label="I dette modul · Opgaver"
+          label="Opgaver"
           items={exercises}
           currentSlug={currentSlug}
           statusBySlug={statusBySlug}
@@ -197,13 +151,13 @@ export function ModuleNav({
         />
       )}
 
-      {currentSlug && flatIndex >= 0 && (
+      {currentSlug && currentIndex >= 0 && (
         <p className="module-nav-step muted">
-          Pensumtrin {flatIndex + 1} af {flat.length}
+          Trin {currentIndex + 1} af {mod.items.length}
         </p>
       )}
 
-      {nextModule && (
+      {onLastItem && nextModule && (
         <Link
           to={
             nextModule.items[0]
@@ -291,10 +245,8 @@ export function LearnPager({
   const prev = idx > 0 ? flat[idx - 1] : null;
   const next = idx < flat.length - 1 ? flat[idx + 1] : null;
   const current = flat[idx];
-  const crossingForward =
-    next && next.moduleSlug !== current.moduleSlug;
-  const crossingBack =
-    prev && prev.moduleSlug !== current.moduleSlug;
+  const crossingForward = next && next.moduleSlug !== current.moduleSlug;
+  const crossingBack = prev && prev.moduleSlug !== current.moduleSlug;
 
   return (
     <nav className="learn-pager" aria-label="Gå til forrige eller næste">
