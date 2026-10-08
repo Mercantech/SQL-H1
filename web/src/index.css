@@ -1339,6 +1339,15 @@ body.is-resizing-split .lesson {
   background: var(--panel);
 }
 
+.er-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
 .er-head h2 {
   margin: 0 0 0.3rem;
   font-family: var(--font-serif);
@@ -1346,13 +1355,26 @@ body.is-resizing-split .lesson {
 }
 
 .er-head p {
-  margin: 0 0 1rem;
+  margin: 0;
   max-width: 60ch;
 }
 
 .er-canvas {
   position: relative;
   padding: 0.35rem 0.15rem 0.5rem;
+}
+
+.er-canvas--board {
+  overflow: auto;
+  min-height: 420px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(247, 250, 245, 0.85);
+  touch-action: none;
+}
+
+.er-canvas--board.is-dragging {
+  cursor: grabbing;
 }
 
 .er-arrows {
@@ -1382,19 +1404,6 @@ body.is-resizing-split .lesson {
   stroke-width: 4px;
 }
 
-.er-entities {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.75rem 2.25rem;
-}
-
-.er-entities--trio {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.75rem 2.5rem;
-}
-
 .er-entity {
   appearance: none;
   border: 1px solid var(--line);
@@ -1402,22 +1411,45 @@ body.is-resizing-split .lesson {
   background: #f7faf5;
   padding: 0;
   text-align: left;
-  cursor: pointer;
+  cursor: grab;
   overflow: hidden;
   color: inherit;
   font: inherit;
   box-shadow: 0 8px 24px rgba(21, 32, 24, 0.04);
-  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.er-entity--abs {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  will-change: transform;
 }
 
 .er-entity:hover {
   border-color: rgba(31, 107, 74, 0.45);
-  transform: translateY(-1px);
 }
 
 .er-entity.active {
   border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(31, 107, 74, 0.18);
+  z-index: 3;
+}
+
+.er-entity.dragging {
+  cursor: grabbing;
+  z-index: 4;
+  box-shadow: 0 16px 36px rgba(21, 32, 24, 0.14);
+  border-color: var(--accent);
+}
+
+.er-entity-drag {
+  cursor: grab;
+}
+
+.er-entity.dragging .er-entity-drag {
+  cursor: grabbing;
 }
 
 .er-entity-head {
@@ -1529,14 +1561,6 @@ body.is-resizing-split .lesson {
 
 .er-legend code {
   font-family: var(--font-mono);
-}
-
-@media (max-width: 900px) {
-  .er-entities,
-  .er-entities--trio {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
 }
 
 .db-why {

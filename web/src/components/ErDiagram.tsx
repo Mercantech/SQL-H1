@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { InspectRelation, InspectTable } from "../api";
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
   selected?: string | null;
 };
 
-type Point = { x: number; y: number };
+type Pos = { x: number; y: number };
 
 type Arrow = {
   key: string;
@@ -18,7 +18,52 @@ type Arrow = {
   label: string;
 };
 
-function edgePoint(from: DOMRect, to: DOMRect, canvas: DOMRect): { start: Point; end: Point } {
+const POS_KEY = "sqlh1_er_positions";
+const CARD_W = 220;
+const GRID = 24;
+
+const DEFAULT_LAYOUT: Record<string, Pos> = {
+  customers: { x: 40, y: 48 },
+  orders: { x: 340, y: 48 },
+  products: { x: 640, y: 48 },
+};
+
+function snap(n: number) {
+  return Math.round(n / GRID) * GRID;
+}
+
+function readSavedPositions(): Record<string, Pos> {
+  try {
+    const raw = localStorage.getItem(POS_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as Record<string, Pos>;
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function initialPositions(tables: InspectTable[]): Record<string, Pos> {
+  const saved = readSavedPositions();
+  const next: Record<string, Pos> = {};
+  let extras = 0;
+  for (const t of tables) {
+    if (saved[t.name]) {
+      next[t.name] = saved[t.name];
+    } else if (DEFAULT_LAYOUT[t.name]) {
+      next[t.name] = DEFAULT_LAYOUT[t.name];
+    } else {
+      next[t.name] = {
+        x: 40 + (extras % 3) * 300,
+        y: 280 + Math.floor(extras / 3) * 220,
+      };
+      extras += 1;
+    }
+  }
+  return next;
+}
+
+function edgePoint(from: DOMRect, to: DOMRect, canvas: DOMRect) {
   const fromC = {
     x: from.left + from.width / 2 - canvas.left,
     y: from.top + from.height / 2 - canvas.top,
@@ -27,11 +72,10 @@ function edgePoint(from: DOMRect, to: DOMRect, canvas: DOMRect): { start: Point;
     x: to.left + to.width / 2 - canvas.left,
     y: to.top + to.height / 2 - canvas.top,
   };
-
   const dx = toC.x - fromC.x;
   const dy = toC.y - fromC.y;
 
-  if (Math.abs(dx) >= Math.abs(dy) * 0.6) {
+  if (Math.abs(dx) >= Math.abs(dy) * 0.55) {
     if (dx >= 0) {
       return {
         start: { x: from.right - canvas.left, y: fromC.y },
@@ -43,7 +87,6 @@ function edgePoint(from: DOMRect, to: DOMRect, canvas: DOMRect): { start: Point;
       end: { x: to.right - canvas.left, y: toC.y },
     };
   }
-
   if (dy >= 0) {
     return {
       start: { x: fromC.x, y: from.bottom - canvas.top },
@@ -56,7 +99,7 @@ function edgePoint(from: DOMRect, to: DOMRect, canvas: DOMRect): { start: Point;
   };
 }
 
-function curvePath(start: Point, end: Point) {
+function curvePath(start: { x: number; y: number }, end: { x: number; y: number }) {
   const dx = end.x - start.x;
   const dy = end.y - start.y;
   if (Math.abs(dx) >= Math.abs(dy)) {
@@ -70,80 +113,168 @@ function curvePath(start: Point, end: Point) {
 export function ErDiagram({ tables, relations, onSelectTable, selected }: Props) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const entityRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const dragRef = useRef<{
+    name: string;
+    offsetX: number;
+    offsetY: number;
+    moved: boolean;
+  } | null>(null);
+
+  const [positions, setPositions] = useState<Record<string, Pos>>(() => initialPositions(tables));
   const [arrows, setArrows] = useState<Arrow[]>([]);
+  const [dragging, setDragging] = useState<string | null>(null);
 
-  const ordered = useMemo(() => {
-    const byName = new Map(tables.map((t) => [t.name, t]));
-    const preferred = ["customers", "orders", "products"];
-    return [
-      ...preferred.filter((n) => byName.has(n)),
-      ...tables.map((t) => t.name).filter((n) => !preferred.includes(n)),
-    ];
-  }, [tables]);
+  const tableNames = useMemo(() => tables.map((t) => t.name).sort().join("|"), [tables]);
 
-  const byName = useMemo(() => new Map(tables.map((t) => [t.name, t])), [tables]);
-
-  useLayoutEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || tables.length === 0) {
-      setArrows([]);
-      return;
-    }
-
-    const redraw = () => {
-      const canvasRect = canvas.getBoundingClientRect();
-      const next: Arrow[] = [];
-
-      for (const rel of relations) {
-        const parentEl = entityRefs.current[rel.toTable];
-        const childEl = entityRefs.current[rel.fromTable];
-        if (!parentEl || !childEl) continue;
-
-        const { start, end } = edgePoint(
-          parentEl.getBoundingClientRect(),
-          childEl.getBoundingClientRect(),
-          canvasRect,
-        );
-        next.push({
-          key: `${rel.fromTable}.${rel.fromColumn}->${rel.toTable}.${rel.toColumn}`,
-          d: curvePath(start, end),
-          labelX: (start.x + end.x) / 2,
-          labelY: (start.y + end.y) / 2 - 12,
-          label: "1 : n",
-        });
+  useEffect(() => {
+    setPositions((prev) => {
+      const seeded = initialPositions(tables);
+      const merged: Record<string, Pos> = {};
+      for (const t of tables) {
+        merged[t.name] = prev[t.name] ?? seeded[t.name];
       }
+      return merged;
+    });
+  }, [tableNames, tables]);
 
-      setArrows(next);
-    };
+  useEffect(() => {
+    localStorage.setItem(POS_KEY, JSON.stringify(positions));
+  }, [positions]);
 
-    redraw();
-    const ro = new ResizeObserver(() => requestAnimationFrame(redraw));
-    ro.observe(canvas);
-    for (const name of ordered) {
-      const el = entityRefs.current[name];
-      if (el) ro.observe(el);
+  const redrawArrows = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const canvasRect = canvas.getBoundingClientRect();
+    const next: Arrow[] = [];
+
+    for (const rel of relations) {
+      const parentEl = entityRefs.current[rel.toTable];
+      const childEl = entityRefs.current[rel.fromTable];
+      if (!parentEl || !childEl) continue;
+      const { start, end } = edgePoint(
+        parentEl.getBoundingClientRect(),
+        childEl.getBoundingClientRect(),
+        canvasRect,
+      );
+      next.push({
+        key: `${rel.fromTable}.${rel.fromColumn}->${rel.toTable}.${rel.toColumn}`,
+        d: curvePath(start, end),
+        labelX: (start.x + end.x) / 2,
+        labelY: (start.y + end.y) / 2 - 12,
+        label: "1 : n",
+      });
     }
-    window.addEventListener("resize", redraw);
+    setArrows(next);
+  }, [relations]);
+
+  useEffect(() => {
+    redrawArrows();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ro = new ResizeObserver(() => requestAnimationFrame(redrawArrows));
+    ro.observe(canvas);
+    window.addEventListener("resize", redrawArrows);
     return () => {
       ro.disconnect();
-      window.removeEventListener("resize", redraw);
+      window.removeEventListener("resize", redrawArrows);
     };
-  }, [tables, relations, selected, ordered]);
+  }, [redrawArrows, positions, selected, tables]);
+
+  useEffect(() => {
+    const onMove = (e: PointerEvent) => {
+      const drag = dragRef.current;
+      const canvas = canvasRef.current;
+      if (!drag || !canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = snap(e.clientX - rect.left - drag.offsetX);
+      const y = snap(e.clientY - rect.top - drag.offsetY);
+      const maxX = Math.max(0, rect.width - CARD_W);
+      const maxY = Math.max(0, canvas.scrollHeight - 80);
+      drag.moved = true;
+      setPositions((prev) => ({
+        ...prev,
+        [drag.name]: {
+          x: Math.min(maxX, Math.max(0, x)),
+          y: Math.min(maxY, Math.max(0, y)),
+        },
+      }));
+    };
+
+    const onUp = () => {
+      const drag = dragRef.current;
+      if (drag && !drag.moved) onSelectTable?.(drag.name);
+      dragRef.current = null;
+      setDragging(null);
+      if (drag?.moved) requestAnimationFrame(redrawArrows);
+    };
+
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+  }, [redrawArrows, onSelectTable]);
+
+  function onPointerDown(name: string, e: React.PointerEvent) {
+    if (e.button !== 0) return;
+    const el = entityRefs.current[name];
+    if (!el) return;
+    e.preventDefault();
+    const elRect = el.getBoundingClientRect();
+    dragRef.current = {
+      name,
+      offsetX: e.clientX - elRect.left,
+      offsetY: e.clientY - elRect.top,
+      moved: false,
+    };
+    setDragging(name);
+  }
+
+  function resetLayout() {
+    localStorage.removeItem(POS_KEY);
+    setPositions(initialPositions(tables));
+  }
+
+  const canvasHeight = useMemo(() => {
+    let max = 420;
+    for (const p of Object.values(positions)) {
+      max = Math.max(max, p.y + 280);
+    }
+    return max;
+  }, [positions]);
 
   if (tables.length === 0) return null;
 
   return (
     <section className="er-diagram" aria-labelledby="er-title">
       <header className="er-head">
-        <h2 id="er-title">ER-diagram</h2>
-        <p className="muted">
-          Visuel model med pile mellem tabeller. Pilen går fra 1-siden (PK) til n-siden (FK).
-        </p>
+        <div>
+          <h2 id="er-title">ER-diagram</h2>
+          <p className="muted">Træk tabellerne rundt på gitteret. Pilene følger med (1 → n).</p>
+        </div>
+        <button type="button" className="btn" onClick={resetLayout}>
+          Nulstil layout
+        </button>
       </header>
 
-      <div className="er-canvas" ref={canvasRef} role="img" aria-label="Entity-relationship diagram">
+      <div
+        className={`er-canvas er-canvas--board ${dragging ? "is-dragging" : ""}`}
+        ref={canvasRef}
+        style={{ height: canvasHeight }}
+        role="img"
+        aria-label="Trækbart entity-relationship diagram"
+      >
         <svg className="er-arrows" aria-hidden="true">
           <defs>
+            <pattern id="er-grid" width={GRID} height={GRID} patternUnits="userSpaceOnUse">
+              <path
+                d={`M ${GRID} 0 L 0 0 0 ${GRID}`}
+                fill="none"
+                stroke="rgba(51, 103, 145, 0.12)"
+                strokeWidth="1"
+              />
+            </pattern>
             <marker
               id="er-arrowhead"
               markerWidth="10"
@@ -158,6 +289,7 @@ export function ErDiagram({ tables, relations, onSelectTable, selected }: Props)
               <path d="M 2 1 L 2 11" stroke="#1f6b4a" strokeWidth="2.2" fill="none" />
             </marker>
           </defs>
+          <rect width="100%" height="100%" fill="url(#er-grid)" />
           {arrows.map((a) => (
             <g key={a.key}>
               <path
@@ -173,39 +305,43 @@ export function ErDiagram({ tables, relations, onSelectTable, selected }: Props)
           ))}
         </svg>
 
-        <div className={`er-entities ${ordered.length === 3 ? "er-entities--trio" : ""}`}>
-          {ordered.map((name) => {
-            const table = byName.get(name)!;
-            return (
-              <button
-                key={name}
-                type="button"
-                ref={(el) => {
-                  entityRefs.current[name] = el;
-                }}
-                className={`er-entity ${selected === name ? "active" : ""}`}
-                onClick={() => onSelectTable?.(name)}
-              >
-                <div className="er-entity-head">
-                  <span className="er-entity-name">{name}</span>
-                  <span className="er-entity-count">{table.rowCount} rækker</span>
-                </div>
-                <ul className="er-attrs">
-                  {table.columns.map((c) => (
-                    <li key={c.name} className={c.isPrimaryKey ? "pk" : c.isForeignKey ? "fk" : ""}>
-                      <span className="er-attr-flags">
-                        {c.isPrimaryKey && <abbr title="Primærnøgle">PK</abbr>}
-                        {c.isForeignKey && <abbr title="Fremmednøgle">FK</abbr>}
-                      </span>
-                      <code>{c.name}</code>
-                      <span className="er-attr-type">{c.dataType}</span>
-                    </li>
-                  ))}
-                </ul>
-              </button>
-            );
-          })}
-        </div>
+        {tables.map((table) => {
+          const pos = positions[table.name] ?? { x: 40, y: 40 };
+          return (
+            <button
+              key={table.name}
+              type="button"
+              ref={(el) => {
+                entityRefs.current[table.name] = el;
+              }}
+              className={`er-entity er-entity--abs ${selected === table.name ? "active" : ""} ${
+                dragging === table.name ? "dragging" : ""
+              }`}
+              style={{
+                width: CARD_W,
+                transform: `translate(${pos.x}px, ${pos.y}px)`,
+              }}
+              onPointerDown={(e) => onPointerDown(table.name, e)}
+            >
+              <div className="er-entity-head er-entity-drag">
+                <span className="er-entity-name">{table.name}</span>
+                <span className="er-entity-count">{table.rowCount} rækker</span>
+              </div>
+              <ul className="er-attrs">
+                {table.columns.map((c) => (
+                  <li key={c.name} className={c.isPrimaryKey ? "pk" : c.isForeignKey ? "fk" : ""}>
+                    <span className="er-attr-flags">
+                      {c.isPrimaryKey && <abbr title="Primærnøgle">PK</abbr>}
+                      {c.isForeignKey && <abbr title="Fremmednøgle">FK</abbr>}
+                    </span>
+                    <code>{c.name}</code>
+                    <span className="er-attr-type">{c.dataType}</span>
+                  </li>
+                ))}
+              </ul>
+            </button>
+          );
+        })}
       </div>
 
       {relations.length > 0 && (
@@ -225,8 +361,8 @@ export function ErDiagram({ tables, relations, onSelectTable, selected }: Props)
       )}
 
       <p className="er-legend muted">
-        Café-modellen: én kunde har mange ordrer, ét produkt indgår i mange ordrer.{" "}
-        <code>orders</code> kobler de to.
+        Tip: træk i tabelhovedet. Positionerne huskes i browseren.{" "}
+        <code>orders</code> kobler kunder og produkter (1:n / n:1).
       </p>
     </section>
   );
