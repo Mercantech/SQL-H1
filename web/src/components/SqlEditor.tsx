@@ -189,36 +189,25 @@ export function SqlEditor({
             Tjek svar
           </button>
         )}
-        <div className="sql-zoom" role="group" aria-label="Zoom i editor">
-          <button
-            type="button"
-            className="btn sql-zoom-btn"
-            onClick={() => bumpZoom(-ZOOM_STEP)}
-            disabled={zoom <= ZOOM_MIN}
-            title="Mindre kode (Ctrl+-)"
-            aria-label="Mindsk kode"
-          >
-            A−
-          </button>
-          <button
-            type="button"
-            className="btn sql-zoom-btn sql-zoom-reset"
-            onClick={() => setZoom(ZOOM_DEFAULT)}
-            title="Nulstil zoom (Ctrl+0)"
-            aria-label={`Zoom ${zoom} procent, klik for at nulstille`}
-          >
-            {zoom}%
-          </button>
-          <button
-            type="button"
-            className="btn sql-zoom-btn"
-            onClick={() => bumpZoom(ZOOM_STEP)}
-            disabled={zoom >= ZOOM_MAX}
-            title="Større kode (Ctrl+=)"
-            aria-label="Forøg kode"
-          >
-            A+
-          </button>
+        <div className="sql-zoom" title="Zoom i editor (Ctrl+= / Ctrl+- / Ctrl+0)">
+          <span className="sql-zoom-label" aria-hidden="true">
+            A
+          </span>
+          <input
+            type="range"
+            className="sql-zoom-slider"
+            min={ZOOM_MIN}
+            max={ZOOM_MAX}
+            step={ZOOM_STEP}
+            value={zoom}
+            onChange={(e) => setZoom(Number(e.target.value))}
+            onDoubleClick={() => setZoom(ZOOM_DEFAULT)}
+            aria-label={`Editor-zoom ${zoom} procent`}
+          />
+          <span className="sql-zoom-label sql-zoom-label-lg" aria-hidden="true">
+            A
+          </span>
+          <span className="sql-zoom-value">{zoom}%</span>
         </div>
       </div>
       <CodeMirror
