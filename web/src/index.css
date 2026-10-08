@@ -122,53 +122,67 @@ input {
   position: relative;
 }
 
-.module-nav {
+.module-nav-dock {
   position: sticky;
   top: 0;
   align-self: flex-start;
-  width: 280px;
-  flex: 0 0 280px;
+  display: flex;
+  align-items: stretch;
   height: calc(100vh - 4.25rem);
+  z-index: 25;
+  flex: 0 0 auto;
+}
+
+.module-nav {
+  width: 280px;
+  height: 100%;
   overflow: auto;
   border-right: 1px solid var(--line);
   background: var(--panel);
   padding: 1rem 0.9rem 1.25rem;
-  transform: translateX(0);
-  transition: transform 220ms ease, margin 220ms ease, width 220ms ease;
-  z-index: 25;
+  transition: width 220ms ease, padding 220ms ease, border-color 220ms ease;
 }
 
-.learn-shell.nav-closed .module-nav {
+.learn-shell.nav-closed .module-nav,
+.module-nav-dock.closed .module-nav {
   width: 0;
-  flex-basis: 0;
-  margin: 0;
   padding: 0;
-  border: 0;
+  border-right-color: transparent;
   overflow: hidden;
   pointer-events: none;
 }
 
-.module-nav-head-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
-
-.module-nav-collapse {
-  border: 0;
-  background: transparent;
-  color: var(--muted);
+.module-nav-fold {
+  position: relative;
+  flex: 0 0 22px;
+  width: 22px;
+  align-self: center;
+  margin-left: -1px;
+  height: 56px;
+  border: 1px solid var(--line);
+  border-left: 0;
+  border-radius: 0 10px 10px 0;
+  background: var(--panel);
+  color: var(--accent);
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.15rem;
+  font-weight: 700;
   line-height: 1;
-  padding: 0.2rem 0.35rem;
-  border-radius: 6px;
+  padding: 0;
+  box-shadow: 2px 0 10px rgba(21, 32, 24, 0.06);
+  transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+  z-index: 26;
 }
 
-.module-nav-collapse:hover {
-  background: rgba(21, 32, 24, 0.06);
-  color: var(--ink);
+.module-nav-fold:hover {
+  background: var(--accent);
+  color: #f4fff8;
+  border-color: var(--accent);
+}
+
+.learn-shell.nav-closed .module-nav-fold {
+  border-left: 1px solid var(--line);
+  margin-left: 0;
 }
 
 .module-nav-head h2 {
@@ -283,32 +297,10 @@ input {
   display: none;
 }
 
-.module-nav-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: fit-content;
-  border: 1px solid var(--line);
-  background: var(--panel);
-  border-radius: 10px;
-  padding: 0.45rem 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.module-nav-toggle:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
 .learn-body {
   flex: 1;
   min-width: 0;
   padding: 1.25rem 1.5rem 2rem;
-}
-
-.learn-toolbar {
-  margin-bottom: 1rem;
 }
 
 .learn-main {
@@ -712,31 +704,28 @@ input {
     z-index: 30;
   }
 
-  .module-nav {
+  .module-nav-dock {
     position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
     height: 100vh;
-    width: min(300px, 88vw);
-    flex: none;
     z-index: 40;
-    transform: translateX(-105%);
-    pointer-events: none;
+  }
+
+  .module-nav {
+    width: min(300px, 88vw);
+    height: 100%;
     box-shadow: var(--shadow);
   }
 
-  .learn-shell.nav-open .module-nav,
-  .module-nav.open {
-    transform: translateX(0);
-    pointer-events: auto;
-    width: min(300px, 88vw);
-    padding: 1rem 0.9rem 1.25rem;
-    border-right: 1px solid var(--line);
+  .learn-shell.nav-closed .module-nav,
+  .module-nav-dock.closed .module-nav {
+    width: 0;
   }
 
-  .learn-shell.nav-closed .module-nav {
-    width: min(300px, 88vw);
+  .module-nav-fold {
+    height: 64px;
   }
 
   .learn-body {

@@ -14,7 +14,7 @@ type Props = {
   /** Om sidemenuen er synlig (desktop + mobil). */
   mobileOpen?: boolean;
   onNavigate?: () => void;
-  onClose?: () => void;
+  onToggle?: () => void;
 };
 
 type FlatStep = {
@@ -59,7 +59,7 @@ export function ModuleNav({
   currentSlug,
   mobileOpen,
   onNavigate,
-  onClose,
+  onToggle,
 }: Props) {
   const [modules, setModules] = useState<ModuleDto[]>([]);
   const [progress, setProgress] = useState<ProgressRow[]>([]);
@@ -90,11 +90,28 @@ export function ModuleNav({
     return sortedModules.slice(idx + 1).find((m) => m.items.length > 0) || null;
   }, [sortedModules, moduleSlug]);
 
+  const foldButton = onToggle ? (
+    <button
+      type="button"
+      className="module-nav-fold"
+      onClick={onToggle}
+      aria-expanded={Boolean(mobileOpen)}
+      aria-controls="module-nav"
+      title={mobileOpen ? "Skjul oversigt" : "Vis oversigt"}
+      aria-label={mobileOpen ? "Skjul oversigt" : "Vis oversigt"}
+    >
+      <span aria-hidden="true">{mobileOpen ? "‹" : "›"}</span>
+    </button>
+  ) : null;
+
   if (!mod) {
     return (
-      <aside id="module-nav" className={`module-nav ${mobileOpen ? "open" : ""}`}>
-        <p className="muted">Henter indhold…</p>
-      </aside>
+      <div className={`module-nav-dock ${mobileOpen ? "open" : "closed"}`}>
+        <aside id="module-nav" className={`module-nav ${mobileOpen ? "open" : ""}`}>
+          <p className="muted">Henter indhold…</p>
+        </aside>
+        {foldButton}
+      </div>
     );
   }
 
@@ -106,45 +123,34 @@ export function ModuleNav({
     currentIndex >= 0 && currentIndex === mod.items.length - 1;
 
   return (
-    <aside id="module-nav" className={`module-nav ${mobileOpen ? "open" : ""}`}>
-      <div className="module-nav-head">
-        <div className="module-nav-head-row">
+    <div className={`module-nav-dock ${mobileOpen ? "open" : "closed"}`}>
+      <aside id="module-nav" className={`module-nav ${mobileOpen ? "open" : ""}`}>
+        <div className="module-nav-head">
           <Link to="/modules" className="module-nav-back" onClick={onNavigate}>
             Alle moduler
           </Link>
-          {onClose && (
-            <button
-              type="button"
-              className="module-nav-collapse"
-              onClick={onClose}
-              aria-label="Skjul oversigt"
-            >
-              ✕
-            </button>
-          )}
+          <h2>
+            <Link to={`/modules/${mod.slug}`} onClick={onNavigate}>
+              {mod.title}
+            </Link>
+          </h2>
+          <p className="module-nav-progress">
+            {doneCount}/{mod.items.length} gennemført
+          </p>
+          <div
+            className="module-nav-bar"
+            role="progressbar"
+            aria-valuenow={doneCount}
+            aria-valuemin={0}
+            aria-valuemax={mod.items.length || 1}
+          >
+            <span
+              style={{
+                width: `${mod.items.length ? (doneCount / mod.items.length) * 100 : 0}%`,
+              }}
+            />
+          </div>
         </div>
-        <h2>
-          <Link to={`/modules/${mod.slug}`} onClick={onNavigate}>
-            {mod.title}
-          </Link>
-        </h2>
-        <p className="module-nav-progress">
-          {doneCount}/{mod.items.length} gennemført
-        </p>
-        <div
-          className="module-nav-bar"
-          role="progressbar"
-          aria-valuenow={doneCount}
-          aria-valuemin={0}
-          aria-valuemax={mod.items.length || 1}
-        >
-          <span
-            style={{
-              width: `${mod.items.length ? (doneCount / mod.items.length) * 100 : 0}%`,
-            }}
-          />
-        </div>
-      </div>
 
       {theory.length > 0 && (
         <NavSection
@@ -184,7 +190,9 @@ export function ModuleNav({
           Næste modul: {nextModule.title}
         </Link>
       )}
-    </aside>
+      </aside>
+      {foldButton}
+    </div>
   );
 }
 

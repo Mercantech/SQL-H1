@@ -34,22 +34,10 @@ export function ModuleDetail() {
         onNavigate={() => {
           if (window.matchMedia("(max-width: 900px)").matches) setNavOpen(false);
         }}
-        onClose={() => setNavOpen(false)}
+        onToggle={() => setNavOpen((v) => !v)}
       />
 
       <div className="learn-body">
-        <div className="learn-toolbar">
-          <button
-            type="button"
-            className="module-nav-toggle"
-            onClick={() => setNavOpen((v) => !v)}
-            aria-expanded={navOpen}
-            aria-controls="module-nav"
-          >
-            {navOpen ? "Skjul oversigt" : "Vis oversigt"}
-          </button>
-        </div>
-
         <div className="learn-main">
           <section className="page-head lesson">
             <p className="eyebrow">
