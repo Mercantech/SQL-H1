@@ -1,39 +1,38 @@
 ---
-title: INSERT, UPDATE og DELETE
+title: 1. Introduktion til DML
+slug: dml-01-intro
 module: dml
 order: 1
 kind: theory
 objectives:
-  - INSERT nye rækker
-  - UPDATE eksisterende data
-  - DELETE rækker sikkert
+  - Skelne mellem SELECT og DML
+  - Kende INSERT, UPDATE og DELETE
 sandbox:
   seed: seeds/shop.sql
   allowWrite: true
-  starterSql: INSERT INTO products (name, category, price) VALUES ('Smoothie', 'Drikke', 42.00);
+  starterSql: SELECT * FROM products ORDER BY id;
 ---
 
-# INSERT, UPDATE og DELETE
+# Introduktion til DML
 
-## INSERT
+**DML** (*Data Manipulation Language*) ændrer data:
 
-```sql
-INSERT INTO products (name, category, price)
-VALUES ('Smoothie', 'Drikke', 42.00);
-```
+| Kommando | Gør |
+|----------|-----|
+| `INSERT` | tilføjer rækker |
+| `UPDATE` | ændrer eksisterende rækker |
+| `DELETE` | fjerner rækker |
 
-## UPDATE
+`SELECT` **læser** kun. I dette modul er skrivning tilladt i emulatoren.
 
-Husk altid `WHERE` — ellers opdateres alle rækker:
+## Vigtige vaner
 
-```sql
-UPDATE products SET price = 30.00 WHERE name = 'Espresso';
-```
+1. Kør `SELECT` **før** du ændrer — se hvad der er der.
+2. Brug altid `WHERE` på `UPDATE`/`DELETE`, medmindre du bevidst vil ramme alle rækker.
+3. Brug **Nulstil data**, hvis du vil tilbage til udgangspunktet.
 
-## DELETE
+## Café-databasen
 
-```sql
-DELETE FROM orders WHERE id = 1;
-```
+Du arbejder stadig med `customers`, `products` og `orders`. Fremmednøgler binder ordrer til kunder og produkter — det mærker du især ved `DELETE`.
 
-Fremmednøgler kan forhindre sletning, hvis der stadig findes afhængige rækker. Brug **Nulstil data** i opgaver, hvis du vil starte forfra.
+Næste lektioner går i dybden med hver kommando.

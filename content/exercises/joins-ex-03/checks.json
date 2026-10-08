@@ -1,0 +1,36 @@
+{
+  "description": "Subquery og WITH",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT name, price FROM products WHERE price > (SELECT AVG(price) FROM products) ORDER BY price DESC",
+      "expected": [
+        ["Saladsandwich", 52.00],
+        ["Sandwich", 48.00],
+        ["Smoothie", 42.00],
+        ["Latte", 35.00]
+      ],
+      "message": "Del 1: Over gennemsnitspris"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "WITH ranked AS (SELECT name, category, price, ROW_NUMBER() OVER (PARTITION BY category ORDER BY price DESC) AS nr FROM products) SELECT name, category, price FROM ranked WHERE nr = 1 ORDER BY category",
+      "expected": [
+        ["Croissant", "Bagværk", 22.50],
+        ["Smoothie", "Drikke", 42.00],
+        ["Saladsandwich", "Mad", 52.00]
+      ],
+      "message": "Del 2: Dyreste pr. kategori"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT c.name FROM customers c JOIN orders o ON o.customer_id = c.id GROUP BY c.name HAVING SUM(o.quantity) >= 4 ORDER BY c.name",
+      "expected": [
+        ["Anna Jensen"],
+        ["Bo Nielsen"],
+        ["Clara Holm"]
+      ],
+      "message": "Del 3: Kunder med mindst 4 stk"
+    }
+  ]
+}

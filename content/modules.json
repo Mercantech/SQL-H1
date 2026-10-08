@@ -2,58 +2,70 @@
   {
     "slug": "select",
     "title": "SELECT-forespørgsler",
-    "description": "Hent data med SELECT: kolonner, WHERE, ORDER BY, GROUP BY, aggregater og funktioner — teori og tre opgaver.",
+    "description": "Hent data med SELECT: filtre, sortering, gruppering, funktioner, CASE, UNION og vinduesfunktioner.",
     "order": 1,
     "scaffoldOnly": false,
     "objectives": [
-      "Anvende SELECT mod en tabel",
-      "Sortere, gruppere og filtrere",
-      "Bruge aggregater og SQL-funktioner"
+      "Anvende SELECT, WHERE, ORDER BY og LIMIT",
+      "Gruppere og aggregere med GROUP BY/HAVING",
+      "Bruge CASE, UNION og vinduesfunktioner"
     ]
   },
   {
     "slug": "dml",
     "title": "Data-manipulation (DML)",
-    "description": "INSERT, UPDATE og DELETE.",
+    "description": "INSERT, UPDATE og DELETE i dybden — inkl. RETURNING og fremmednøgle-hensyn.",
     "order": 2,
     "scaffoldOnly": false,
     "objectives": [
-      "Indsætte rækker med INSERT",
-      "Opdatere med UPDATE",
-      "Slette med DELETE"
+      "Indsætte én eller flere rækker",
+      "Opdatere sikkert med WHERE",
+      "Slette data uden at bryde relationer"
+    ]
+  },
+  {
+    "slug": "joins-subqueries",
+    "title": "JOIN, subqueries og WITH",
+    "description": "Forespørgsler på tværs af tabeller: INNER/LEFT JOIN, subqueries, EXISTS og CTE (WITH).",
+    "order": 3,
+    "scaffoldOnly": false,
+    "objectives": [
+      "Joine flere tabeller",
+      "Bruge subqueries og EXISTS",
+      "Skrive CTE’er med WITH"
+    ]
+  },
+  {
+    "slug": "relations",
+    "title": "Relationstyper",
+    "description": "Primær-/fremmednøgler, 1:n og n:n — forstået via café-skemaet og SELECT.",
+    "order": 4,
+    "scaffoldOnly": false,
+    "objectives": [
+      "Skelne PK og FK",
+      "Forklare 1:n og n:n",
+      "Udforske relationer med JOIN"
+    ]
+  },
+  {
+    "slug": "constraints",
+    "title": "Konsistens og constraints",
+    "description": "NOT NULL, fremmednøgler og konsistens — oplevet via tilladt DML (uden DDL).",
+    "order": 5,
+    "scaffoldOnly": false,
+    "objectives": [
+      "Forstå constraints i praksis",
+      "Læse Postgres-fejl ved brud",
+      "Slette i korrekt rækkefølge"
     ]
   },
   {
     "slug": "ddl-er",
     "title": "Tabeller og E/R",
     "description": "Oprette, redigere og slette tabeller samt dokumentere med E/R-diagram.",
-    "order": 3,
-    "scaffoldOnly": true,
-    "objectives": ["CREATE/ALTER/DROP TABLE", "E/R-diagram"]
-  },
-  {
-    "slug": "relations",
-    "title": "Relationstyper",
-    "description": "1:1, 1:mange, mange:mange med nøgler.",
-    "order": 4,
-    "scaffoldOnly": true,
-    "objectives": ["1:1", "1:n", "n:n", "Primær- og fremmednøgler"]
-  },
-  {
-    "slug": "constraints",
-    "title": "Konsistens og constraints",
-    "description": "Referenceintegritet, relationer og constraints — praksis og baggrund.",
-    "order": 5,
-    "scaffoldOnly": true,
-    "objectives": ["Constraints", "Referenceintegritet", "Konsistenskrav"]
-  },
-  {
-    "slug": "joins-subqueries",
-    "title": "JOIN og subqueries",
-    "description": "Forespørgsler på tværs af flere tabeller.",
     "order": 6,
     "scaffoldOnly": true,
-    "objectives": ["JOIN", "SUBQUERY"]
+    "objectives": ["CREATE/ALTER/DROP TABLE", "E/R-diagram"]
   },
   {
     "slug": "databases",

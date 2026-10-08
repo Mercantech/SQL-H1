@@ -1,5 +1,6 @@
 ---
-title: Opgaver — DML
+title: Opgave A — Grundlæggende DML
+slug: dml-ex-01
 module: dml
 order: 10
 kind: exercise
@@ -13,7 +14,7 @@ sandbox:
     INSERT INTO customers (name, city) VALUES ('Eva Møller', 'Aarhus');
 ---
 
-# Opgaver — DML
+# Opgave A — Grundlæggende DML
 
 Udgangspunktet er café-databasen. Udfør ændringerne nedenfor, og tryk **Tjek svar**.
 

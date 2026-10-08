@@ -1,0 +1,35 @@
+{
+  "description": "Vinduesfunktioner",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT name, category, price, ROW_NUMBER() OVER (PARTITION BY category ORDER BY price DESC)::int AS nr FROM products ORDER BY category, nr",
+      "expected": [
+        ["Croissant", "Bagværk", 22.50, 1],
+        ["Chokoladebolle", "Bagværk", 18.00, 2],
+        ["Smoothie", "Drikke", 42.00, 1],
+        ["Latte", "Drikke", 35.00, 2],
+        ["Espresso", "Drikke", 28.00, 3],
+        ["Te", "Drikke", 25.00, 4],
+        ["Saladsandwich", "Mad", 52.00, 1],
+        ["Sandwich", "Mad", 48.00, 2]
+      ],
+      "message": "Del 1: ROW_NUMBER pr. kategori"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT name, DENSE_RANK() OVER (ORDER BY price)::int AS rang FROM products ORDER BY rang, name",
+      "expected": [
+        ["Chokoladebolle", 1],
+        ["Croissant", 2],
+        ["Te", 3],
+        ["Espresso", 4],
+        ["Latte", 5],
+        ["Smoothie", 6],
+        ["Sandwich", 7],
+        ["Saladsandwich", 8]
+      ],
+      "message": "Del 2: DENSE_RANK på pris"
+    }
+  ]
+}

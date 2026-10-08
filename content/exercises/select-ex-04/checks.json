@@ -1,0 +1,36 @@
+{
+  "description": "CASE og UNION",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT name, price, CASE WHEN price >= 40 THEN 'premium' ELSE 'standard' END AS niveau FROM products ORDER BY name",
+      "expected": [
+        ["Chokoladebolle", 18.00, "standard"],
+        ["Croissant", 22.50, "standard"],
+        ["Espresso", 28.00, "standard"],
+        ["Latte", 35.00, "standard"],
+        ["Saladsandwich", 52.00, "premium"],
+        ["Sandwich", 48.00, "premium"],
+        ["Smoothie", 42.00, "premium"],
+        ["Te", 25.00, "standard"]
+      ],
+      "message": "Del 1: CASE premium/standard"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT name AS navn FROM products UNION SELECT 'Testkunde' ORDER BY navn",
+      "expected": [
+        ["Chokoladebolle"],
+        ["Croissant"],
+        ["Espresso"],
+        ["Latte"],
+        ["Saladsandwich"],
+        ["Sandwich"],
+        ["Smoothie"],
+        ["Te"],
+        ["Testkunde"]
+      ],
+      "message": "Del 2: UNION med Testkunde"
+    }
+  ]
+}

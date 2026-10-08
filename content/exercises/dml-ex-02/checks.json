@@ -1,0 +1,26 @@
+{
+  "description": "Multi INSERT og UPDATE",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT name, category, price, in_stock FROM products WHERE name = 'Kakao'",
+      "expected": [["Kakao", "Drikke", 32.00, true]],
+      "message": "Del 1: Kakao er indsat"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT name, city, email FROM customers WHERE name = 'Ida Ravn'",
+      "expected": [["Ida Ravn", "Odense", "ida@example.com"]],
+      "message": "Del 2: Ida Ravn er indsat"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT name, price FROM products WHERE category = 'Bagværk' ORDER BY name",
+      "expected": [
+        ["Chokoladebolle", 19.50],
+        ["Croissant", 24.00]
+      ],
+      "message": "Del 3: Bagværk +1.50"
+    }
+  ]
+}

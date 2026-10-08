@@ -1,0 +1,39 @@
+{
+  "description": "LEFT JOIN og EXISTS",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT p.name FROM products p LEFT JOIN orders o ON o.product_id = p.id WHERE o.id IS NULL ORDER BY p.name",
+      "expected": [["Chokoladebolle"]],
+      "message": "Del 1: Produkter uden ordrer"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT p.name, COUNT(o.id)::int AS antal FROM products p LEFT JOIN orders o ON o.product_id = p.id GROUP BY p.name ORDER BY antal, p.name",
+      "expected": [
+        ["Chokoladebolle", 0],
+        ["Saladsandwich", 1],
+        ["Croissant", 2],
+        ["Latte", 2],
+        ["Sandwich", 2],
+        ["Smoothie", 2],
+        ["Te", 2],
+        ["Espresso", 3]
+      ],
+      "message": "Del 2: Antal ordrer pr. produkt"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT c.name FROM customers c WHERE EXISTS (SELECT 1 FROM orders o JOIN products p ON p.id = o.product_id WHERE o.customer_id = c.id AND p.category = 'Drikke') ORDER BY c.name",
+      "expected": [
+        ["Anna Jensen"],
+        ["Bo Nielsen"],
+        ["Clara Holm"],
+        ["David Lund"],
+        ["Eva Mikkelsen"],
+        ["Freja Olsen"]
+      ],
+      "message": "Del 3: Kunder der har købt Drikke"
+    }
+  ]
+}

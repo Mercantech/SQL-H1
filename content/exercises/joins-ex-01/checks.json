@@ -1,0 +1,30 @@
+{
+  "description": "INNER JOIN",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT c.name, p.name AS produkt, o.quantity FROM orders o JOIN customers c ON c.id = o.customer_id JOIN products p ON p.id = o.product_id WHERE o.quantity >= 2 ORDER BY c.name, p.name",
+      "expected": [
+        ["Anna Jensen", "Espresso", 2],
+        ["Anna Jensen", "Smoothie", 2],
+        ["Bo Nielsen", "Sandwich", 2],
+        ["Clara Holm", "Te", 3],
+        ["David Lund", "Latte", 2],
+        ["Freja Olsen", "Croissant", 2]
+      ],
+      "message": "Del 1: Ordrer med quantity >= 2"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT c.name AS kunde, p.name AS produkt, (o.quantity * p.price) AS linje_total FROM orders o JOIN customers c ON c.id = o.customer_id JOIN products p ON p.id = o.product_id WHERE c.city = 'Aarhus' ORDER BY linje_total DESC, kunde",
+      "expected": [
+        ["Bo Nielsen", "Sandwich", 96.00],
+        ["Eva Mikkelsen", "Saladsandwich", 52.00],
+        ["Eva Mikkelsen", "Smoothie", 42.00],
+        ["Bo Nielsen", "Latte", 35.00],
+        ["Bo Nielsen", "Te", 25.00]
+      ],
+      "message": "Del 2: Aarhus-linjer"
+    }
+  ]
+}
