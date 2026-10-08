@@ -692,13 +692,6 @@ body.is-resizing-split .lesson {
   overflow: hidden;
 }
 
-.sandbox h2 {
-  margin: 0 0 0.75rem;
-  font-family: var(--font-serif);
-  font-size: 1.2rem;
-  flex: 0 0 auto;
-}
-
 .sql-panel {
   flex: 1;
   min-height: 0;
@@ -839,24 +832,6 @@ body.is-resizing-split .lesson {
   gap: 0.5rem;
   align-items: center;
   flex: 0 0 auto;
-}
-
-.sql-hint {
-  margin-left: auto;
-  color: var(--muted);
-  font-size: 0.85rem;
-}
-
-.sql-kbd {
-  display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 0.78em;
-  font-weight: 600;
-  padding: 0.05em 0.35em;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  background: rgba(21, 32, 24, 0.04);
-  color: var(--ink);
 }
 
 .sql-editor {

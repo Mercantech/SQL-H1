@@ -176,7 +176,6 @@ export function Learn() {
                 onKeyDown={split.onKeyDown}
               />
               <aside className="sandbox">
-                <h2>Prøv selv</h2>
                 {!isLoggedIn() && (
                   <p className="login-nudge">
                     <button type="button" className="btn primary" onClick={() => beginLogin()}>
@@ -195,7 +194,6 @@ export function Learn() {
                   result={result}
                   checkMessages={checkMessages}
                   checkPassed={checkPassed}
-                  allowWrite={item.sandbox?.allowWrite}
                 />
               </aside>
             </>

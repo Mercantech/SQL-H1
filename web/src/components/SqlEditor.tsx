@@ -16,7 +16,6 @@ type Props = {
   result?: ExecuteResult | null;
   checkMessages?: string[] | null;
   checkPassed?: boolean | null;
-  allowWrite?: boolean;
 };
 
 function normalizeSets(result: ExecuteResult): ResultSet[] {
@@ -69,11 +68,6 @@ function ResultTable({ set }: { set: ResultSet }) {
   );
 }
 
-function isMac() {
-  if (typeof navigator === "undefined") return false;
-  return /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent);
-}
-
 export function SqlEditor({
   value,
   onChange,
@@ -84,7 +78,6 @@ export function SqlEditor({
   result,
   checkMessages,
   checkPassed,
-  allowWrite,
 }: Props) {
   const [tab, setTab] = useState(0);
   const sets = result && !result.error ? normalizeSets(result) : [];
@@ -146,13 +139,6 @@ export function SqlEditor({
             Tjek svar
           </button>
         )}
-        <span className="sql-hint">
-          {allowWrite ? "Skrivning tilladt" : "Kun SELECT"}
-          {" · "}
-          <kbd className="sql-kbd">{runShortcut}</kbd> kør
-          {" · "}
-          markering = kun det
-        </span>
       </div>
       <CodeMirror
         value={value}

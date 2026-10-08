@@ -62,7 +62,6 @@ export function Playground() {
       <SqlEditor
         value={sql}
         onChange={setSql}
-        allowWrite
         running={running}
         result={result}
         onRun={async (sqlToRun) => {
