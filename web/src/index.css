@@ -712,6 +712,45 @@ body.is-resizing-split .lesson {
   font-family: var(--font-mono);
 }
 
+.md-code {
+  position: relative;
+  margin: 1rem 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #122018;
+}
+
+.md-code-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.35rem;
+  padding: 0.4rem 0.5rem 0;
+}
+
+.md-code-btn {
+  appearance: none;
+  border: 1px solid rgba(215, 240, 226, 0.22);
+  background: rgba(215, 240, 226, 0.08);
+  color: #d7f0e2;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.55rem;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.md-code-btn:hover {
+  background: rgba(215, 240, 226, 0.16);
+}
+
+.md-code pre {
+  margin: 0;
+  background: transparent;
+  border-radius: 0;
+  padding: 0.65rem 1rem 1rem;
+}
+
 .md pre {
   background: #122018;
   color: #d7f0e2;

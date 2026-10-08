@@ -10,7 +10,7 @@ import {
   type ExecuteResult,
 } from "../api";
 import { beginLogin, isLoggedIn } from "../auth";
-import { Markdown } from "../components/Markdown";
+import { appendCodeToEditor, Markdown } from "../components/Markdown";
 import { LearnPager, ModuleNav } from "../components/ModuleNav";
 import { SqlEditor } from "../components/SqlEditor";
 import { useLearnSplit } from "../hooks/useLearnSplit";
@@ -147,7 +147,15 @@ export function Learn() {
             </p>
             <h1>{item.title}</h1>
             <div className="md">
-              <Markdown>{item.markdown}</Markdown>
+              <Markdown
+                onInsertCode={
+                  showSandbox
+                    ? (code) => setSql((prev) => appendCodeToEditor(prev, code))
+                    : undefined
+                }
+              >
+                {item.markdown}
+              </Markdown>
             </div>
             {error && <p className="error-text">{error}</p>}
             <LearnPager moduleSlug={item.module} currentSlug={item.slug} />
