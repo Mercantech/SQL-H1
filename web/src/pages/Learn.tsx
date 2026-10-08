@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import {
   checkExercise,
   executeSql,
@@ -12,6 +10,7 @@ import {
   type ExecuteResult,
 } from "../api";
 import { beginLogin, isLoggedIn } from "../auth";
+import { Markdown } from "../components/Markdown";
 import { LearnPager, ModuleNav } from "../components/ModuleNav";
 import { SqlEditor } from "../components/SqlEditor";
 import { useLearnSplit } from "../hooks/useLearnSplit";
@@ -146,7 +145,7 @@ export function Learn() {
             </p>
             <h1>{item.title}</h1>
             <div className="md">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{item.markdown}</ReactMarkdown>
+              <Markdown>{item.markdown}</Markdown>
             </div>
             {error && <p className="error-text">{error}</p>}
             <LearnPager moduleSlug={item.module} currentSlug={item.slug} />
