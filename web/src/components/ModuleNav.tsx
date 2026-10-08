@@ -125,8 +125,15 @@ export function ModuleNav({
     </button>
   ) : null;
 
+  const connected = dbStatus === "ready" && Boolean(dbName);
+
   const dbFooter = (
     <div className="module-nav-db" title={dbName || undefined}>
+      <span
+        className={`module-nav-db-diode ${connected ? "on" : "off"}`}
+        role="status"
+        aria-label={connected ? "Forbundet til database" : "Ingen databaseforbindelse"}
+      />
       <img
         src={postgresLogo}
         alt=""
@@ -142,7 +149,7 @@ export function ModuleNav({
             ? "Ikke logget ind"
             : dbStatus === "loading"
               ? "Henter…"
-              : dbStatus === "ready" && dbName
+              : connected
                 ? dbName
                 : "Ikke forbundet"}
         </span>
