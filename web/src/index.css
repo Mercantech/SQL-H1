@@ -31,6 +31,7 @@ html,
 body,
 #root {
   margin: 0;
+  height: 100%;
   min-height: 100%;
 }
 
@@ -46,8 +47,10 @@ input {
 
 .app-shell {
   min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .topbar {
@@ -57,8 +60,7 @@ input {
   padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--line);
   backdrop-filter: blur(8px);
-  position: sticky;
-  top: 0;
+  flex: 0 0 auto;
   z-index: 10;
   background: rgba(238, 243, 234, 0.85);
 }
@@ -108,6 +110,10 @@ input {
   max-width: none;
   margin: 0;
   padding: 0;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .learn-loading {
@@ -118,17 +124,16 @@ input {
 .learn-shell {
   display: flex;
   align-items: stretch;
-  min-height: calc(100vh - 4.25rem);
+  flex: 1;
+  min-height: 0;
+  height: 100%;
   position: relative;
 }
 
 .module-nav-dock {
-  position: sticky;
-  top: 0;
-  align-self: flex-start;
   display: flex;
   align-items: stretch;
-  height: calc(100vh - 4.25rem);
+  height: 100%;
   z-index: 25;
   flex: 0 0 auto;
 }
@@ -300,20 +305,35 @@ input {
 .learn-body {
   flex: 1;
   min-width: 0;
-  padding: 1.25rem 1.5rem 2rem;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
 }
 
 .learn-main {
   display: grid;
-  gap: 1.5rem;
+  gap: 0;
+  flex: 1;
   min-width: 0;
-  width: min(1120px, 100%);
+  min-height: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .learn-main.with-sandbox {
-  width: min(1280px, 100%);
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.95fr);
-  align-items: start;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.learn-main > .lesson {
+  min-height: 0;
+  overflow: auto;
+  padding: 1.25rem 1.5rem 2rem;
+}
+
+.learn-main.with-sandbox > .lesson {
+  border-right: 1px solid var(--line);
 }
 
 .learn-pager {
@@ -548,19 +568,28 @@ input {
 }
 
 .sandbox {
-  position: sticky;
-  top: 5rem;
-  border: 1px solid var(--line);
-  border-radius: 16px;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   background: var(--panel);
-  padding: 1rem;
-  box-shadow: var(--shadow);
+  padding: 1rem 1.15rem 1.25rem;
+  overflow: hidden;
 }
 
 .sandbox h2 {
   margin: 0 0 0.75rem;
   font-family: var(--font-serif);
   font-size: 1.2rem;
+  flex: 0 0 auto;
+}
+
+.sql-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
 }
 
 .md pre,
@@ -594,7 +623,7 @@ input {
   flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
-  margin-bottom: 0.75rem;
+  flex: 0 0 auto;
 }
 
 .sql-hint {
@@ -604,18 +633,39 @@ input {
 }
 
 .sql-editor {
+  flex: 1 1 45%;
+  min-height: 160px;
   border: 1px solid var(--line);
   border-radius: 12px;
   overflow: hidden;
 }
 
+.sql-editor .cm-editor,
+.sql-editor .cm-editor.cm-focused {
+  height: 100% !important;
+}
+
+.sql-editor .cm-scroller {
+  overflow: auto !important;
+}
+
+.sandbox .login-nudge,
+.sandbox .check-box {
+  flex: 0 0 auto;
+}
+
 .sql-result {
-  margin-top: 0.75rem;
+  flex: 1 1 35%;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .table-wrap {
+  flex: 1;
   overflow: auto;
-  max-height: 280px;
+  min-height: 0;
   border: 1px solid var(--line);
   border-radius: 10px;
 }
@@ -681,12 +731,34 @@ input {
 }
 
 @media (max-width: 1100px) {
+  .app-shell {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .main.main--flush {
+    flex: none;
+  }
+
+  .learn-shell {
+    flex: none;
+    min-height: calc(100vh - 4.25rem);
+  }
+
   .learn-main.with-sandbox {
     grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .learn-main.with-sandbox > .lesson {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    max-height: none;
   }
 
   .sandbox {
-    position: static;
+    height: min(70vh, 720px);
   }
 }
 
@@ -729,6 +801,10 @@ input {
   }
 
   .learn-body {
+    padding: 0;
+  }
+
+  .learn-main > .lesson {
     padding: 1rem 1rem 1.75rem;
   }
 

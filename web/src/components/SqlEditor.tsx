@@ -49,7 +49,7 @@ export function SqlEditor({
       </div>
       <CodeMirror
         value={value}
-        height="220px"
+        height="100%"
         extensions={[sql()]}
         onChange={onChange}
         basicSetup={{ lineNumbers: true }}
