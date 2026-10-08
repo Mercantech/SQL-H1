@@ -1331,6 +1331,244 @@ body.is-resizing-split .lesson {
   }
 }
 
+.er-diagram {
+  margin: 0 0 1.5rem;
+  padding: 1.2rem 1.25rem 1.35rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+}
+
+.er-head h2 {
+  margin: 0 0 0.3rem;
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+}
+
+.er-head p {
+  margin: 0 0 1rem;
+  max-width: 60ch;
+}
+
+.er-entities {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.er-entity {
+  appearance: none;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #f7faf5;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  color: inherit;
+  font: inherit;
+  box-shadow: 0 8px 24px rgba(21, 32, 24, 0.04);
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.er-entity:hover {
+  border-color: rgba(31, 107, 74, 0.45);
+  transform: translateY(-1px);
+}
+
+.er-entity.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(31, 107, 74, 0.18);
+}
+
+.er-entity-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  align-items: baseline;
+  padding: 0.65rem 0.75rem;
+  background: linear-gradient(180deg, rgba(31, 107, 74, 0.14), rgba(31, 107, 74, 0.06));
+  border-bottom: 1px solid var(--line);
+}
+
+.er-entity-name {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--accent);
+}
+
+.er-entity-count {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.er-attrs {
+  list-style: none;
+  margin: 0;
+  padding: 0.35rem 0;
+}
+
+.er-attrs li {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr) auto;
+  gap: 0.35rem;
+  align-items: center;
+  padding: 0.28rem 0.75rem;
+  font-size: 0.82rem;
+}
+
+.er-attrs li.pk {
+  background: rgba(27, 107, 58, 0.08);
+}
+
+.er-attrs li.fk {
+  background: rgba(51, 103, 145, 0.08);
+}
+
+.er-attr-flags {
+  display: flex;
+  gap: 0.2rem;
+  min-height: 1em;
+}
+
+.er-attr-flags abbr {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  padding: 0.05rem 0.25rem;
+  border-radius: 4px;
+  background: rgba(21, 32, 24, 0.08);
+  color: var(--muted);
+}
+
+.er-attrs li.pk .er-attr-flags abbr {
+  background: rgba(27, 107, 58, 0.18);
+  color: var(--ok);
+}
+
+.er-attrs li.fk .er-attr-flags abbr {
+  background: rgba(51, 103, 145, 0.18);
+  color: #336791;
+}
+
+.er-attrs code {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.er-attr-type {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.er-relations {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0.75rem 0 0;
+  border-top: 1px dashed var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.er-relations li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.65rem;
+  font-size: 0.88rem;
+}
+
+.er-rel-link {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  color: var(--accent);
+  font: inherit;
+}
+
+.er-rel-link code {
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.er-crow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--muted);
+}
+
+.er-card {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  min-width: 1.1rem;
+  text-align: center;
+}
+
+.er-line {
+  width: 2.5rem;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), #336791);
+  border-radius: 2px;
+  position: relative;
+}
+
+.er-line::before,
+.er-line::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border: 2px solid #336791;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  background: var(--panel);
+}
+
+.er-line::before {
+  left: -2px;
+}
+
+.er-line::after {
+  right: -2px;
+  border-radius: 0;
+  width: 0;
+  height: 0;
+  border: 5px solid transparent;
+  border-left-color: #336791;
+  background: transparent;
+}
+
+.er-rel-cols {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.er-legend {
+  margin: 0.9rem 0 0;
+  font-size: 0.88rem;
+  max-width: 70ch;
+}
+
+.er-legend code {
+  font-family: var(--font-mono);
+}
+
+@media (max-width: 900px) {
+  .er-entities {
+    grid-template-columns: 1fr;
+  }
+}
+
 .db-why {
   margin-top: 2rem;
   padding: 1.35rem 1.4rem 1.5rem;

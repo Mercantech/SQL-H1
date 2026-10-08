@@ -7,6 +7,7 @@ import {
   type InspectTable,
 } from "../api";
 import { beginLogin, isLoggedIn } from "../auth";
+import { ErDiagram } from "../components/ErDiagram";
 import postgresLogo from "../assets/postgresql.svg";
 
 function DiffBadge({ status }: { status: string }) {
@@ -241,6 +242,13 @@ export function Database() {
               </span>
             )}
           </div>
+
+          <ErDiagram
+            tables={data.tables}
+            relations={data.relations || []}
+            selected={selected}
+            onSelectTable={setSelected}
+          />
 
           <div className="db-layout">
             <aside className="db-tables">

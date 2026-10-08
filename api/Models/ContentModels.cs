@@ -109,6 +109,16 @@ public class InspectColumnDto
     public string Name { get; set; } = "";
     public string DataType { get; set; } = "";
     public bool Nullable { get; set; }
+    public bool IsPrimaryKey { get; set; }
+    public bool IsForeignKey { get; set; }
+}
+
+public class InspectRelationDto
+{
+    public string FromTable { get; set; } = "";
+    public string FromColumn { get; set; } = "";
+    public string ToTable { get; set; } = "";
+    public string ToColumn { get; set; } = "";
 }
 
 public class InspectTableDto
@@ -136,4 +146,5 @@ public class InspectResult
     public bool MatchesBaseline { get; set; }
     public List<InspectTableDto> Tables { get; set; } = [];
     public List<string> BaselineOnlyTables { get; set; } = [];
+    public List<InspectRelationDto> Relations { get; set; } = [];
 }

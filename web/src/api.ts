@@ -112,6 +112,15 @@ export type InspectColumn = {
   name: string;
   dataType: string;
   nullable: boolean;
+  isPrimaryKey?: boolean;
+  isForeignKey?: boolean;
+};
+
+export type InspectRelation = {
+  fromTable: string;
+  fromColumn: string;
+  toTable: string;
+  toColumn: string;
 };
 
 export type InspectTable = {
@@ -136,6 +145,7 @@ export type InspectResult = {
   matchesBaseline: boolean;
   tables: InspectTable[];
   baselineOnlyTables: string[];
+  relations?: InspectRelation[];
 };
 
 export async function fetchSandboxInspect(contentSlug?: string): Promise<InspectResult> {

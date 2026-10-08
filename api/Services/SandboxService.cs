@@ -167,18 +167,25 @@ public class SandboxService(
 
             var publicTables = await ListTablesAsync(conn, "public", ct);
             var baselineTables = await ListTablesAsync(conn, refSchema, ct);
+            var relations = await ListForeignKeysAsync(conn, "public", ct);
+            var fkColumns = relations
+                .Select(r => (r.FromTable, r.FromColumn))
+                .ToHashSet();
             var result = new InspectResult
             {
                 DbName = studentDb.DbName,
                 Status = studentDb.Status,
                 BaselineLabel = baselineLabel,
-                BaselineOnlyTables = baselineTables.Where(t => !publicTables.Contains(t)).OrderBy(t => t).ToList()
+                BaselineOnlyTables = baselineTables.Where(t => !publicTables.Contains(t)).OrderBy(t => t).ToList(),
+                Relations = relations
             };
 
             foreach (var table in publicTables.OrderBy(t => t))
             {
                 if (!IsSafeIdent(table)) continue;
                 var columns = await ListColumnsAsync(conn, "public", table, ct);
+                foreach (var col in columns)
+                    col.IsForeignKey = fkColumns.Contains((table, col.Name));
                 var rowCount = await CountRowsAsync(conn, "public", table, ct);
                 long? baselineCount = null;
                 var diffStatus = "extra";
@@ -306,10 +313,21 @@ public class SandboxService(
     {
         await using var cmd = new NpgsqlCommand(
             """
-            SELECT column_name, data_type, is_nullable
-            FROM information_schema.columns
-            WHERE table_schema = @s AND table_name = @t
-            ORDER BY ordinal_position
+            SELECT c.column_name, c.data_type, c.is_nullable,
+                   EXISTS (
+                     SELECT 1
+                     FROM information_schema.table_constraints tc
+                     JOIN information_schema.key_column_usage kcu
+                       ON tc.constraint_name = kcu.constraint_name
+                      AND tc.table_schema = kcu.table_schema
+                     WHERE tc.table_schema = c.table_schema
+                       AND tc.table_name = c.table_name
+                       AND kcu.column_name = c.column_name
+                       AND tc.constraint_type = 'PRIMARY KEY'
+                   ) AS is_pk
+            FROM information_schema.columns c
+            WHERE c.table_schema = @s AND c.table_name = @t
+            ORDER BY c.ordinal_position
             """, conn);
         cmd.Parameters.AddWithValue("s", schema);
         cmd.Parameters.AddWithValue("t", table);
@@ -321,7 +339,45 @@ public class SandboxService(
             {
                 Name = reader.GetString(0),
                 DataType = reader.GetString(1),
-                Nullable = reader.GetString(2) == "YES"
+                Nullable = reader.GetString(2) == "YES",
+                IsPrimaryKey = reader.GetBoolean(3)
+            });
+        }
+        return list;
+    }
+
+    private static async Task<List<InspectRelationDto>> ListForeignKeysAsync(
+        NpgsqlConnection conn, string schema, CancellationToken ct)
+    {
+        await using var cmd = new NpgsqlCommand(
+            """
+            SELECT
+              kcu.table_name AS from_table,
+              kcu.column_name AS from_column,
+              ccu.table_name AS to_table,
+              ccu.column_name AS to_column
+            FROM information_schema.table_constraints tc
+            JOIN information_schema.key_column_usage kcu
+              ON tc.constraint_name = kcu.constraint_name
+             AND tc.table_schema = kcu.table_schema
+            JOIN information_schema.constraint_column_usage ccu
+              ON ccu.constraint_name = tc.constraint_name
+             AND ccu.table_schema = tc.table_schema
+            WHERE tc.constraint_type = 'FOREIGN KEY'
+              AND tc.table_schema = @s
+            ORDER BY from_table, from_column
+            """, conn);
+        cmd.Parameters.AddWithValue("s", schema);
+        var list = new List<InspectRelationDto>();
+        await using var reader = await cmd.ExecuteReaderAsync(ct);
+        while (await reader.ReadAsync(ct))
+        {
+            list.Add(new InspectRelationDto
+            {
+                FromTable = reader.GetString(0),
+                FromColumn = reader.GetString(1),
+                ToTable = reader.GetString(2),
+                ToColumn = reader.GetString(3)
             });
         }
         return list;
