@@ -1979,12 +1979,60 @@ body.is-resizing-split .lesson {
   padding: 0.35rem 0.7rem;
 }
 
+.join-match-eq {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.45rem;
+  margin: 0 0 0.65rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(31, 107, 74, 0.1);
+  border: 1px solid rgba(31, 107, 74, 0.22);
+  font-size: 0.82rem;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.join-match-eq-side {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.join-match-eq-val {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--accent);
+  background: #fff;
+  border-radius: 6px;
+  padding: 0.05rem 0.4rem;
+  border: 1px solid rgba(31, 107, 74, 0.25);
+}
+
+.join-match-eq-op {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.join-match-eq-count {
+  color: var(--muted);
+  font-size: 0.78rem;
+  margin-left: 0.15rem;
+}
+
 .join-match-board {
+  position: relative;
   display: grid;
-  grid-template-columns: 1fr 72px 1fr;
-  gap: 0.35rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 3.25rem;
   align-items: start;
   margin-top: 0.35rem;
+}
+
+.join-match-col {
+  position: relative;
+  z-index: 1;
 }
 
 .join-match-col h4 {
@@ -2002,7 +2050,7 @@ body.is-resizing-split .lesson {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.45rem;
 }
 
 .join-match-row {
@@ -2010,14 +2058,20 @@ body.is-resizing-split .lesson {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.1rem;
+  gap: 0.12rem;
   text-align: left;
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   background: #fff;
   border-radius: 10px;
-  padding: 0.45rem 0.55rem;
+  padding: 0.5rem 0.6rem;
   cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease, background 0.15s ease;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.12s ease,
+    background 0.18s ease,
+    opacity 0.18s ease,
+    filter 0.18s ease;
 }
 
 .join-match-row:hover {
@@ -2027,13 +2081,23 @@ body.is-resizing-split .lesson {
 
 .join-match-row.lit {
   border-color: var(--accent);
-  background: rgba(31, 107, 74, 0.1);
-  box-shadow: 0 0 0 2px rgba(31, 107, 74, 0.18);
+  background: rgba(31, 107, 74, 0.12);
+  box-shadow: 0 0 0 2px rgba(31, 107, 74, 0.2);
+}
+
+.join-match-row.dim {
+  opacity: 0.32;
+  filter: grayscale(0.35);
 }
 
 .join-match-row.orphan:not(.lit) {
   border-style: dashed;
-  opacity: 0.85;
+  border-color: rgba(196, 92, 38, 0.45);
+}
+
+.join-match-name {
+  font-weight: 600;
+  font-size: 0.92rem;
 }
 
 .join-key {
@@ -2042,27 +2106,59 @@ body.is-resizing-split .lesson {
   color: var(--accent);
 }
 
-.join-match-links {
+.join-match-links-overlay {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: 220px;
-  align-self: stretch;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
 }
 
 .join-link {
   fill: none;
-  stroke-width: 2;
+  stroke-width: 2.25;
   stroke-linecap: round;
-  transition: stroke 0.2s ease, opacity 0.2s ease;
+  transition: stroke 0.2s ease, opacity 0.2s ease, stroke-width 0.2s ease;
 }
 
-.join-link.lit {
+.join-link-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 10;
+}
+
+.join-link-dot {
+  transition: fill 0.2s ease, opacity 0.2s ease;
+}
+
+.join-link-g.idle .join-link {
+  stroke: rgba(31, 107, 74, 0.28);
+}
+
+.join-link-g.idle .join-link-dot {
+  fill: rgba(31, 107, 74, 0.35);
+}
+
+.join-link-g.lit .join-link {
   stroke: var(--accent);
+  stroke-width: 2.75;
   opacity: 1;
 }
 
-.join-link.dim {
+.join-link-g.lit .join-link-dot {
+  fill: var(--accent);
+}
+
+.join-link-g.dim .join-link {
   stroke: var(--line);
-  opacity: 0.45;
+  opacity: 0.2;
+}
+
+.join-link-g.dim .join-link-dot {
+  fill: var(--line);
+  opacity: 0.25;
 }
 
 .join-orphan-dot {
@@ -2159,9 +2255,10 @@ body.is-resizing-split .lesson {
 @media (max-width: 700px) {
   .join-match-board {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
 
-  .join-match-links {
+  .join-match-links-overlay {
     display: none;
   }
 
