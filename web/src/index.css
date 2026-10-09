@@ -1888,55 +1888,180 @@ body.is-resizing-split .lesson {
   color: #f3faf5;
 }
 
+.join-viz-preview-tag {
+  margin-left: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent-2);
+}
+
+.join-kind-btn.preview {
+  border-color: var(--accent);
+  background: rgba(31, 107, 74, 0.12);
+}
+
 .join-venn-wrap {
   display: flex;
   justify-content: center;
-  margin: 0.35rem 0 0.75rem;
+  margin: 0.35rem 0 0.55rem;
+  padding: 0.35rem 0.25rem 0.15rem;
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse 70% 80% at 35% 45%, rgba(31, 107, 74, 0.08), transparent 60%),
+    radial-gradient(ellipse 70% 80% at 65% 45%, rgba(196, 92, 38, 0.08), transparent 60%);
 }
 
 .join-venn {
-  width: min(100%, 320px);
+  width: min(100%, 360px);
   height: auto;
+  overflow: visible;
 }
 
-.venn-fill {
-  transition: fill 0.25s ease, opacity 0.25s ease;
+.venn-base {
+  opacity: 0.14;
+  transition: opacity 0.25s ease;
 }
 
-.venn-fill.left.on {
-  fill: rgba(31, 107, 74, 0.22);
+.venn-base.left {
+  fill: #1f6b4a;
 }
 
-.venn-fill.right.on {
-  fill: rgba(196, 92, 38, 0.2);
+.venn-base.right {
+  fill: #c45c26;
 }
 
-.venn-fill.inner.on {
-  fill: rgba(31, 107, 74, 0.55);
+.venn-zone {
+  cursor: pointer;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  transform-origin: center;
+  transform-box: fill-box;
 }
 
-.venn-fill.off {
-  fill: rgba(197, 210, 195, 0.18);
+.venn-zone.on {
+  opacity: 0.78;
+}
+
+.venn-zone.off {
+  opacity: 0.1;
+}
+
+.venn-zone.hover {
+  opacity: 0.95;
+  filter: brightness(1.08);
+}
+
+.venn-zone.fade {
+  opacity: 0.18;
+}
+
+.venn-zone.off.hover {
+  opacity: 0.35;
+}
+
+.venn-hit {
+  fill: transparent;
+  cursor: pointer;
+  pointer-events: all;
 }
 
 .venn-ring {
-  stroke: var(--ink);
-  stroke-width: 1.4;
-  opacity: 0.55;
+  stroke: rgba(21, 32, 24, 0.45);
+  stroke-width: 1.6;
+  opacity: 0.7;
+  pointer-events: none;
 }
 
 .venn-label {
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 600;
   fill: var(--ink);
   font-family: var(--font-sans);
-  opacity: 0.75;
+  pointer-events: none;
+  opacity: 0.8;
 }
 
 .venn-label-center {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   fill: #f4faf6;
   font-family: var(--font-sans);
+  pointer-events: none;
+  letter-spacing: 0.02em;
+}
+
+.venn-count {
+  pointer-events: none;
+  transition: opacity 0.22s ease;
+}
+
+.venn-count.off {
+  opacity: 0.35;
+}
+
+.venn-count.on {
+  opacity: 1;
+}
+
+.venn-count rect {
+  fill: #fff;
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.venn-count.left.on rect {
+  stroke: rgba(31, 107, 74, 0.45);
+  fill: rgba(31, 107, 74, 0.1);
+}
+
+.venn-count.inner.on rect {
+  stroke: rgba(31, 107, 74, 0.55);
+  fill: rgba(31, 107, 74, 0.16);
+}
+
+.venn-count.right.on rect {
+  stroke: rgba(196, 92, 38, 0.45);
+  fill: rgba(196, 92, 38, 0.12);
+}
+
+.venn-count text {
+  font-size: 10px;
+  font-weight: 600;
+  fill: var(--ink);
+  font-family: var(--font-sans);
+}
+
+.join-viz-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
+  margin: 0.55rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.join-viz-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.join-dot {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+}
+
+.join-dot.left {
+  background: linear-gradient(135deg, #2f8f63, #1f6b4a);
+}
+
+.join-dot.inner {
+  background: linear-gradient(180deg, #3a9b6a, #1b5c3f);
+}
+
+.join-dot.right {
+  background: linear-gradient(135deg, #d4783a, #c45c26);
 }
 
 .join-result-table-wrap {
@@ -1965,6 +2090,11 @@ body.is-resizing-split .lesson {
   font-size: 0.78rem;
 }
 
+.join-result-table tbody tr {
+  transition: background 0.15s ease, opacity 0.15s ease;
+  cursor: default;
+}
+
 .join-result-table tr.matched td:last-child {
   color: var(--ok);
   font-weight: 600;
@@ -1972,6 +2102,20 @@ body.is-resizing-split .lesson {
 
 .join-result-table tr.null-row {
   background: rgba(196, 92, 38, 0.06);
+}
+
+.join-result-table tr.hl {
+  background: rgba(31, 107, 74, 0.14);
+  outline: 1px solid rgba(31, 107, 74, 0.28);
+}
+
+.join-result-table tr.null-row.hl {
+  background: rgba(196, 92, 38, 0.14);
+  outline-color: rgba(196, 92, 38, 0.3);
+}
+
+.join-result-table tr.dim {
+  opacity: 0.3;
 }
 
 .join-result-table .is-null {
