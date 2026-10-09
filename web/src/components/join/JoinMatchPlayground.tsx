@@ -30,6 +30,7 @@ export function JoinMatchPlayground({ onInsert }: Props) {
     () => DEMO_CUSTOMERS.filter((c) => !DEMO_ORDERS.some((o) => o.customer_id === c.id)),
     [],
   );
+  const walkInOrders = useMemo(() => DEMO_ORDERS.filter((o) => o.customer_id == null), []);
 
   function measure() {
     const board = boardRef.current;
@@ -39,6 +40,7 @@ export function JoinMatchPlayground({ onInsert }: Props) {
 
     const next: LinkGeom[] = [];
     for (const o of DEMO_ORDERS) {
+      if (o.customer_id == null) continue;
       const cEl = customerRefs.current.get(o.customer_id);
       const oEl = orderRefs.current.get(o.id);
       if (!cEl || !oEl) continue;
@@ -91,12 +93,10 @@ export function JoinMatchPlayground({ onInsert }: Props) {
     return orderId === focus.id;
   }
 
+  const focusedOrder = focus?.side === "order" ? DEMO_ORDERS.find((o) => o.id === focus.id) : null;
   const activeKey =
-    focus?.side === "customer"
-      ? focus.id
-      : focus
-        ? DEMO_ORDERS.find((o) => o.id === focus.id)?.customer_id
-        : null;
+    focus?.side === "customer" ? focus.id : focusedOrder ? focusedOrder.customer_id : null;
+  const walkInFocused = Boolean(focusedOrder && focusedOrder.customer_id == null);
 
   const matchCount =
     activeKey == null ? 0 : DEMO_ORDERS.filter((o) => o.customer_id === activeKey).length;
@@ -114,20 +114,30 @@ export function JoinMatchPlayground({ onInsert }: Props) {
         </span>
       </div>
 
-      {activeKey != null && (
+      {(activeKey != null || walkInFocused) && (
         <div className="join-match-eq" aria-live="polite">
-          <span className="join-match-eq-side">c.id</span>
-          <span className="join-match-eq-val">{activeKey}</span>
-          <span className="join-match-eq-op">=</span>
-          <span className="join-match-eq-val">{activeKey}</span>
-          <span className="join-match-eq-side">o.customer_id</span>
-          <span className="join-match-eq-count">
-            {matchCount === 0
-              ? "ingen match"
-              : matchCount === 1
-                ? "1 match"
-                : `${matchCount} matches (1:n)`}
-          </span>
+          {walkInFocused ? (
+            <>
+              <span className="join-match-eq-side">o.customer_id</span>
+              <span className="join-match-eq-val">NULL</span>
+              <span className="join-match-eq-count">walk-in — matcher ingen kunde</span>
+            </>
+          ) : (
+            <>
+              <span className="join-match-eq-side">c.id</span>
+              <span className="join-match-eq-val">{activeKey}</span>
+              <span className="join-match-eq-op">=</span>
+              <span className="join-match-eq-val">{activeKey}</span>
+              <span className="join-match-eq-side">o.customer_id</span>
+              <span className="join-match-eq-count">
+                {matchCount === 0
+                  ? "ingen match"
+                  : matchCount === 1
+                    ? "1 match"
+                    : `${matchCount} matches (1:n)`}
+              </span>
+            </>
+          )}
         </div>
       )}
 
@@ -188,6 +198,7 @@ export function JoinMatchPlayground({ onInsert }: Props) {
             {DEMO_ORDERS.map((o) => {
               const p = DEMO_PRODUCTS.find((x) => x.id === o.product_id);
               const lit = relatedOrder(o.id);
+              const walkIn = o.customer_id == null;
               return (
                 <li key={o.id}>
                   <button
@@ -198,10 +209,12 @@ export function JoinMatchPlayground({ onInsert }: Props) {
                     }}
                     className={`join-match-row ${lit && focus ? "lit" : ""} ${
                       focus && !lit ? "dim" : ""
-                    }`}
+                    } ${walkIn ? "orphan" : ""}`}
                     onClick={() => toggle({ side: "order", id: o.id })}
                   >
-                    <span className="join-key">customer_id = {o.customer_id}</span>
+                    <span className="join-key">
+                      customer_id = {walkIn ? "NULL" : o.customer_id}
+                    </span>
                     <span className="join-match-name">
                       #{o.id} · {p?.name}
                     </span>
@@ -214,11 +227,20 @@ export function JoinMatchPlayground({ onInsert }: Props) {
         </div>
       </div>
 
-      {unmatchedCustomers.length > 0 && (
+      {(unmatchedCustomers.length > 0 || walkInOrders.length > 0) && (
         <p className="join-viz-note">
-          <span className="join-orphan-dot" /> {unmatchedCustomers.map((c) => c.name).join(", ")} har
-          ingen ordrer — forsvinder i <strong>INNER JOIN</strong>, overlever i{" "}
-          <strong>LEFT JOIN</strong>.
+          <span className="join-orphan-dot" />{" "}
+          {unmatchedCustomers.length > 0 && (
+            <>
+              {unmatchedCustomers.map((c) => c.name).join(", ")} har ingen ordrer (kun venstre).{" "}
+            </>
+          )}
+          {walkInOrders.length > 0 && (
+            <>
+              Walk-in-ordre #{walkInOrders.map((o) => o.id).join(", #")} har{" "}
+              <code>customer_id NULL</code> (kun højre ved RIGHT/FULL).
+            </>
+          )}
         </p>
       )}
 

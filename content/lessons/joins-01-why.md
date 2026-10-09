@@ -35,7 +35,7 @@ Det skalerer ikke. I stedet **kobler** du tabellerne i én forespørgsel med `JO
 
 ## Se nøglerne i aktion
 
-Klik rundt i diagrammet: hver streg er et match på `customer_id`. Clara har ingen ordrer — det bliver vigtigt ved LEFT JOIN.
+Klik rundt i diagrammet: hver streg er et match på `customer_id`. Clara har ingen ordrer, og der findes walk-in-ordrer med `customer_id NULL` — det giver huller på **begge** sider ved FULL JOIN.
 
 ```join-viz
 match
@@ -47,6 +47,6 @@ match
 |-------|-------------|--------------|
 | `customers` | `id` | — |
 | `products` | `id` | — |
-| `orders` | `id` | `customer_id` → customers, `product_id` → products |
+| `orders` | `id` | `customer_id` → customers (kan være `NULL`), `product_id` → products |
 
 Næste lektion: `INNER JOIN` — kun de rækker, hvor nøglerne matcher.

@@ -1,8 +1,13 @@
-/** Mini-café-data til JOIN-visualiseringer (bevidst med huller). */
+/** Mini-café-data til JOIN-visualiseringer (bevidst med huller på begge sider). */
 
 export type DemoCustomer = { id: number; name: string; city: string };
 export type DemoProduct = { id: number; name: string; category: string };
-export type DemoOrder = { id: number; customer_id: number; product_id: number; quantity: number };
+export type DemoOrder = {
+  id: number;
+  customer_id: number | null;
+  product_id: number;
+  quantity: number;
+};
 
 export const DEMO_CUSTOMERS: DemoCustomer[] = [
   { id: 1, name: "Anna", city: "Viborg" },
@@ -16,11 +21,16 @@ export const DEMO_PRODUCTS: DemoProduct[] = [
   { id: 3, name: "Croissant", category: "Bagværk" },
 ];
 
-/** Clara (3) har ingen ordrer. Croissant (3) har ingen ordrer. */
+/**
+ * Clara (3) har ingen ordrer (kun venstre).
+ * Ordre #13 er walk-in med customer_id NULL (kun højre).
+ * Croissant (3) har ingen ordrer (produktsiden i LEFT JOIN-demo).
+ */
 export const DEMO_ORDERS: DemoOrder[] = [
   { id: 10, customer_id: 1, product_id: 1, quantity: 2 },
   { id: 11, customer_id: 2, product_id: 2, quantity: 1 },
   { id: 12, customer_id: 1, product_id: 2, quantity: 1 },
+  { id: 13, customer_id: null, product_id: 1, quantity: 1 },
 ];
 
 export type JoinKind = "inner" | "left" | "right" | "full";
@@ -33,7 +43,7 @@ export type JoinResultRow = {
   fromRight: boolean;
 };
 
-/** Simpel LEFT/RIGHT-simulering: customers ⨝ orders på customer_id. */
+/** customers ⨝ orders på customer_id (NULL matcher aldrig). */
 export function joinCustomersOrders(kind: JoinKind): JoinResultRow[] {
   const rows: JoinResultRow[] = [];
   const usedOrders = new Set<number>();
@@ -66,8 +76,19 @@ export function joinCustomersOrders(kind: JoinKind): JoinResultRow[] {
   }
 
   if (kind === "right" || kind === "full") {
-    // I denne demo har alle ordrer en kunde — tilføj ingen ekstra.
-    // Vis dog “orphan” koncept via produkter i anden widget.
+    for (const o of DEMO_ORDERS) {
+      if (usedOrders.has(o.id)) continue;
+      const hasCustomer = o.customer_id != null && DEMO_CUSTOMERS.some((c) => c.id === o.customer_id);
+      if (hasCustomer) continue;
+      const p = DEMO_PRODUCTS.find((x) => x.id === o.product_id);
+      rows.push({
+        leftLabel: "NULL",
+        rightLabel: `ordre #${o.id} (${p?.name ?? "?"})`,
+        matched: false,
+        fromLeft: false,
+        fromRight: true,
+      });
+    }
   }
 
   if (kind === "inner") {

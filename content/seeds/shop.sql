@@ -18,9 +18,10 @@ CREATE TABLE products (
   in_stock BOOLEAN NOT NULL DEFAULT TRUE
 );
 
+-- customer_id må være NULL (walk-in / anonym ordre) — så FULL/RIGHT JOIN kan have “kun højre”.
 CREATE TABLE orders (
   id SERIAL PRIMARY KEY,
-  customer_id INT NOT NULL REFERENCES customers(id),
+  customer_id INT REFERENCES customers(id),
   product_id INT NOT NULL REFERENCES products(id),
   quantity INT NOT NULL,
   order_date DATE NOT NULL
@@ -44,13 +45,13 @@ INSERT INTO products (name, category, price, in_stock) VALUES
   ('Smoothie', 'Drikke', 42.00, TRUE),
   ('Saladsandwich', 'Mad', 52.00, TRUE);
 
+-- Clara (3) har bevidst ingen ordrer (LEFT/FULL: kun venstre).
+-- To walk-in-ordrer med customer_id NULL (RIGHT/FULL: kun højre).
 INSERT INTO orders (customer_id, product_id, quantity, order_date) VALUES
   (1, 1, 2, '2024-04-01'),
   (1, 3, 1, '2024-04-02'),
   (2, 2, 1, '2024-04-02'),
   (2, 4, 2, '2024-04-03'),
-  (3, 5, 3, '2024-04-04'),
-  (3, 1, 1, '2024-04-05'),
   (4, 4, 1, '2024-04-05'),
   (4, 2, 2, '2024-04-06'),
   (5, 7, 1, '2024-04-07'),
@@ -58,4 +59,6 @@ INSERT INTO orders (customer_id, product_id, quantity, order_date) VALUES
   (6, 3, 2, '2024-04-08'),
   (6, 1, 1, '2024-04-09'),
   (1, 7, 2, '2024-04-10'),
-  (2, 5, 1, '2024-04-11');
+  (2, 5, 1, '2024-04-11'),
+  (NULL, 1, 1, '2024-04-12'),
+  (NULL, 3, 2, '2024-04-13');

@@ -16,7 +16,7 @@ sandbox:
     SELECT customer_id, COUNT(*)::int AS antal
     FROM orders
     GROUP BY customer_id
-    ORDER BY customer_id;
+    ORDER BY customer_id NULLS LAST;
 ---
 
 # Opgave C — Aggregater og funktioner
@@ -25,7 +25,7 @@ Afslutningsopgave for SELECT-modulet.
 
 ## Del 1
 
-Vis antal ordrer pr. kunde: kolonnerne `customer_id` og `antal`, sorteret på `customer_id`.
+Vis antal ordrer pr. `customer_id` (inkl. walk-in med `NULL`), sorteret med `ORDER BY customer_id NULLS LAST`.
 
 ## Del 2
 

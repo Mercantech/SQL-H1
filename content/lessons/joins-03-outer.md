@@ -57,7 +57,14 @@ Spejlvendt `LEFT JOIN` (alle fra højre). Mindre brugt — de fleste skriver om 
 
 ## FULL OUTER JOIN
 
-Alle fra begge sider. Sjældent i hverdagen, men nyttigt at kende — se **FULL** i diagrammet ovenfor.
+Alle fra begge sider. I café-dataen: Clara (ingen ordrer) **og** walk-in-ordrer (`customer_id` er `NULL`). Se **FULL** i diagrammet — alle tre zoner får hit.
+
+```sql
+SELECT c.name, o.id AS ordre_id
+FROM customers c
+FULL OUTER JOIN orders o ON o.customer_id = c.id
+ORDER BY c.name NULLS LAST, o.id;
+```
 
 ## Prøv selv
 

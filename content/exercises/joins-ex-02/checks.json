@@ -13,11 +13,11 @@
       "expected": [
         ["Chokoladebolle", 0],
         ["Saladsandwich", 1],
-        ["Croissant", 2],
+        ["Te", 1],
         ["Latte", 2],
         ["Sandwich", 2],
         ["Smoothie", 2],
-        ["Te", 2],
+        ["Croissant", 3],
         ["Espresso", 3]
       ],
       "message": "Del 2: Antal ordrer pr. produkt"
@@ -28,7 +28,6 @@
       "expected": [
         ["Anna Jensen"],
         ["Bo Nielsen"],
-        ["Clara Holm"],
         ["David Lund"],
         ["Eva Mikkelsen"],
         ["Freja Olsen"]

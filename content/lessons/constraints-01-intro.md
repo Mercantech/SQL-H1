@@ -22,7 +22,7 @@ En **constraint** er en regel databasen håndhæver. I café-seed’en er bl.a.:
 |-------|----------|
 | `NOT NULL` | `customers.name`, `products.price` |
 | `PRIMARY KEY` | `id`-kolonner |
-| `REFERENCES` (FK) | `orders.customer_id` |
+| `REFERENCES` (FK) | `orders.customer_id` → `customers` (må være `NULL` = walk-in) |
 
 Du må **ikke** køre `ALTER TABLE` i MVP — men du kan **mærke** reglerne.
 
@@ -37,13 +37,20 @@ VALUES (NULL, 'Drikke', 10);
 
 ## Fremmednøgle
 
-Prøv (skal fejle — kunden findes ikke):
+Ugyldigt kunde-id fejler (kunden findes ikke):
 
 ```sql
 INSERT INTO orders (customer_id, product_id, quantity, order_date)
 VALUES (999, 1, 1, '2024-05-01');
 ```
 
+Walk-in er OK — `customer_id` må være `NULL` (anonym ordre):
+
+```sql
+INSERT INTO orders (customer_id, product_id, quantity, order_date)
+VALUES (NULL, 1, 1, '2024-05-01');
+```
+
 ## Hvorfor constraints?
 
-De beskytter **konsistens**: ingen ordrer uden kunde, ingen produkter uden navn. Det er samme idé som validering i applikationskode — bare tættere på dataene.
+De beskytter **konsistens**: ingen ordrer med *ugyldig* kunde, ingen produkter uden navn. `NULL` betyder “ingen kunde knyttet” — nyttigt til FULL/RIGHT JOIN. Det er samme idé som validering i applikationskode — bare tættere på dataene.

@@ -7,12 +7,14 @@ type Props = {
 
 type Hop = "customers" | "orders" | "products";
 
+const LINKED_ORDERS = DEMO_ORDERS.filter((o) => o.customer_id != null);
+
 export function JoinChainViz({ onInsert }: Props) {
-  const [orderId, setOrderId] = useState(DEMO_ORDERS[0]?.id ?? 10);
+  const [orderId, setOrderId] = useState(LINKED_ORDERS[0]?.id ?? 10);
   const [pulse, setPulse] = useState<Hop | null>(null);
 
   const path = useMemo(() => {
-    const order = DEMO_ORDERS.find((o) => o.id === orderId) ?? DEMO_ORDERS[0];
+    const order = LINKED_ORDERS.find((o) => o.id === orderId) ?? LINKED_ORDERS[0];
     const customer = DEMO_CUSTOMERS.find((c) => c.id === order.customer_id);
     const product = DEMO_PRODUCTS.find((p) => p.id === order.product_id);
     return { order, customer, product };
@@ -31,7 +33,7 @@ export function JoinChainViz({ onInsert }: Props) {
       </div>
 
       <div className="join-chain-picker" role="group" aria-label="Vælg ordre">
-        {DEMO_ORDERS.map((o) => (
+        {LINKED_ORDERS.map((o) => (
           <button
             key={o.id}
             type="button"

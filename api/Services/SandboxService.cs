@@ -728,7 +728,7 @@ public class SandboxService(
 
         CREATE TABLE orders (
           id SERIAL PRIMARY KEY,
-          customer_id INT NOT NULL REFERENCES customers(id),
+          customer_id INT REFERENCES customers(id),
           product_id INT NOT NULL REFERENCES products(id),
           quantity INT NOT NULL,
           order_date DATE NOT NULL
@@ -752,9 +752,10 @@ public class SandboxService(
           (1, 3, 1, '2024-04-02'),
           (2, 2, 1, '2024-04-02'),
           (2, 4, 2, '2024-04-03'),
-          (3, 5, 3, '2024-04-04'),
-          (3, 1, 1, '2024-04-05'),
           (4, 4, 1, '2024-04-05'),
-          (4, 2, 2, '2024-04-06');
+          (4, 2, 2, '2024-04-06'),
+          (NULL, 1, 1, '2024-04-12'),
+          (NULL, 3, 2, '2024-04-13');
         """;
 }
+
