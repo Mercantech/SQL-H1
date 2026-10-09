@@ -46,6 +46,11 @@ function getFenceLang(preChildren: ReactNode): string | null {
   return null;
 }
 
+/** Side-titel kommer fra frontmatter — fjern ledende # i brødteksten. */
+export function stripLeadingH1(markdown: string) {
+  return markdown.replace(/^\uFEFF?\s*#\s+[^\n]+\n+/, "");
+}
+
 export function Markdown({ children, onInsertCode, onRunCode }: Props) {
   return (
     <ReactMarkdown
@@ -66,7 +71,7 @@ export function Markdown({ children, onInsertCode, onRunCode }: Props) {
         },
       }}
     >
-      {children}
+      {stripLeadingH1(children)}
     </ReactMarkdown>
   );
 }
