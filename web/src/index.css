@@ -987,7 +987,7 @@ body.is-resizing-split .lesson {
   display: flex;
   justify-content: flex-end;
   gap: 0.35rem;
-  padding: 0.4rem 0.5rem 0;
+  padding: 0.35rem 0.5rem 0.2rem;
 }
 
 .md-code-btn {
@@ -1021,7 +1021,15 @@ body.is-resizing-split .lesson {
   margin: 0;
   background: transparent;
   border-radius: 0;
-  padding: 0.65rem 1rem 1rem;
+  padding: 0.55rem 1rem 0.85rem;
+}
+
+.md-code--plain pre {
+  padding: 0.75rem 1rem 0.85rem;
+}
+
+.md-code--sql pre {
+  padding-top: 0.35rem;
 }
 
 .md pre {
