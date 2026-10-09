@@ -2,7 +2,17 @@ import { useState } from "react";
 import postgresLogo from "../assets/postgresql.svg";
 
 /** DB-Engines Ranking, juni 2026 (db-engines.com). Score er deres popularitetsindeks — ikke markedsandel. */
-const RANKING = [
+type RankRow = {
+  id: string;
+  name: string;
+  score: number;
+  yoy: number;
+  license: string;
+  accent: string;
+  highlight?: boolean;
+};
+
+const RANKING: RankRow[] = [
   { id: "oracle", name: "Oracle", score: 1140, yoy: -90, license: "Proprietær", accent: "#c45c26" },
   { id: "mysql", name: "MySQL", score: 856, yoy: -97, license: "Open source", accent: "#3d7ea6" },
   { id: "mssql", name: "SQL Server", score: 698, yoy: -79, license: "Proprietær", accent: "#5a6b8c" },
@@ -15,7 +25,7 @@ const RANKING = [
     accent: "#1f6b4a",
     highlight: true,
   },
-] as const;
+];
 
 const MAX_SCORE = Math.max(...RANKING.map((r) => r.score));
 
