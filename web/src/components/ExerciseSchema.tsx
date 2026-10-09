@@ -18,6 +18,7 @@ function escapeHtml(text: string) {
 }
 
 export function ExerciseSchema({ schema }: Props) {
+  const [open, setOpen] = useState(false);
   const [ddlOpen, setDdlOpen] = useState(false);
   const [active, setActive] = useState(schema.tables[0]?.name ?? "");
 
@@ -33,91 +34,107 @@ export function ExerciseSchema({ schema }: Props) {
   if (!table) return null;
 
   const fks = schema.relations.filter((r) => r.fromTable === table.name);
+  const summary = `${schema.tables.length} tabeller${
+    schema.relations.length > 0 ? ` · ${schema.relations.length} relationer` : ""
+  }`;
 
   return (
-    <section className="ex-schema" aria-label="Database-schema til opgaven">
-      <div className="ex-schema-head">
-        <div>
+    <section className={`ex-schema ${open ? "open" : "closed"}`} aria-label="Database-schema til opgaven">
+      <button
+        type="button"
+        className="ex-schema-toggle"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+      >
+        <span className="ex-schema-toggle-main">
           <strong>Schema</strong>
-          <span className="ex-schema-sub">
-            {schema.tables.length} tabeller
-            {schema.relations.length > 0 ? ` · ${schema.relations.length} relationer` : ""}
-          </span>
-        </div>
-        <button
-          type="button"
-          className={`btn ghost ex-schema-ddl-btn ${ddlOpen ? "active" : ""}`}
-          aria-expanded={ddlOpen}
-          onClick={() => setDdlOpen((v) => !v)}
-        >
-          {ddlOpen ? "Skjul SQL" : "Vis CREATE TABLE"}
-        </button>
-      </div>
+          <span className="ex-schema-sub">{summary}</span>
+        </span>
+        <span className="ex-schema-chevron" aria-hidden="true">
+          {open ? "▾" : "▸"}
+        </span>
+        <span className="ex-schema-toggle-label">{open ? "Skjul" : "Vis"}</span>
+      </button>
 
-      <div className="ex-schema-tabs" role="tablist" aria-label="Tabeller">
-        {schema.tables.map((t) => (
-          <button
-            key={t.name}
-            type="button"
-            role="tab"
-            aria-selected={t.name === table.name}
-            className={t.name === table.name ? "active" : ""}
-            onClick={() => setActive(t.name)}
-          >
-            {t.name}
-          </button>
-        ))}
-      </div>
+      {open && (
+        <div className="ex-schema-body">
+          <div className="ex-schema-toolbar">
+            <button
+              type="button"
+              className={`btn ghost ex-schema-ddl-btn ${ddlOpen ? "active" : ""}`}
+              aria-expanded={ddlOpen}
+              onClick={() => setDdlOpen((v) => !v)}
+            >
+              {ddlOpen ? "Skjul SQL" : "Vis CREATE TABLE"}
+            </button>
+          </div>
 
-      <div className="ex-schema-table-wrap">
-        <table className="ex-schema-table">
-          <thead>
-            <tr>
-              <th>Kolonne</th>
-              <th>Type</th>
-              <th>Nøgle</th>
-            </tr>
-          </thead>
-          <tbody>
-            {table.columns.map((c) => (
-              <tr key={c.name}>
-                <td>
-                  <code>{c.name}</code>
-                  {c.nullable ? <span className="ex-schema-null">NULL</span> : null}
-                </td>
-                <td className="ex-schema-type">{c.dataType}</td>
-                <td className="ex-schema-keys">
-                  {c.isPrimaryKey && <span className="ex-badge pk">PK</span>}
-                  {c.isForeignKey && <span className="ex-badge fk">FK</span>}
-                  {!c.isPrimaryKey && !c.isForeignKey && <span className="muted">—</span>}
-                </td>
-              </tr>
+          <div className="ex-schema-tabs" role="tablist" aria-label="Tabeller">
+            {schema.tables.map((t) => (
+              <button
+                key={t.name}
+                type="button"
+                role="tab"
+                aria-selected={t.name === table.name}
+                className={t.name === table.name ? "active" : ""}
+                onClick={() => setActive(t.name)}
+              >
+                {t.name}
+              </button>
             ))}
-          </tbody>
-        </table>
-      </div>
+          </div>
 
-      {fks.length > 0 && (
-        <p className="ex-schema-rels">
-          {fks.map((r) => (
-            <span key={`${r.fromColumn}-${r.toTable}`}>
-              <code>
-                {r.fromTable}.{r.fromColumn}
-              </code>{" "}
-              →{" "}
-              <code>
-                {r.toTable}.{r.toColumn}
-              </code>
-            </span>
-          ))}
-        </p>
-      )}
+          <div className="ex-schema-table-wrap">
+            <table className="ex-schema-table">
+              <thead>
+                <tr>
+                  <th>Kolonne</th>
+                  <th>Type</th>
+                  <th>Nøgle</th>
+                </tr>
+              </thead>
+              <tbody>
+                {table.columns.map((c) => (
+                  <tr key={c.name}>
+                    <td>
+                      <code>{c.name}</code>
+                      {c.nullable ? <span className="ex-schema-null">NULL</span> : null}
+                    </td>
+                    <td className="ex-schema-type">{c.dataType}</td>
+                    <td className="ex-schema-keys">
+                      {c.isPrimaryKey && <span className="ex-badge pk">PK</span>}
+                      {c.isForeignKey && <span className="ex-badge fk">FK</span>}
+                      {!c.isPrimaryKey && !c.isForeignKey && <span className="muted">—</span>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-      {ddlOpen && (
-        <div className="ex-schema-ddl">
-          <pre>
-            <code className="hljs language-sql" dangerouslySetInnerHTML={{ __html: highlighted }} />
-          </pre>
+          {fks.length > 0 && (
+            <p className="ex-schema-rels">
+              {fks.map((r) => (
+                <span key={`${r.fromColumn}-${r.toTable}`}>
+                  <code>
+                    {r.fromTable}.{r.fromColumn}
+                  </code>{" "}
+                  →{" "}
+                  <code>
+                    {r.toTable}.{r.toColumn}
+                  </code>
+                </span>
+              ))}
+            </p>
+          )}
+
+          {ddlOpen && (
+            <div className="ex-schema-ddl">
+              <pre>
+                <code className="hljs language-sql" dangerouslySetInnerHTML={{ __html: highlighted }} />
+              </pre>
+            </div>
+          )}
         </div>
       )}
     </section>

@@ -612,32 +612,74 @@ body.is-resizing-split .lesson {
 
 .ex-schema {
   margin: 0.35rem 0 1.15rem;
-  padding: 0.75rem 0.85rem 0.85rem;
   border: 1px solid var(--line);
   border-radius: 14px;
   background:
     linear-gradient(165deg, rgba(255, 255, 255, 0.95) 0%, rgba(232, 242, 228, 0.7) 100%);
+  overflow: hidden;
 }
 
-.ex-schema-head {
+.ex-schema-toggle {
+  width: 100%;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 0.55rem;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.7rem 0.85rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: background 0.15s ease;
 }
 
-.ex-schema-head strong {
+.ex-schema-toggle:hover {
+  background: rgba(31, 107, 74, 0.06);
+}
+
+.ex-schema.open .ex-schema-toggle {
+  border-bottom: 1px solid var(--line);
+}
+
+.ex-schema-toggle-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.ex-schema-toggle-main strong {
   font-family: var(--font-serif);
   font-size: 1.05rem;
-  display: block;
 }
 
 .ex-schema-sub {
-  display: block;
   font-size: 0.82rem;
   color: var(--muted);
-  margin-top: 0.1rem;
+}
+
+.ex-schema-chevron {
+  font-size: 0.95rem;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.ex-schema-toggle-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.ex-schema-body {
+  padding: 0.75rem 0.85rem 0.85rem;
+}
+
+.ex-schema-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
 }
 
 .ex-schema-ddl-btn {
