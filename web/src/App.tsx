@@ -7,6 +7,7 @@ import { ModuleDetail } from "./pages/ModuleDetail";
 import { Modules } from "./pages/Modules";
 import { Database } from "./pages/Database";
 import { Playground } from "./pages/Playground";
+import { Profile } from "./pages/Profile";
 import { Progress } from "./pages/Progress";
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="playground" element={<Playground />} />
           <Route path="database" element={<Database />} />
           <Route path="progress" element={<Progress />} />
+          <Route path="profile" element={<Profile />} />
           <Route path="auth/callback" element={<AuthCallback />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

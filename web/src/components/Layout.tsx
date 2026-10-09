@@ -24,7 +24,9 @@ export function Layout() {
         <div className="auth-slot">
           {loggedIn ? (
             <>
-              <span className="user-chip">{profile?.name || "Elev"}</span>
+              <Link to="/profile" className="user-chip" title="Åbn profil">
+                {profile?.name || "Elev"}
+              </Link>
               <button type="button" className="btn ghost" onClick={() => logout()}>
                 Log ud
               </button>
