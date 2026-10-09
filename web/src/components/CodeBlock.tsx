@@ -2,7 +2,9 @@ import { isValidElement, useState, type ReactNode } from "react";
 
 type Props = {
   children?: ReactNode;
+  language?: string | null;
   onInsert?: (code: string) => void;
+  onRun?: (code: string) => void;
 };
 
 function getText(node: ReactNode): string {
@@ -13,9 +15,16 @@ function getText(node: ReactNode): string {
   return "";
 }
 
-export function CodeBlock({ children, onInsert }: Props) {
+function isSqlLanguage(lang: string | null | undefined) {
+  if (!lang) return false;
+  const l = lang.toLowerCase();
+  return l === "sql" || l === "postgresql" || l === "postgres" || l === "psql";
+}
+
+export function CodeBlock({ children, language, onInsert, onRun }: Props) {
   const [copied, setCopied] = useState(false);
   const code = getText(children).replace(/\n$/, "");
+  const canRun = Boolean(onRun && isSqlLanguage(language) && code.trim());
 
   async function copy() {
     try {
@@ -36,6 +45,15 @@ export function CodeBlock({ children, onInsert }: Props) {
         {onInsert && (
           <button type="button" className="md-code-btn" onClick={() => onInsert(code)}>
             Indsæt i editor
+          </button>
+        )}
+        {canRun && (
+          <button
+            type="button"
+            className="md-code-btn md-code-btn-run"
+            onClick={() => onRun?.(code)}
+          >
+            Kør
           </button>
         )}
       </div>

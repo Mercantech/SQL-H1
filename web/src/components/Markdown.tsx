@@ -10,6 +10,7 @@ import { JoinViz, parseJoinVizFence } from "./join/JoinViz";
 type Props = {
   children: string;
   onInsertCode?: (code: string) => void;
+  onRunCode?: (code: string) => void;
 };
 
 const rehypePlugins: PluggableList = [
@@ -45,7 +46,7 @@ function getFenceLang(preChildren: ReactNode): string | null {
   return null;
 }
 
-export function Markdown({ children, onInsertCode }: Props) {
+export function Markdown({ children, onInsertCode, onRunCode }: Props) {
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
@@ -57,7 +58,11 @@ export function Markdown({ children, onInsertCode }: Props) {
             const raw = getText(preChildren).replace(/\n$/, "");
             return <JoinViz config={parseJoinVizFence(raw)} onInsert={onInsertCode} />;
           }
-          return <CodeBlock onInsert={onInsertCode}>{preChildren}</CodeBlock>;
+          return (
+            <CodeBlock language={lang} onInsert={onInsertCode} onRun={onRunCode}>
+              {preChildren}
+            </CodeBlock>
+          );
         },
       }}
     >

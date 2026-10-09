@@ -749,6 +749,16 @@ body.is-resizing-split .lesson {
   background: rgba(215, 240, 226, 0.16);
 }
 
+.md-code-btn-run {
+  border-color: rgba(125, 211, 168, 0.55);
+  background: rgba(31, 107, 74, 0.55);
+  color: #f3faf5;
+}
+
+.md-code-btn-run:hover {
+  background: rgba(31, 107, 74, 0.75);
+}
+
 .md-code pre {
   margin: 0;
   background: transparent;

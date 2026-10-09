@@ -153,6 +153,14 @@ export function Learn() {
                     ? (code) => setSql((prev) => appendCodeToEditor(prev, code))
                     : undefined
                 }
+                onRunCode={
+                  showSandbox
+                    ? (code) => {
+                        setSql(code);
+                        void onRun(code);
+                      }
+                    : undefined
+                }
               >
                 {item.markdown}
               </Markdown>
