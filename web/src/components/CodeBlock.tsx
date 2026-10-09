@@ -21,22 +21,31 @@ export function isSqlLanguage(lang: string | null | undefined) {
   return l === "sql" || l === "postgresql" || l === "postgres" || l === "psql";
 }
 
-/** Fjern ledende newline fra highlight.js / markdown fences. */
+/**
+ * Fjern kun den ledende newline fra fence-start (markdown/rehype).
+ * Gå kun venstre kant — trim ikke \n mellem highlight.js-tokens.
+ */
 function trimFenceChildren(children: ReactNode): ReactNode {
   if (children == null || typeof children === "boolean") return children;
   if (typeof children === "string") return children.replace(/^\n+/, "");
-  if (Array.isArray(children)) return children.map((c) => trimFenceChildren(c));
+  if (Array.isArray(children)) {
+    if (children.length === 0) return children;
+    const first = children[0];
+    if (typeof first === "string") {
+      const trimmed = first.replace(/^\n+/, "");
+      if (trimmed === "" && /^\n+$/.test(first)) return children.slice(1);
+      if (trimmed === first) return children;
+      return [trimmed, ...children.slice(1)];
+    }
+    const trimmedFirst = trimFenceChildren(first);
+    if (trimmedFirst === first) return children;
+    return [trimmedFirst, ...children.slice(1)];
+  }
   if (isValidElement<{ children?: ReactNode }>(children)) {
     const inner = children.props.children;
-    if (typeof inner === "string") {
-      return cloneElement(children, {}, inner.replace(/^\n+/, ""));
-    }
-    if (Array.isArray(inner) && typeof inner[0] === "string") {
-      const next = [...inner];
-      next[0] = (next[0] as string).replace(/^\n+/, "");
-      return cloneElement(children, {}, next);
-    }
-    return cloneElement(children, {}, trimFenceChildren(inner));
+    const next = trimFenceChildren(inner);
+    if (next === inner) return children;
+    return cloneElement(children, {}, next);
   }
   return children;
 }
