@@ -53,3 +53,5 @@ ORDER BY c.name;
 ```
 
 Brug emulatoren frit — målet er at **tænke i nøgler**, ikke kun i enkelte tabeller.
+
+Næste lektioner: **normalisering** (1NF–3NF) og **designmønstre** til at bygge skemaer bevidst.

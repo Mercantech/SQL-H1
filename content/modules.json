@@ -37,14 +37,14 @@
   },
   {
     "slug": "relations",
-    "title": "Relationstyper",
-    "description": "Primær-/fremmednøgler, 1:n og n:n — forstået via café-skemaet og SELECT.",
+    "title": "Relationstyper og database-design",
+    "description": "Nøgler, kardinalitet, normalisering (1NF–3NF) og designmønstre — forstået via café-skemaet.",
     "order": 4,
     "scaffoldOnly": false,
     "objectives": [
-      "Skelne PK og FK",
-      "Forklare 1:n og n:n",
-      "Udforske relationer med JOIN"
+      "Skelne PK/FK og forklare 1:n / n:n",
+      "Anvende normalisering og spotte anomalier",
+      "Genkende designmønstre (lookup, kobling, soft delete m.m.)"
     ]
   },
   {

@@ -1,5 +1,6 @@
 ---
 title: Tabeller og E/R (kommer snart)
+slug: ddl-er-stub
 module: ddl-er
 order: 1
 kind: theory
@@ -10,4 +11,6 @@ objectives:
 
 # Tabeller og E/R
 
-Dette modul er under opbygning. Her skal du lære at oprette, redigere og slette tabeller samt dokumentere med E/R-diagram.
+Dette modul får senere fuld **DDL** (`CREATE`/`ALTER`/`DROP TABLE`).
+
+Indtil da ligger teorien om **normalisering** og **designmønstre** i modulet *Relationstyper og database-design* — og du kan udforske café-skemaet visuelt under **Database**.
