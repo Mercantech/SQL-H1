@@ -14,13 +14,13 @@
   {
     "slug": "dml",
     "title": "Data-manipulation (DML)",
-    "description": "Dyb teori i DML koblet til CRUD: Create/Read/Update/Delete med INSERT, SELECT, UPDATE og DELETE — inkl. constraints, RETURNING og fremmednøgler.",
+    "description": "Dyb teori i DML koblet til CRUD: INSERT/UPDATE/DELETE, constraints, RETURNING samt komplekse sletninger med fremmednøgler og cascading.",
     "order": 2,
     "scaffoldOnly": false,
     "objectives": [
       "Forklare DML vs SELECT/DDL og mappe til CRUD",
-      "Oprette data sikkert med INSERT (Create)",
-      "Opdatere og slette med sikre WHERE-filtre (Update/Delete)"
+      "Oprette, opdatere og slette data sikkert",
+      "Vælge slettestrategi (RESTRICT, CASCADE, SET NULL) bevidst"
     ]
   },
   {

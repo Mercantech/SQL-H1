@@ -168,4 +168,4 @@ Delete  DELETE   → annullér ordren
 2. `DELETE` dem med `RETURNING`.
 3. Prøv (forstå fejlen) at slette en kunde der stadig har ordrer — og forklar hvorfor.
 
-Når du er tryg ved Create, Read, Update og Delete i SQL, er du klar til DML-opgaverne — og til at genkende CRUD i din fremtidige API.
+Næste lektion går i dybden: **cascading**, `ON DELETE`-regler og strategier for sammenhængende data.
