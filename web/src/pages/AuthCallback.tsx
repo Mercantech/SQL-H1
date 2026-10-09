@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { provisionSandbox } from "../api";
-import { handleAuthCallback } from "../auth";
+import { consumeReturnPath, handleAuthCallback } from "../auth";
 
 export function AuthCallback() {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export function AuthCallback() {
         } catch {
           /* playground forsøger igen */
         }
-        navigate("/", { replace: true });
+        navigate(consumeReturnPath("/"), { replace: true });
       } catch (e) {
         setError(e instanceof Error ? e.message : "Login fejlede");
       }

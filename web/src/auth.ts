@@ -30,7 +30,20 @@ const KEYS = {
   refresh: "sqlh1_refresh_token",
   expiresAt: "sqlh1_expires_at",
   exchangeLock: "sqlh1_oauth_exchange_lock",
+  returnTo: "sqlh1_oauth_return_to",
 };
+
+/** Kun relative app-stier — undgå open redirect. */
+export function safeReturnPath(path: string | null | undefined, fallback = "/") {
+  if (!path) return fallback;
+  if (!path.startsWith("/") || path.startsWith("//")) return fallback;
+  if (path.startsWith("/auth/callback")) return fallback;
+  return path;
+}
+
+function currentAppPath() {
+  return `${window.location.pathname}${window.location.search}${window.location.hash}`;
+}
 
 function randomString(bytes = 32) {
   const arr = new Uint8Array(bytes);
@@ -49,13 +62,15 @@ async function sha256(plain: string) {
   return crypto.subtle.digest("SHA-256", new TextEncoder().encode(plain));
 }
 
-export async function beginLogin() {
+export async function beginLogin(returnTo?: string) {
   const verifier = randomString(48);
   const state = randomString(24);
   const challenge = base64Url(await sha256(verifier));
   sessionStorage.setItem(KEYS.verifier, verifier);
   sessionStorage.setItem(KEYS.state, state);
   sessionStorage.removeItem(KEYS.exchangeLock);
+  const dest = safeReturnPath(returnTo ?? currentAppPath());
+  sessionStorage.setItem(KEYS.returnTo, dest);
   const url = new URL(authConfig.authorizeUrl);
   url.searchParams.set("response_type", "code");
   url.searchParams.set("client_id", authConfig.clientId);
@@ -64,6 +79,13 @@ export async function beginLogin() {
   url.searchParams.set("code_challenge", challenge);
   url.searchParams.set("code_challenge_method", "S256");
   window.location.assign(url.toString());
+}
+
+/** Hent og ryd gemt post-login sti. */
+export function consumeReturnPath(fallback = "/") {
+  const saved = sessionStorage.getItem(KEYS.returnTo);
+  sessionStorage.removeItem(KEYS.returnTo);
+  return safeReturnPath(saved, fallback);
 }
 
 function storeTokens(data: {
