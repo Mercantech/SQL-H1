@@ -8,6 +8,7 @@ import {
 } from "../api";
 import { beginLogin, isLoggedIn } from "../auth";
 import { ErDiagram } from "../components/ErDiagram";
+import { WhyPostgres } from "../components/WhyPostgres";
 import postgresLogo from "../assets/postgresql.svg";
 
 function DiffBadge({ status }: { status: string }) {
@@ -275,55 +276,6 @@ export function Database() {
           <WhyPostgres />
         </>
       )}
-    </section>
-  );
-}
-
-function WhyPostgres() {
-  return (
-    <section className="db-why" aria-labelledby="why-postgres-title">
-      <h2 id="why-postgres-title">Hvorfor PostgreSQL?</h2>
-      <p>
-        SQL-H1 kører på <strong>PostgreSQL</strong> — ikke fordi de andre er “forkerte”, men fordi Postgres
-        passer ekstra godt til undervisning, cloud og moderne backend-arbejde.
-      </p>
-      <div className="db-why-grid">
-        <article>
-          <h3>Standard-SQL tæt på</h3>
-          <p>
-            Postgres følger SQL-standarden tættere end mange alternativer. Det du lærer her (
-            <code>SELECT</code>, <code>JOIN</code>, <code>WITH</code>, vinduesfunktioner) overføres nemt til
-            andre systemer.
-          </p>
-        </article>
-        <article>
-          <h3>Frem for Microsoft SQL Server</h3>
-          <p>
-            MSSQL er stærkt i Windows/.NET-miljøer, men er proprietært og tungere at hoste. Postgres er
-            open source, kører overalt (Docker, Linux, cloud) og giver dig samme relationelle kerne uden
-            licensbarriere — praktisk når hver elev får sin egen database.
-          </p>
-        </article>
-        <article>
-          <h3>Frem for MySQL / MariaDB</h3>
-          <p>
-            MySQL er populært til websider, men har historisk været mere “løs” med typer, constraints og
-            standard-SQL. Postgres er kendt for strengere dataintegritet, rige datatyper og avancerede
-            forespørgsler — nyttigt når målet er at lære <em>rigtig</em> relationel SQL.
-          </p>
-        </article>
-        <article>
-          <h3>Klar til erhvervet</h3>
-          <p>
-            Postgres bruges bredt i produktion (startups, offentlige systemer, SaaS). Samme motor som her
-            møder du i mange .NET-API’er med Npgsql — så undervisningen matcher det, du senere bygger med.
-          </p>
-        </article>
-      </div>
-      <p className="db-why-note muted">
-        Bundlinjen: lær SQL-tankegangen først. Dialekt-forskelle (T-SQL, MySQL-specifikke funktioner) er
-        små justeringer, når du forstår relationer, nøgler og forespørgsler.
-      </p>
     </section>
   );
 }
