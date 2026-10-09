@@ -10,6 +10,34 @@ export type ModuleDto = {
   items: { slug: string; title: string; kind: string; order: number }[];
 };
 
+export type SchemaColumn = {
+  name: string;
+  dataType: string;
+  nullable: boolean;
+  isPrimaryKey: boolean;
+  isForeignKey: boolean;
+  referencesTable?: string | null;
+  referencesColumn?: string | null;
+};
+
+export type SchemaTable = {
+  name: string;
+  columns: SchemaColumn[];
+};
+
+export type SchemaRelation = {
+  fromTable: string;
+  fromColumn: string;
+  toTable: string;
+  toColumn: string;
+};
+
+export type SeedSchema = {
+  ddl: string;
+  tables: SchemaTable[];
+  relations: SchemaRelation[];
+};
+
 export type ContentDto = {
   slug: string;
   title: string;
@@ -25,6 +53,7 @@ export type ContentDto = {
     checksPath?: string;
     starterSql?: string;
   } | null;
+  schema?: SeedSchema | null;
 };
 
 export type ResultSet = {

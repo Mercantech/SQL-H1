@@ -10,6 +10,7 @@ import {
   type ExecuteResult,
 } from "../api";
 import { beginLogin, isLoggedIn } from "../auth";
+import { ExerciseSchema } from "../components/ExerciseSchema";
 import { appendCodeToEditor, Markdown } from "../components/Markdown";
 import { LearnPager, ModuleNav } from "../components/ModuleNav";
 import { SqlEditor } from "../components/SqlEditor";
@@ -146,6 +147,7 @@ export function Learn() {
               {item.kind === "exercise" ? "Opgave" : "Teori"}
             </p>
             <h1>{item.title}</h1>
+            {item.kind === "exercise" && item.schema && <ExerciseSchema schema={item.schema} />}
             <div className="md">
               <Markdown
                 onInsertCode={

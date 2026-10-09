@@ -31,6 +31,38 @@ public class SandboxMeta
     public string? StarterSql { get; set; }
 }
 
+public class SeedSchemaDto
+{
+    public string Ddl { get; set; } = "";
+    public List<SchemaTableDto> Tables { get; set; } = [];
+    public List<SchemaRelationDto> Relations { get; set; } = [];
+}
+
+public class SchemaTableDto
+{
+    public string Name { get; set; } = "";
+    public List<SchemaColumnDto> Columns { get; set; } = [];
+}
+
+public class SchemaColumnDto
+{
+    public string Name { get; set; } = "";
+    public string DataType { get; set; } = "";
+    public bool Nullable { get; set; }
+    public bool IsPrimaryKey { get; set; }
+    public bool IsForeignKey { get; set; }
+    public string? ReferencesTable { get; set; }
+    public string? ReferencesColumn { get; set; }
+}
+
+public class SchemaRelationDto
+{
+    public string FromTable { get; set; } = "";
+    public string FromColumn { get; set; } = "";
+    public string ToTable { get; set; } = "";
+    public string ToColumn { get; set; } = "";
+}
+
 public class ExerciseCheckFile
 {
     public string? Description { get; set; }

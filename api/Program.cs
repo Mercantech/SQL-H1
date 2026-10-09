@@ -194,7 +194,24 @@ api.MapGet("/modules", (ContentService content) =>
 api.MapGet("/content/{slug}", (string slug, ContentService content) =>
 {
     var item = content.GetContent(slug);
-    return item is null ? Results.NotFound() : Results.Json(item);
+    if (item is null) return Results.NotFound();
+
+    // Schema-overblik til opgaver (og øvrigt indhold med seed)
+    var schema = content.GetSeedSchema(item);
+
+    return Results.Json(new
+    {
+        item.Slug,
+        item.Title,
+        item.Module,
+        item.Order,
+        item.Kind,
+        item.Objectives,
+        item.Markdown,
+        item.Html,
+        item.Sandbox,
+        schema
+    });
 });
 
 api.MapPost("/sandbox/provision", async (HttpContext ctx, UserService users, SandboxService sandbox) =>

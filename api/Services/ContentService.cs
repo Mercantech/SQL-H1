@@ -73,6 +73,9 @@ public class ContentService
         return path is null ? null : File.ReadAllText(path);
     }
 
+    public SeedSchemaDto? GetSeedSchema(ContentItem item) =>
+        SeedSchemaParser.Parse(ReadSeedSql(item));
+
     public string? ReadSeedFile(string relativePath)
     {
         var path = Path.Combine(_root, relativePath.Replace('/', Path.DirectorySeparatorChar));
