@@ -3,6 +3,13 @@ export type Slide = {
   markdown: string;
 };
 
+/** True når sliden kun er en enkelt overskrift (H1–H3). */
+export function isHeadingOnlySlide(markdown: string): boolean {
+  const text = markdown.replace(/^\uFEFF/, "").trim();
+  if (!text) return false;
+  return /^#{1,3}\s+\S[^\n]*\s*$/.test(text);
+}
+
 /**
  * Del lektions-markdown i slides: intro (før første ##) + ét slide pr. ##-sektion.
  */

@@ -14,7 +14,7 @@ import { appendCodeToEditor, Markdown } from "../components/Markdown";
 import { SqlEditor } from "../components/SqlEditor";
 import { useLearnSplit } from "../hooks/useLearnSplit";
 import { buildFlatPath, type FlatStep } from "../lib/contentPath";
-import { splitMarkdownToSlides } from "../lib/splitSlides";
+import { isHeadingOnlySlide, splitMarkdownToSlides } from "../lib/splitSlides";
 
 function neighborLabel(from: FlatStep, to: FlatStep, dir: "next" | "prev") {
   const crossModule = from.moduleSlug !== to.moduleSlug;
@@ -288,47 +288,6 @@ export function Present() {
         </div>
       )}
 
-      {onLastSlide && nextLesson && currentStep && (
-        <div
-          className={`present-bridge present-bridge--next ${
-            forwardCrossModule ? "present-bridge--module" : ""
-          }`}
-        >
-          <span className="present-bridge-label">
-            {forwardCrossModule ? "Sidste slide · næste er nyt modul" : "Sidste slide i lektionen"}
-          </span>
-          <button
-            type="button"
-            className="present-bridge-btn"
-            onClick={() => goLesson(nextLesson, "next")}
-          >
-            <span className="present-bridge-dir">
-              {neighborLabel(currentStep, nextLesson, "next")}
-            </span>
-            <span className="present-bridge-title">{nextLesson.item.title}</span>
-          </button>
-        </div>
-      )}
-
-      {onFirstSlide && prevLesson && currentStep && (
-        <div
-          className={`present-bridge present-bridge--prev ${
-            backCrossModule ? "present-bridge--module" : ""
-          }`}
-        >
-          <button
-            type="button"
-            className="present-bridge-btn"
-            onClick={() => goLesson(prevLesson, "prev")}
-          >
-            <span className="present-bridge-dir">
-              {neighborLabel(currentStep, prevLesson, "prev")}
-            </span>
-            <span className="present-bridge-title">{prevLesson.item.title}</span>
-          </button>
-        </div>
-      )}
-
       <div
         ref={editorVisible ? split.containerRef : undefined}
         className={`present-main ${editorVisible ? "with-sandbox" : ""}`}
@@ -343,6 +302,44 @@ export function Present() {
         }
       >
         <section className="present-stage" aria-label={`Slide ${index + 1}`}>
+          {onLastSlide && nextLesson && currentStep && (
+            <div
+              className={`present-bridge present-bridge--next ${
+                forwardCrossModule ? "present-bridge--module" : ""
+              }`}
+            >
+              <button
+                type="button"
+                className="present-bridge-btn"
+                onClick={() => goLesson(nextLesson, "next")}
+              >
+                <span className="present-bridge-dir">
+                  {neighborLabel(currentStep, nextLesson, "next")}
+                </span>
+                <span className="present-bridge-title">{nextLesson.item.title}</span>
+              </button>
+            </div>
+          )}
+
+          {onFirstSlide && prevLesson && currentStep && (
+            <div
+              className={`present-bridge present-bridge--prev ${
+                backCrossModule ? "present-bridge--module" : ""
+              }`}
+            >
+              <button
+                type="button"
+                className="present-bridge-btn"
+                onClick={() => goLesson(prevLesson, "prev")}
+              >
+                <span className="present-bridge-dir">
+                  {neighborLabel(currentStep, prevLesson, "prev")}
+                </span>
+                <span className="present-bridge-title">{prevLesson.item.title}</span>
+              </button>
+            </div>
+          )}
+
           <button
             type="button"
             className="present-hit present-hit-prev"
@@ -350,8 +347,13 @@ export function Present() {
             disabled={!canGoBack}
             onClick={goBack}
           />
-          <div className="present-slide md">
+          <div
+            className={`present-slide md ${
+              isHeadingOnlySlide(slide.markdown) ? "present-slide--title" : ""
+            }`}
+          >
             <Markdown
+              keepLeadingH1
               onInsertCode={
                 showSandbox
                   ? (code) => {

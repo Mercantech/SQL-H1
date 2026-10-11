@@ -3438,6 +3438,7 @@ body.is-resizing-split .lesson {
 }
 
 .present-shell {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -3584,6 +3585,38 @@ body.is-resizing-split .lesson {
   scrollbar-color: rgba(31, 107, 74, 0.45) rgba(197, 210, 195, 0.35);
 }
 
+.present-slide--title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  max-width: none;
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.present-slide--title > :first-child {
+  margin-top: 0;
+}
+
+.present-slide--title h1,
+.present-slide--title h2,
+.present-slide--title h3 {
+  margin: 0;
+  max-width: 16ch;
+  letter-spacing: -0.03em;
+}
+
+.present-slide--title h1 {
+  font-size: clamp(2.35rem, 5.2vw, 3.6rem);
+}
+
+.present-slide--title h2 {
+  font-size: clamp(2rem, 4.4vw, 3.1rem);
+}
+
 .present-slide h1 {
   font-family: var(--font-serif);
   font-size: clamp(1.85rem, 3.6vw, 2.75rem);
@@ -3688,54 +3721,59 @@ body.is-resizing-split .lesson {
 }
 
 .present-flash {
-  flex: 0 0 auto;
+  position: absolute;
+  top: 3.4rem;
+  left: 50%;
+  z-index: 8;
+  transform: translateX(-50%);
   text-align: center;
-  font-weight: 700;
-  font-size: 0.95rem;
-  padding: 0.55rem 1rem;
-  color: #f4fff8;
-  background: linear-gradient(90deg, #1f6b4a, #2a8a5e);
-  animation: present-flash-in 0.25s ease;
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 0.35rem 0.85rem;
+  color: var(--ink);
+  background: rgba(247, 250, 245, 0.92);
+  border: 1px solid rgba(31, 107, 74, 0.2);
+  border-radius: 999px;
+  box-shadow: 0 4px 18px rgba(24, 42, 32, 0.08);
+  pointer-events: none;
+  animation: present-flash-in 0.22s ease;
 }
 
 @keyframes present-flash-in {
   from {
     opacity: 0;
-    transform: translateY(-4px);
+    transform: translateX(-50%) translateY(-4px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0);
   }
 }
 
 .present-bridge {
-  flex: 0 0 auto;
+  position: absolute;
+  top: 0.85rem;
+  z-index: 4;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  padding: 0.45rem 1rem;
-  border-bottom: 1px solid var(--line);
-  background: rgba(31, 107, 74, 0.07);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  opacity: 0.42;
+  transition: opacity 0.18s ease;
 }
 
-.present-bridge--module {
-  background: rgba(196, 92, 38, 0.1);
-  border-bottom-color: rgba(196, 92, 38, 0.28);
+.present-bridge:hover,
+.present-bridge:focus-within {
+  opacity: 1;
 }
 
-.present-bridge-label {
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+.present-bridge--prev {
+  left: 4.25rem;
 }
 
-.present-bridge--module .present-bridge-label {
-  color: var(--accent-2);
+.present-bridge--next {
+  right: 4.25rem;
 }
 
 .present-bridge-btn {
@@ -3743,40 +3781,40 @@ body.is-resizing-split .lesson {
   display: inline-flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.1rem;
-  border: 1px solid rgba(31, 107, 74, 0.35);
-  background: var(--panel);
+  gap: 0.05rem;
+  border: 1px solid rgba(31, 107, 74, 0.14);
+  background: rgba(247, 250, 245, 0.72);
+  backdrop-filter: blur(8px);
   color: var(--ink);
   border-radius: 10px;
-  padding: 0.4rem 0.85rem;
+  padding: 0.3rem 0.65rem;
   cursor: pointer;
   text-align: left;
   font: inherit;
-  max-width: min(28rem, 100%);
-  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  max-width: min(15rem, 42vw);
+  box-shadow: none;
+  transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
 .present-bridge--module .present-bridge-btn {
-  border-color: rgba(196, 92, 38, 0.45);
+  border-color: rgba(196, 92, 38, 0.22);
 }
 
 .present-bridge-btn:hover {
-  background: rgba(31, 107, 74, 0.1);
-  border-color: var(--accent);
-  transform: translateY(-1px);
+  background: rgba(247, 250, 245, 0.95);
+  border-color: rgba(31, 107, 74, 0.35);
 }
 
 .present-bridge--module .present-bridge-btn:hover {
-  background: rgba(196, 92, 38, 0.12);
-  border-color: var(--accent-2);
+  border-color: rgba(196, 92, 38, 0.4);
 }
 
 .present-bridge-dir {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--accent);
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--muted);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 
 .present-bridge--module .present-bridge-dir {
@@ -3784,9 +3822,18 @@ body.is-resizing-split .lesson {
 }
 
 .present-bridge-title {
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 0.78rem;
+  font-weight: 500;
   line-height: 1.25;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 14rem;
+}
+
+.present-bridge-btn:hover .present-bridge-title {
+  color: var(--ink);
 }
 
 .present-footer .present-nav-lesson {
@@ -3844,6 +3891,14 @@ body.is-resizing-split .lesson {
 
   .present-slide {
     padding: 1.25rem 1.25rem 1rem;
+  }
+
+  .present-bridge--prev {
+    left: 0.65rem;
+  }
+
+  .present-bridge--next {
+    right: 0.65rem;
   }
 
   .present-hit {

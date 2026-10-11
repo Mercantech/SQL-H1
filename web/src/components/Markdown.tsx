@@ -13,6 +13,8 @@ type Props = {
   children: string;
   onInsertCode?: (code: string) => void;
   onRunCode?: (code: string) => void;
+  /** Behold ledende H1 (fx titel-slide i præsentation). */
+  keepLeadingH1?: boolean;
 };
 
 const rehypePlugins: PluggableList = [
@@ -56,7 +58,8 @@ export function stripLeadingH1(markdown: string) {
   return markdown.replace(/^\uFEFF?\s*#\s+[^\n]+\n+/, "");
 }
 
-export function Markdown({ children, onInsertCode, onRunCode }: Props) {
+export function Markdown({ children, onInsertCode, onRunCode, keepLeadingH1 }: Props) {
+  const source = keepLeadingH1 ? children : stripLeadingH1(children);
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
@@ -76,7 +79,7 @@ export function Markdown({ children, onInsertCode, onRunCode }: Props) {
         },
       }}
     >
-      {stripLeadingH1(children)}
+      {source}
     </ReactMarkdown>
   );
 }
