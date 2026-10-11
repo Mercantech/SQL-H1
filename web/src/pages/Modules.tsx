@@ -7,6 +7,7 @@ import {
   type ProgressRow,
 } from "../api";
 import { isLoggedIn } from "../auth";
+import { LearningObjectives } from "../components/LearningObjectives";
 
 export function Modules() {
   const [modules, setModules] = useState<ModuleDto[]>([]);
@@ -85,6 +86,10 @@ export function Modules() {
                     )}
                   </h2>
                   <p>{m.description}</p>
+                  <LearningObjectives
+                    objectives={m.objectives ?? []}
+                    compact
+                  />
                 </div>
               </Link>
             </li>

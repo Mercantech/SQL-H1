@@ -59,14 +59,43 @@ export function Present() {
       .catch((e) => setError(e instanceof Error ? e.message : "Fejl"));
   }, [slug]);
 
-  const slides = useMemo(() => {
-    if (!item) return [];
-    return splitMarkdownToSlides(item.markdown, item.title);
-  }, [item]);
-
   const flat = useMemo(() => buildFlatPath(modules), [modules]);
   const pathIdx = flat.findIndex((s) => s.item.slug === slug);
   const currentStep = pathIdx >= 0 ? flat[pathIdx] : null;
+  const currentModule = useMemo(
+    () => (item ? modules.find((m) => m.slug === item.module) ?? null : null),
+    [item, modules],
+  );
+  const isModuleIntro = useMemo(() => {
+    if (!item || !currentModule) return false;
+    const firstTheory = [...currentModule.items]
+      .filter((i) => i.kind === "theory")
+      .sort((a, b) => a.order - b.order)[0];
+    return firstTheory?.slug === item.slug;
+  }, [currentModule, item]);
+
+  const slides = useMemo(() => {
+    if (!item) return [];
+    const base = splitMarkdownToSlides(item.markdown, item.title);
+    const goals = currentModule?.objectives ?? [];
+    if (!isModuleIntro || goals.length === 0) return base;
+
+    const goalsSlide = {
+      title: "Læringsmål",
+      markdown: [
+        "## Læringsmål",
+        "",
+        "Efter kapitlet kan du:",
+        "",
+        ...goals.map((o) => `- ${o}`),
+      ].join("\n"),
+    };
+
+    if (base.length > 0 && isHeadingOnlySlide(base[0].markdown)) {
+      return [base[0], goalsSlide, ...base.slice(1)];
+    }
+    return [goalsSlide, ...base];
+  }, [currentModule?.objectives, isModuleIntro, item]);
 
   /** I præsentation springer vi over opgaver, når vi står på teori. */
   const { prevLesson, nextLesson } = useMemo(() => {

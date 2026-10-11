@@ -1024,9 +1024,117 @@ body.is-resizing-split .lesson {
   color: var(--ok);
 }
 
+.learning-goals {
+  margin: 1.25rem 0 1.5rem;
+  padding: 1rem 1.15rem 1.1rem;
+  border: 1px solid rgba(31, 107, 74, 0.18);
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, rgba(31, 107, 74, 0.07), transparent 55%),
+    rgba(247, 250, 245, 0.85);
+}
+
+.learning-goals-title {
+  margin: 0 0 0.55rem;
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.learning-goals .objectives {
+  margin: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.learning-goals .objectives li {
+  position: relative;
+  padding: 0.15rem 0 0.15rem 1.35rem;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.learning-goals .objectives li::before {
+  content: "";
+  position: absolute;
+  left: 0.15rem;
+  top: 0.55em;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.75;
+}
+
+.learning-goals--compact {
+  margin: 0.7rem 0 0;
+  padding: 0.65rem 0.8rem;
+  border-radius: 10px;
+  background: rgba(31, 107, 74, 0.05);
+}
+
+.learning-goals--compact .learning-goals-title {
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  margin-bottom: 0.35rem;
+}
+
+.learning-goals--compact .objectives {
+  gap: 0.15rem;
+}
+
+.learning-goals--compact .objectives li {
+  padding-left: 1rem;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.learning-goals--compact .objectives li::before {
+  top: 0.5em;
+  width: 0.35rem;
+  height: 0.35rem;
+}
+
 .objectives li {
   padding: 0.2rem 0;
   color: var(--muted);
+}
+
+.present-slide .objectives {
+  list-style: none;
+  margin: 1.25rem auto 0;
+  padding: 0;
+  max-width: 38rem;
+  text-align: left;
+}
+
+.present-slide .objectives li {
+  position: relative;
+  padding: 0.45rem 0 0.45rem 1.5rem;
+  color: var(--ink);
+  font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+  line-height: 1.45;
+  border-bottom: 1px solid rgba(31, 107, 74, 0.12);
+}
+
+.present-slide .objectives li:last-child {
+  border-bottom: 0;
+}
+
+.present-slide .objectives li::before {
+  content: "";
+  position: absolute;
+  left: 0.2rem;
+  top: 0.85em;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--accent);
 }
 
 .sandbox {

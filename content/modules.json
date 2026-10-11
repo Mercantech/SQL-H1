@@ -6,9 +6,11 @@
     "order": 1,
     "scaffoldOnly": false,
     "objectives": [
-      "Anvende SELECT, WHERE, ORDER BY og LIMIT",
-      "Gruppere og aggregere med GROUP BY/HAVING",
-      "Bruge CASE, UNION, vinduesfunktioner og håndtere NULL"
+      "Skrive SELECT-forespørgsler med eksplicitte kolonner, alias og DISTINCT",
+      "Filtrere og sortere med WHERE, ORDER BY og LIMIT — inkl. mønstre og datoer",
+      "Aggregere data med GROUP BY, HAVING og funktioner som COUNT, SUM og AVG",
+      "Bruge CASE, UNION/INTERSECT/EXCEPT og simple vinduesfunktioner",
+      "Forklare og håndtere NULL korrekt (IS NULL, COALESCE, tre-værdi-logik)"
     ]
   },
   {
@@ -18,9 +20,10 @@
     "order": 2,
     "scaffoldOnly": false,
     "objectives": [
-      "Forklare DML vs SELECT/DDL og mappe til CRUD",
-      "Oprette, opdatere og slette data sikkert med RETURNING",
-      "Vælge slettestrategi (RESTRICT, CASCADE, SET NULL) bevidst"
+      "Skelne DML fra SELECT og DDL og mappe det til CRUD i en applikation",
+      "Indsætte, opdatere og slette rækker sikkert med WHERE og RETURNING",
+      "Forudsige fejl fra constraints (NOT NULL, UNIQUE, FK) ved DML",
+      "Vælge slettestrategi bevidst: RESTRICT, CASCADE eller SET NULL"
     ]
   },
   {
@@ -30,9 +33,11 @@
     "order": 3,
     "scaffoldOnly": false,
     "objectives": [
-      "Joine flere tabeller visuelt og i SQL",
-      "Bruge subqueries, EXISTS og anti-join",
-      "Skrive CTE’er med WITH"
+      "Joine flere tabeller med INNER og OUTER JOIN og forklare forskellen i resultatet",
+      "Læse og tegne, hvordan relationer giver rækker i et join-resultat",
+      "Skrive subqueries og EXISTS — og vælge JOIN vs subquery bevidst",
+      "Bygge læsbare flerleddede forespørgsler med WITH (CTE)",
+      "Finde «rækker der mangler» med anti-join (NOT EXISTS / LEFT JOIN … IS NULL)"
     ]
   },
   {
@@ -42,9 +47,11 @@
     "order": 4,
     "scaffoldOnly": false,
     "objectives": [
-      "Skelne PK/FK og forklare 1:1 / 1:n / n:n",
-      "Anvende normalisering og spotte anomalier",
-      "Argumentere for design-trade-offs i projektet"
+      "Skelne primærnøgle, fremmednøgle, naturlig og surrogatnøgle i et skema",
+      "Bestemme kardinalitet (1:1, 1:n, n:n) og modellere den med tabeller/FK",
+      "Anvende 1NF–3NF og spotte opdaterings-, indsætnings- og sletteanomalier",
+      "Genkende typiske designmønstre (lookup, junction, 1:1-udvidelse)",
+      "Argumentere for pragmatiske trade-offs (denormalisering, historie, performance)"
     ]
   },
   {
@@ -54,9 +61,10 @@
     "order": 5,
     "scaffoldOnly": false,
     "objectives": [
-      "Forstå constraints i praksis",
-      "Tilføje CHECK/UNIQUE og læse Postgres-fejl",
-      "Slette i korrekt rækkefølge"
+      "Forklare hvorfor constraints beskytter data bedre end «kun app-validering»",
+      "Tilføje og bruge NOT NULL, UNIQUE, CHECK og fremmednøgler i Postgres",
+      "Læse Postgres-fejlbeskeder og rette data/SQL derefter",
+      "Slette og opdatere i korrekt rækkefølge ift. fremmednøgler"
     ]
   },
   {
@@ -66,9 +74,10 @@
     "order": 6,
     "scaffoldOnly": false,
     "objectives": [
-      "Oprette, ændre og slette tabeller",
-      "Vælge datatyper, defaults og IDENTITY",
-      "Dokumentere skema med E/R"
+      "Oprette, ændre og slette tabeller med CREATE, ALTER og DROP",
+      "Vælge passende datatyper, DEFAULT og IDENTITY/serial",
+      "Tilføje indeks bevidst og aflæse simpel EXPLAIN-output",
+      "Dokumentere et skema med E/R (entiteter, nøgler, relationer)"
     ]
   },
   {
@@ -78,9 +87,9 @@
     "order": 7,
     "scaffoldOnly": false,
     "objectives": [
-      "CREATE/DROP VIEW",
-      "Bygge detalje- og aggregat-views",
-      "Begrunde views ift. sikkerhed og forenkling"
+      "Oprette, bruge og slette views med CREATE/DROP VIEW",
+      "Bygge views i lag (detalje → aggregat) til genbrugelige rapporter",
+      "Begrunde views ift. forenkling, sikkerhed og indkapsling af kompleks SQL"
     ]
   },
   {
@@ -90,9 +99,10 @@
     "order": 8,
     "scaffoldOnly": false,
     "objectives": [
-      "Anvende GRANT/REVOKE på tabeller og views",
-      "Forstå parametre og SQL injection",
-      "Bruge transaktioner bevidst"
+      "Give og fjerne rettigheder med GRANT/REVOKE på tabeller og views",
+      "Forklare SQL injection og hvorfor parametre er obligatoriske",
+      "Bruge BEGIN/COMMIT/ROLLBACK bevidst til flere DML-trin",
+      "Vælge hvornår en operation skal være atomisk"
     ]
   },
   {
@@ -102,9 +112,10 @@
     "order": 9,
     "scaffoldOnly": false,
     "objectives": [
-      "Oprette og kalde funktioner/procedures",
-      "Skelne FUNCTION og PROCEDURE",
-      "Validere input med RAISE"
+      "Oprette og kalde funktioner og procedures i Postgres",
+      "Skelne FUNCTION og PROCEDURE — og hvornår I bruger hvilken",
+      "Validere input og signalere fejl med RAISE",
+      "Flytte genbrugelig forretningslogik tæt på data, når det giver mening"
     ]
   },
   {
@@ -114,9 +125,10 @@
     "order": 10,
     "scaffoldOnly": false,
     "objectives": [
-      "CREATE TRIGGER og trigger-funktion",
-      "Bruge BEFORE/AFTER til audit og timestamps",
-      "Vælge constraint vs trigger vs app-logik"
+      "Oprette trigger-funktioner og knytte dem til tabeller med CREATE TRIGGER",
+      "Bruge BEFORE/AFTER til timestamps, audit og enkle konsistensregler",
+      "Vælge bevidst mellem constraint, trigger og app-logik",
+      "Argumentere for, hvornår triggers gør systemet sværere at forstå"
     ]
   },
   {
@@ -126,9 +138,10 @@
     "order": 11,
     "scaffoldOnly": false,
     "objectives": [
-      "Kende RDBMS-metadata",
-      "Tage backup og bruge EXPLAIN",
-      "Koble Postgres til Docker Compose i H1"
+      "Orientere dig i RDBMS-metadata (roller, skemaer, objekter)",
+      "Tage og genskabe backup (dump/restore) i en udviklingskontekst",
+      "Bruge EXPLAIN til at snakke om forespørgselsplaner på et grundniveau",
+      "Koble Postgres til Docker Compose i H1-projektet og følge en drift-checkliste"
     ]
   },
   {
@@ -138,9 +151,10 @@
     "order": 12,
     "scaffoldOnly": false,
     "objectives": [
-      "Åbne connections og køre commands sikkert",
-      "Læse med DataReader og RETURNING",
-      "Parametrisere CRUD og bruge transaktioner"
+      "Åbne og disponere Npgsql-connections korrekt (using / async)",
+      "Køre commands med parametre — aldrig streng-sammensat SQL",
+      "Læse resultater med DataReader og RETURNING fra DML",
+      "Udføre CRUD og korte transaktioner fra C# mod Postgres"
     ]
   },
   {
@@ -150,9 +164,10 @@
     "order": 13,
     "scaffoldOnly": false,
     "objectives": [
-      "Forespørge og mappe med Dapper",
-      "Køre DML med ExecuteAsync og parametre",
-      "Vælge Dapper vs rå ADO.NET i projektet"
+      "Forespørge og mappe til DTO’er med Dapper Query/QueryAsync",
+      "Køre DML med ExecuteAsync og navngivne parametre",
+      "Hente JOIN-rapporter og multi-mapping i enkle tilfælde",
+      "Vælge bevidst mellem Dapper og rå ADO.NET i H1-projektet"
     ]
   }
 ]

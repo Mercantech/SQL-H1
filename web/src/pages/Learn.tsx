@@ -1,16 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   checkExercise,
   executeSql,
   fetchContent,
+  fetchModules,
   putProgress,
   resetSandbox,
   type ContentDto,
   type ExecuteResult,
+  type ModuleDto,
 } from "../api";
 import { beginLogin, isLoggedIn } from "../auth";
 import { ExerciseSchema } from "../components/ExerciseSchema";
+import { LearningObjectives } from "../components/LearningObjectives";
 import { appendCodeToEditor, Markdown } from "../components/Markdown";
 import { LearnPager, ModuleNav } from "../components/ModuleNav";
 import { SqlEditor } from "../components/SqlEditor";
@@ -21,6 +24,7 @@ import { useSandboxOpen } from "../hooks/useSandboxOpen";
 export function Learn() {
   const { slug } = useParams();
   const [item, setItem] = useState<ContentDto | null>(null);
+  const [modules, setModules] = useState<ModuleDto[]>([]);
   const [sql, setSql] = useState("");
   const [result, setResult] = useState<ExecuteResult | null>(null);
   const [running, setRunning] = useState(false);
@@ -30,6 +34,10 @@ export function Learn() {
   const [navOpen, setNavOpen] = useModuleNavOpen();
   const [sandboxOpen, setSandboxOpen] = useSandboxOpen();
   const split = useLearnSplit();
+
+  useEffect(() => {
+    fetchModules().then(setModules).catch(() => setModules([]));
+  }, []);
 
   useEffect(() => {
     if (!slug) return;
@@ -46,6 +54,17 @@ export function Learn() {
       })
       .catch((e) => setError(e.message));
   }, [slug]);
+
+  const moduleIntro = useMemo(() => {
+    if (!item) return null;
+    const mod = modules.find((m) => m.slug === item.module);
+    if (!mod?.objectives?.length) return null;
+    const firstTheory = [...mod.items]
+      .filter((i) => i.kind === "theory")
+      .sort((a, b) => a.order - b.order)[0];
+    if (!firstTheory || firstTheory.slug !== item.slug) return null;
+    return mod;
+  }, [item, modules]);
 
   async function ensureReady() {
     if (!isLoggedIn()) {
@@ -175,6 +194,9 @@ export function Learn() {
               )}
             </div>
             <h1>{item.title}</h1>
+            {moduleIntro && (
+              <LearningObjectives objectives={moduleIntro.objectives} />
+            )}
             {item.kind === "exercise" && item.schema && <ExerciseSchema schema={item.schema} />}
             <div className="md">
               <Markdown

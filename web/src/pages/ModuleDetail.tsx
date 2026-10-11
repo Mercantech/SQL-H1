@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { fetchModules, type ModuleDto } from "../api";
+import { LearningObjectives } from "../components/LearningObjectives";
 import { ModuleNav } from "../components/ModuleNav";
 import { useModuleNavOpen } from "../hooks/useModuleNavOpen";
 
@@ -45,13 +46,7 @@ export function ModuleDetail() {
             </p>
             <h1>{mod.title}</h1>
             <p>{mod.description}</p>
-            {mod.objectives?.length > 0 && (
-              <ul className="objectives">
-                {mod.objectives.map((o) => (
-                  <li key={o}>{o}</li>
-                ))}
-              </ul>
-            )}
+            <LearningObjectives objectives={mod.objectives ?? []} />
             {first && (
               <p className="cta-row">
                 <Link className="btn primary" to={`/learn/${first.slug}`}>
