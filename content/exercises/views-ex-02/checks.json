@@ -1,0 +1,21 @@
+{
+  "description": "v_sales_by_category oven på v_order_lines.",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM information_schema.views WHERE table_schema = 'public' AND table_name = 'v_sales_by_category'",
+      "expected": [[1]],
+      "message": "Viewet v_sales_by_category findes"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT category, omsaetning, linjer::int FROM v_sales_by_category ORDER BY category",
+      "expected": [
+        ["Bagværk", 112.50, 3],
+        ["Drikke", 368.00, 8],
+        ["Mad", 196.00, 3]
+      ],
+      "message": "Omsætning og linjer pr. kategori"
+    }
+  ]
+}

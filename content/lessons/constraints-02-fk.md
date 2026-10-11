@@ -35,7 +35,7 @@ DELETE FROM customers WHERE name = 'Bo Nielsen';
 
 ## Opdatering af nøgler
 
-Undgå at ændre `id`-værdier, der bruges som FK — medmindre du har en bevidst migrationsplan (`ON UPDATE CASCADE` findes i DDL, som ligger uden for MVP).
+Undgå at ændre `id`-værdier, der bruges som FK — medmindre du har en bevidst migrationsplan (`ON UPDATE CASCADE` sættes i DDL).
 
 ## Øvelse
 

@@ -1,0 +1,21 @@
+{
+  "description": "NULL/COALESCE på kunder og walk-in.",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT name, COALESCE(email, '(ingen e-mail)') AS email_visning FROM customers WHERE city = 'Viborg' ORDER BY name",
+      "expected": [
+        ["Anna Jensen", "anna@example.com"],
+        ["Clara Holm", "(ingen e-mail)"],
+        ["Freja Olsen", "freja@example.com"]
+      ],
+      "message": "Del 1: Viborg-kunder med COALESCE"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int AS antal FROM orders WHERE customer_id IS NULL",
+      "expected": [[2]],
+      "message": "Del 2: 2 walk-in-ordrer"
+    }
+  ]
+}

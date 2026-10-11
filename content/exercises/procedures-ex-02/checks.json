@@ -1,0 +1,17 @@
+{
+  "description": "require_positive returnerer gyldige værdier.",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace WHERE n.nspname = 'public' AND p.proname = 'require_positive'",
+      "expected": [[1]],
+      "message": "Funktionen require_positive findes"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT require_positive(5)",
+      "expected": [[5]],
+      "message": "require_positive(5) = 5"
+    }
+  ]
+}

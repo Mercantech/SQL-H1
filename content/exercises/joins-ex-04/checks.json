@@ -1,0 +1,17 @@
+{
+  "description": "Anti-join: kunder uden ordrer + usolgte produkter.",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT c.name FROM customers c WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.id) ORDER BY c.name",
+      "expected": [["Clara Holm"]],
+      "message": "Del 1: Clara har ingen ordrer"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT p.name FROM products p WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.product_id = p.id) ORDER BY p.name",
+      "expected": [["Chokoladebolle"]],
+      "message": "Del 2: Chokoladebolle er aldrig solgt"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "description": "v_menu + SELECT til PUBLIC.",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM information_schema.views WHERE table_schema = 'public' AND table_name = 'v_menu'",
+      "expected": [[1]],
+      "message": "Viewet v_menu findes"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM v_menu",
+      "expected": [[7]],
+      "message": "v_menu viser 7 produkter på lager (ikke Chokoladebolle)"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM information_schema.role_table_grants WHERE table_schema = 'public' AND table_name = 'v_menu' AND grantee = 'PUBLIC' AND privilege_type = 'SELECT'",
+      "expected": [[1]],
+      "message": "PUBLIC har SELECT på v_menu"
+    }
+  ]
+}

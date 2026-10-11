@@ -1,0 +1,17 @@
+{
+  "description": "CHECK og UNIQUE constraints på café-tabeller.",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM information_schema.check_constraints WHERE constraint_schema = 'public' AND constraint_name = 'products_price_positive'",
+      "expected": [[1]],
+      "message": "CHECK products_price_positive findes"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM information_schema.table_constraints WHERE table_schema = 'public' AND constraint_name = 'customers_email_unique' AND constraint_type = 'UNIQUE'",
+      "expected": [[1]],
+      "message": "UNIQUE customers_email_unique findes"
+    }
+  ]
+}

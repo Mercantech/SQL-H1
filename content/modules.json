@@ -2,134 +2,157 @@
   {
     "slug": "select",
     "title": "SELECT-forespørgsler",
-    "description": "Hent data med SELECT: filtre, sortering, gruppering, funktioner, CASE, UNION og vinduesfunktioner.",
+    "description": "Hent data med SELECT: filtre, sortering, gruppering, funktioner, CASE, UNION, vinduesfunktioner og NULL-logik.",
     "order": 1,
     "scaffoldOnly": false,
     "objectives": [
       "Anvende SELECT, WHERE, ORDER BY og LIMIT",
       "Gruppere og aggregere med GROUP BY/HAVING",
-      "Bruge CASE, UNION og vinduesfunktioner"
+      "Bruge CASE, UNION, vinduesfunktioner og håndtere NULL"
     ]
   },
   {
     "slug": "dml",
     "title": "Data-manipulation (DML)",
-    "description": "INSERT, UPDATE og DELETE koblet til CRUD — inkl. RETURNING, constraints og cascading ved sletning.",
+    "description": "INSERT, UPDATE, DELETE og RETURNING koblet til CRUD — inkl. constraints og cascading ved sletning.",
     "order": 2,
     "scaffoldOnly": false,
     "objectives": [
       "Forklare DML vs SELECT/DDL og mappe til CRUD",
-      "Oprette, opdatere og slette data sikkert",
+      "Oprette, opdatere og slette data sikkert med RETURNING",
       "Vælge slettestrategi (RESTRICT, CASCADE, SET NULL) bevidst"
     ]
   },
   {
     "slug": "joins-subqueries",
     "title": "JOIN, subqueries og WITH",
-    "description": "Forespørgsler på tværs af tabeller: INNER/LEFT JOIN, subqueries, EXISTS og CTE (WITH).",
+    "description": "Forespørgsler på tværs af tabeller: INNER/OUTER JOIN, subqueries, EXISTS, CTE og anti-join.",
     "order": 3,
     "scaffoldOnly": false,
     "objectives": [
       "Joine flere tabeller visuelt og i SQL",
-      "Bruge subqueries og EXISTS",
+      "Bruge subqueries, EXISTS og anti-join",
       "Skrive CTE’er med WITH"
     ]
   },
   {
     "slug": "relations",
     "title": "Relationstyper og database-design",
-    "description": "Nøgler, kardinalitet, normalisering (1NF–3NF) og designmønstre — forstået via café-skemaet.",
+    "description": "Nøgler, kardinalitet, normalisering (1NF–3NF), designmønstre og pragmatiske trade-offs.",
     "order": 4,
     "scaffoldOnly": false,
     "objectives": [
       "Skelne PK/FK og forklare 1:1 / 1:n / n:n",
       "Anvende normalisering og spotte anomalier",
-      "Genkende designmønstre (lookup, kobling, soft delete m.m.)"
+      "Argumentere for design-trade-offs i projektet"
     ]
   },
   {
     "slug": "constraints",
     "title": "Konsistens og constraints",
-    "description": "NOT NULL, UNIQUE, CHECK, fremmednøgler og referenceintegritet — oplevet via tilladt DML.",
+    "description": "NOT NULL, UNIQUE, CHECK, fremmednøgler — oplevet via DML og skrevet med DDL.",
     "order": 5,
     "scaffoldOnly": false,
     "objectives": [
       "Forstå constraints i praksis",
-      "Læse Postgres-fejl ved brud",
+      "Tilføje CHECK/UNIQUE og læse Postgres-fejl",
       "Slette i korrekt rækkefølge"
     ]
   },
   {
     "slug": "ddl-er",
     "title": "Tabeller og E/R",
-    "description": "CREATE/ALTER/DROP TABLE, indeks, EXPLAIN og dokumentation med E/R — i din egen elev-database.",
+    "description": "CREATE/ALTER/DROP, datatyper, indeks, EXPLAIN og E/R — i din egen elev-database.",
     "order": 6,
     "scaffoldOnly": false,
     "objectives": [
       "Oprette, ændre og slette tabeller",
-      "Tilføje indeks og constraints i DDL",
+      "Vælge datatyper, defaults og IDENTITY",
       "Dokumentere skema med E/R"
     ]
   },
   {
     "slug": "views",
     "title": "Views",
-    "description": "Oprette views, bruge dem i forespørgsler og begrunde sikkerhedsaspektet.",
+    "description": "Oprette views i lag, bruge dem i forespørgsler og begrunde sikkerhedsaspektet.",
     "order": 7,
     "scaffoldOnly": false,
     "objectives": [
       "CREATE/DROP VIEW",
-      "Begrunde views ift. sikkerhed og forenkling",
-      "Forespørge via views"
+      "Bygge detalje- og aggregat-views",
+      "Begrunde views ift. sikkerhed og forenkling"
     ]
   },
   {
     "slug": "advanced",
     "title": "Rettigheder og avanceret SQL",
-    "description": "GRANT/REVOKE, least privilege og parametre — hvem må hvad, og hvordan undgår man injection.",
+    "description": "GRANT/REVOKE, parametre/injection og transaktioner (BEGIN/COMMIT).",
     "order": 8,
     "scaffoldOnly": false,
     "objectives": [
       "Anvende GRANT/REVOKE på tabeller og views",
-      "Forklare least privilege",
-      "Forstå parametre og SQL injection"
+      "Forstå parametre og SQL injection",
+      "Bruge transaktioner bevidst"
     ]
   },
   {
     "slug": "procedures",
     "title": "Procedures og funktioner",
-    "description": "Postgres-funktioner og procedures til genbrugelig databehandling.",
+    "description": "Postgres-funktioner og procedures — inkl. fejlhåndtering med RAISE.",
     "order": 9,
     "scaffoldOnly": false,
     "objectives": [
       "Oprette og kalde funktioner/procedures",
       "Skelne FUNCTION og PROCEDURE",
-      "Bruge dem til genbrugelig datalogik"
+      "Validere input med RAISE"
     ]
   },
   {
     "slug": "triggers",
     "title": "Triggers",
-    "description": "Triggers der automatisk holder data konsistent eller logger ændringer ved INSERT/UPDATE/DELETE.",
+    "description": "Triggers til audit, updated_at og konsistens — og hvornår I skal lade være.",
     "order": 10,
     "scaffoldOnly": false,
     "objectives": [
       "CREATE TRIGGER og trigger-funktion",
-      "Vælge BEFORE/AFTER og row-level",
+      "Bruge BEFORE/AFTER til audit og timestamps",
       "Vælge constraint vs trigger vs app-logik"
     ]
   },
   {
     "slug": "drift",
     "title": "Drift og databaseserver",
-    "description": "Postgres som server: metadata, backup/restore, indeks/EXPLAIN og Docker Compose på H1.",
+    "description": "Metadata, backup/restore, indeks/EXPLAIN, Docker Compose og projekt-checkliste.",
     "order": 11,
     "scaffoldOnly": false,
     "objectives": [
-      "Kende grundlæggende RDBMS-metadata",
-      "Tage backup og restore (pg_dump)",
-      "Bruge indeks og EXPLAIN",
-      "Koble til Docker Compose i H1"
+      "Kende RDBMS-metadata",
+      "Tage backup og bruge EXPLAIN",
+      "Koble Postgres til Docker Compose i H1"
+    ]
+  },
+  {
+    "slug": "adonet",
+    "title": "ADO.NET",
+    "description": "Dataadgang fra C# med Npgsql: connections, commands, readers, parametre og transaktioner.",
+    "order": 12,
+    "scaffoldOnly": false,
+    "objectives": [
+      "Åbne connections og køre commands sikkert",
+      "Læse med DataReader og RETURNING",
+      "Parametrisere CRUD og bruge transaktioner"
+    ]
+  },
+  {
+    "slug": "dapper",
+    "title": "Dapper",
+    "description": "Micro-ORM oven på ADO.NET: Query/Execute, mapping til DTO’er og JOIN-rapporter.",
+    "order": 13,
+    "scaffoldOnly": false,
+    "objectives": [
+      "Forespørge og mappe med Dapper",
+      "Køre DML med ExecuteAsync og parametre",
+      "Vælge Dapper vs rå ADO.NET i projektet"
     ]
   }
 ]

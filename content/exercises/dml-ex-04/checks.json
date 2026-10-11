@@ -1,0 +1,17 @@
+{
+  "description": "RETURNING-opgave: Gina + Smoothie-pris.",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT name, city, email FROM customers WHERE name = 'Gina Berg'",
+      "expected": [["Gina Berg", "Randers", "gina@example.com"]],
+      "message": "Del 1: Gina Berg er indsat"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT price FROM products WHERE name = 'Smoothie'",
+      "expected": [[45.00]],
+      "message": "Del 2: Smoothie koster 45.00"
+    }
+  ]
+}

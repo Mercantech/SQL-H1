@@ -1,0 +1,23 @@
+{
+  "description": "updated_at kolonne + trigger på products.",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'products' AND column_name = 'updated_at'",
+      "expected": [[1]],
+      "message": "products.updated_at findes"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM pg_trigger t JOIN pg_class c ON c.oid = t.tgrelid JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relname = 'products' AND t.tgname = 'trg_products_touch' AND NOT t.tgisinternal",
+      "expected": [[1]],
+      "message": "Triggeren trg_products_touch findes"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM products WHERE name = 'Te' AND updated_at IS NOT NULL",
+      "expected": [[1]],
+      "message": "Te har updated_at sat efter UPDATE"
+    }
+  ]
+}

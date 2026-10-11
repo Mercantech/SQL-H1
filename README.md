@@ -45,11 +45,9 @@ Markdown under [`content/`](content/):
 - `lessons/` — teori
 - `exercises/` — opgaver + `checks.json` + `seeds/`
 
-Fuldt indhold (indtil videre): **SELECT**, **DML**, **JOIN/subqueries**, **relationer/design**, **constraints**.
+Fuldt indhold: **SELECT** → **DML** → **JOIN** → **relationer** → **constraints** → **DDL/E/R** → **views** → **rettigheder/transaktioner** → **procedures** → **triggers** → **drift** → **ADO.NET** → **Dapper**.
 
-Skaller til senere (Databaseprogrammering + databaseserver): **DDL/E/R**, **views**, **rettigheder**, **procedures/funktioner**, **triggers**, **drift**.
-
-ADO.NET/Dapper ligger i **H1-pensum uge 4 (DAL)** — ikke i SQL-H1.
+C#-modulerne (ADO.NET/Dapper) har teori med Npgsql-eksempler; elever øver den tilhørende **SQL** i sandboxen (egen DB).
 
 ## Deploy (Dokploy)
 

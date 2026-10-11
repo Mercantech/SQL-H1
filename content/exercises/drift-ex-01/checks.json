@@ -1,0 +1,17 @@
+{
+  "description": "Metadata: tabeller og indeks i public.",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE' ORDER BY table_name",
+      "expected": [["customers"], ["orders"], ["products"]],
+      "message": "Del 1: de tre basistabeller"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int AS antal FROM pg_indexes WHERE schemaname = 'public'",
+      "expected": [[3]],
+      "message": "Del 2: tre PK-indeks i seed"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "description": "Skema-indsigt: kategorier og produkter i ordrer.",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT category, COUNT(*)::int AS antal FROM products GROUP BY category ORDER BY category",
+      "expected": [
+        ["Bagværk", 2],
+        ["Drikke", 4],
+        ["Mad", 2]
+      ],
+      "message": "Del 1: produkter pr. kategori"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT p.name, COUNT(*)::int AS antal_linjer FROM products p JOIN orders o ON o.product_id = p.id GROUP BY p.name ORDER BY p.name",
+      "expected": [
+        ["Croissant", 3],
+        ["Espresso", 3],
+        ["Latte", 2],
+        ["Saladsandwich", 1],
+        ["Sandwich", 2],
+        ["Smoothie", 2],
+        ["Te", 1]
+      ],
+      "message": "Del 2: produkter med ordrelinjer"
+    }
+  ]
+}

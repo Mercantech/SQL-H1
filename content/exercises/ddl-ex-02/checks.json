@@ -1,0 +1,29 @@
+{
+  "description": "categories lookup + FK + udfyldt category_id.",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT name FROM categories ORDER BY name",
+      "expected": [["Bagværk"], ["Drikke"], ["Mad"]],
+      "message": "De tre kategorier er indsat"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM information_schema.table_constraints WHERE table_schema = 'public' AND constraint_name = 'products_category_fk'",
+      "expected": [[1]],
+      "message": "FK products_category_fk findes"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM products WHERE category_id IS NULL",
+      "expected": [[0]],
+      "message": "Alle produkter har category_id"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT p.name, c.name FROM products p JOIN categories c ON c.id = p.category_id WHERE p.name = 'Espresso'",
+      "expected": [["Espresso", "Drikke"]],
+      "message": "Espresso pejer på Drikke"
+    }
+  ]
+}
