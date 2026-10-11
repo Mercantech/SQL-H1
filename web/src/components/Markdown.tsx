@@ -2,7 +2,9 @@ import { isValidElement, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
+import csharp from "highlight.js/lib/languages/csharp";
 import sql from "highlight.js/lib/languages/sql";
+import yaml from "highlight.js/lib/languages/yaml";
 import type { PluggableList } from "unified";
 import { CodeBlock } from "./CodeBlock";
 import { JoinViz, parseJoinVizFence } from "./join/JoinViz";
@@ -17,11 +19,14 @@ const rehypePlugins: PluggableList = [
   [
     rehypeHighlight,
     {
-      languages: { sql },
+      languages: { sql, csharp, yaml },
       aliases: {
         postgresql: "sql",
         postgres: "sql",
         psql: "sql",
+        cs: "csharp",
+        "c#": "csharp",
+        yml: "yaml",
       },
     },
   ],
