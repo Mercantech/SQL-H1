@@ -7,6 +7,7 @@ import { ModuleDetail } from "./pages/ModuleDetail";
 import { Modules } from "./pages/Modules";
 import { Database } from "./pages/Database";
 import { Playground } from "./pages/Playground";
+import { Present } from "./pages/Present";
 import { Profile } from "./pages/Profile";
 import { Progress } from "./pages/Progress";
 
@@ -14,6 +15,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="present/:slug" element={<Present />} />
         <Route element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="modules" element={<Modules />} />

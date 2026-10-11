@@ -158,11 +158,22 @@ export function Learn() {
           }
         >
           <article className="lesson">
-            <p className="eyebrow">
-              <Link to={`/modules/${item.module}`}>Modul</Link>
-              {" · "}
-              {item.kind === "exercise" ? "Opgave" : "Teori"}
-            </p>
+            <div className="lesson-toolbar">
+              <p className="eyebrow">
+                <Link to={`/modules/${item.module}`}>Modul</Link>
+                {" · "}
+                {item.kind === "exercise" ? "Opgave" : "Teori"}
+              </p>
+              {item.kind === "theory" && (
+                <Link
+                  to={`/present/${item.slug}`}
+                  className="btn ghost lesson-present-btn"
+                  title="Åbn som slideshow til undervisning"
+                >
+                  Præsentation
+                </Link>
+              )}
+            </div>
             <h1>{item.title}</h1>
             {item.kind === "exercise" && item.schema && <ExerciseSchema schema={item.schema} />}
             <div className="md">
