@@ -45,7 +45,11 @@ Markdown under [`content/`](content/):
 - `lessons/` — teori
 - `exercises/` — opgaver + `checks.json` + `seeds/`
 
-MVP har fuldt indhold for **SELECT** og **DML**. Øvrige målpinde er modul-skaller.
+Fuldt indhold (indtil videre): **SELECT**, **DML**, **JOIN/subqueries**, **relationer/design**, **constraints**.
+
+Skaller til senere (Databaseprogrammering + databaseserver): **DDL/E/R**, **views**, **rettigheder**, **procedures/funktioner**, **triggers**, **drift**.
+
+ADO.NET/Dapper ligger i **H1-pensum uge 4 (DAL)** — ikke i SQL-H1.
 
 ## Deploy (Dokploy)
 

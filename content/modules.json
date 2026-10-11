@@ -14,7 +14,7 @@
   {
     "slug": "dml",
     "title": "Data-manipulation (DML)",
-    "description": "Dyb teori i DML koblet til CRUD: INSERT/UPDATE/DELETE, constraints, RETURNING samt komplekse sletninger med fremmednøgler og cascading.",
+    "description": "INSERT, UPDATE og DELETE koblet til CRUD — inkl. RETURNING, constraints og cascading ved sletning.",
     "order": 2,
     "scaffoldOnly": false,
     "objectives": [
@@ -26,7 +26,7 @@
   {
     "slug": "joins-subqueries",
     "title": "JOIN, subqueries og WITH",
-    "description": "Forespørgsler på tværs af tabeller med interaktive diagrammer: INNER/LEFT JOIN, subqueries, EXISTS og CTE (WITH).",
+    "description": "Forespørgsler på tværs af tabeller: INNER/LEFT JOIN, subqueries, EXISTS og CTE (WITH).",
     "order": 3,
     "scaffoldOnly": false,
     "objectives": [
@@ -42,7 +42,7 @@
     "order": 4,
     "scaffoldOnly": false,
     "objectives": [
-      "Skelne PK/FK og forklare 1:n / n:n",
+      "Skelne PK/FK og forklare 1:1 / 1:n / n:n",
       "Anvende normalisering og spotte anomalier",
       "Genkende designmønstre (lookup, kobling, soft delete m.m.)"
     ]
@@ -50,7 +50,7 @@
   {
     "slug": "constraints",
     "title": "Konsistens og constraints",
-    "description": "NOT NULL, fremmednøgler og konsistens — oplevet via tilladt DML (uden DDL).",
+    "description": "NOT NULL, UNIQUE, CHECK, fremmednøgler og referenceintegritet — oplevet via tilladt DML.",
     "order": 5,
     "scaffoldOnly": false,
     "objectives": [
@@ -62,65 +62,74 @@
   {
     "slug": "ddl-er",
     "title": "Tabeller og E/R",
-    "description": "Oprette, redigere og slette tabeller samt dokumentere med E/R-diagram.",
+    "description": "CREATE/ALTER/DROP TABLE, indeks og dokumentation med E/R-diagram.",
     "order": 6,
     "scaffoldOnly": true,
-    "objectives": ["CREATE/ALTER/DROP TABLE", "E/R-diagram"]
-  },
-  {
-    "slug": "databases",
-    "title": "Databaser",
-    "description": "Oprette og slette en database.",
-    "order": 7,
-    "scaffoldOnly": true,
-    "objectives": ["CREATE DATABASE", "DROP DATABASE"]
+    "objectives": [
+      "Oprette, ændre og slette tabeller",
+      "Tilføje indeks og constraints i DDL",
+      "Dokumentere skema med E/R"
+    ]
   },
   {
     "slug": "views",
     "title": "Views",
-    "description": "Oprette views og begrunde sikkerhedsaspektet.",
-    "order": 8,
+    "description": "Oprette views, bruge dem i forespørgsler og begrunde sikkerhedsaspektet.",
+    "order": 7,
     "scaffoldOnly": true,
-    "objectives": ["CREATE VIEW", "Sikkerhed"]
+    "objectives": [
+      "CREATE/DROP VIEW",
+      "Begrunde views ift. sikkerhed og forenkling",
+      "Forespørge via views"
+    ]
   },
   {
     "slug": "advanced",
-    "title": "Avanceret SQL",
-    "description": "Parametre, kontrolstrukturer, rettighedsstyring o.l.",
-    "order": 9,
+    "title": "Rettigheder og avanceret SQL",
+    "description": "Roller, GRANT/REVOKE, parametre og kontrolstrukturer — hvem må hvad i databasen.",
+    "order": 8,
     "scaffoldOnly": true,
-    "objectives": ["Parametre", "Kontrolstrukturer", "Rettigheder"]
+    "objectives": [
+      "Oprette roller og tildele rettigheder",
+      "Anvende GRANT/REVOKE på tabeller og views",
+      "Forstå parametre og enkle kontrolstrukturer"
+    ]
   },
   {
     "slug": "procedures",
-    "title": "Stored Procedures",
-    "description": "Oprette, redigere og slette procedures til administration og databehandling.",
-    "order": 10,
+    "title": "Procedures og funktioner",
+    "description": "Postgres-funktioner og procedures til administration og databehandling (stored procedures).",
+    "order": 9,
     "scaffoldOnly": true,
-    "objectives": ["CREATE/ALTER/DROP PROCEDURE"]
+    "objectives": [
+      "Oprette og kalde funktioner/procedures",
+      "Skelne FUNCTION og PROCEDURE",
+      "Bruge dem til genbrugelig datalogik"
+    ]
   },
   {
     "slug": "triggers",
     "title": "Triggers",
-    "description": "Triggers til at holde databasen konsistent.",
+    "description": "Triggers der automatisk holder data konsistent ved INSERT/UPDATE/DELETE.",
+    "order": 10,
+    "scaffoldOnly": true,
+    "objectives": [
+      "CREATE TRIGGER og trigger-funktion",
+      "Vælge BEFORE/AFTER og row-level",
+      "Bruge triggers til konsistensregler"
+    ]
+  },
+  {
+    "slug": "drift",
+    "title": "Drift og databaseserver",
+    "description": "Postgres som server: metadata, backup/restore, indeks og EXPLAIN, data ind/ud — kobles til Docker Compose i H1.",
     "order": 11,
     "scaffoldOnly": true,
-    "objectives": ["CREATE TRIGGER", "Konsistens"]
-  },
-  {
-    "slug": "adonet",
-    "title": "ADO.NET",
-    "description": "Kommer senere — dataadgang med ADO.NET.",
-    "order": 12,
-    "scaffoldOnly": true,
-    "objectives": ["Connection", "Command", "DataReader"]
-  },
-  {
-    "slug": "dapper",
-    "title": "Dapper",
-    "description": "Kommer senere — micro-ORM med Dapper.",
-    "order": 13,
-    "scaffoldOnly": true,
-    "objectives": ["Query", "Execute", "Mapping"]
+    "objectives": [
+      "Kende grundlæggende RDBMS-metadata (pg_catalog)",
+      "Tage backup og restore (pg_dump / restore)",
+      "Bruge indeks og EXPLAIN til performance",
+      "Flytte data ind og ud (COPY / dump)"
+    ]
   }
 ]

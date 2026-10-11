@@ -6,11 +6,12 @@ order: 1
 kind: theory
 objectives:
   - CREATE/ALTER/DROP TABLE
+  - Indeks og constraints i DDL
   - E/R-diagram
 ---
 
 # Tabeller og E/R
 
-Dette modul får senere fuld **DDL** (`CREATE`/`ALTER`/`DROP TABLE`).
+Modul-skal: fuld **DDL** (`CREATE`/`ALTER`/`DROP TABLE`), indeks og dokumentation med **E/R-diagram**.
 
-Indtil da ligger teorien om **normalisering** og **designmønstre** i modulet *Relationstyper og database-design* — og du kan udforske café-skemaet visuelt under **Database**.
+Indtil da ligger teorien om **normalisering** og **designmønstre** i *Relationstyper og database-design* — café-skemaet kan udforskes under **Database**.
