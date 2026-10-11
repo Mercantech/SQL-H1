@@ -1,0 +1,23 @@
+{
+  "description": "Validerer order_line_total-funktionen.",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace WHERE n.nspname = 'public' AND p.proname = 'order_line_total'",
+      "expected": [[1]],
+      "message": "Funktionen order_line_total findes"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT order_line_total(1)",
+      "expected": [[56.00]],
+      "message": "Ordre 1: 2 × 28 = 56"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT order_line_total(3)",
+      "expected": [[35.00]],
+      "message": "Ordre 3: 1 × Latte 35 = 35"
+    }
+  ]
+}

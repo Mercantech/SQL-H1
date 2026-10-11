@@ -55,7 +55,7 @@ export function Playground() {
           ) : (
             "…"
           )}
-          . MVP tillader SELECT/INSERT/UPDATE/DELETE.
+          . Du må bruge SELECT, DML, DDL, views, funktioner, triggers og GRANT — ikke cluster-admin (`CREATE ROLE`/`DATABASE`).
         </p>
       </header>
       {error && <p className="error-text">{error}</p>}

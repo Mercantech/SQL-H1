@@ -102,7 +102,7 @@ DELETE FROM customers WHERE name = 'Anna Jensen';
 - `ON DELETE SET NULL` — ordrer bliver walk-in (`customer_id NULL`) — vi har allerede NULL-tilladelse på `customer_id`
 - Forbyd sletning så længe der findes ordrer (det du oplever nu)
 
-I MVP opretter du ikke selv FK-regler (DDL) — men du **skal** forstå dem, når Delete fejler.
+FK-regler oprettes med DDL (se *Tabeller og E/R*) — her skal du **forstå** dem, når `DELETE` fejler.
 
 ## Delete og walk-in-ordrer
 

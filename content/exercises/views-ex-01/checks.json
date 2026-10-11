@@ -1,0 +1,29 @@
+{
+  "description": "Validerer v_order_lines view.",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM information_schema.views WHERE table_schema = 'public' AND table_name = 'v_order_lines'",
+      "expected": [[1]],
+      "message": "Viewet v_order_lines findes"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM v_order_lines",
+      "expected": [[14]],
+      "message": "Viewet returnerer alle 14 ordrer (inkl. walk-in)"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT kunde, produkt, quantity FROM v_order_lines WHERE order_id = 13",
+      "expected": [["Walk-in", "Espresso", 1]],
+      "message": "Walk-in ordre 13 vises korrekt"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT linje_beloeb FROM v_order_lines WHERE order_id = 1",
+      "expected": [[56.00]],
+      "message": "Ordre 1: 2 x Espresso 28 = 56"
+    }
+  ]
+}

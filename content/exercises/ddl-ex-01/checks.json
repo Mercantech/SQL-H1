@@ -1,0 +1,35 @@
+{
+  "description": "Validerer suppliers-tabel, FK, indeks og kobling til Espresso.",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'suppliers'",
+      "expected": [[1]],
+      "message": "Tabellen suppliers findes"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'products' AND column_name = 'supplier_id'",
+      "expected": [[1]],
+      "message": "products.supplier_id findes"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM information_schema.table_constraints WHERE table_schema = 'public' AND table_name = 'products' AND constraint_name = 'products_supplier_fk' AND constraint_type = 'FOREIGN KEY'",
+      "expected": [[1]],
+      "message": "FK products_supplier_fk findes"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ix_products_supplier'",
+      "expected": [[1]],
+      "message": "Indeks ix_products_supplier findes"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT p.name, s.name, s.city FROM products p JOIN suppliers s ON s.id = p.supplier_id WHERE p.name = 'Espresso'",
+      "expected": [["Espresso", "Nordic Beans", "Aarhus"]],
+      "message": "Espresso er koblet til Nordic Beans i Aarhus"
+    }
+  ]
+}

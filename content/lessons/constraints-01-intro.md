@@ -6,7 +6,7 @@ order: 1
 kind: theory
 objectives:
   - Kende NOT NULL, UNIQUE, CHECK, FK
-  - Se effekten uden at oprette constraints
+  - Mærke constraints via DML-fejl
 sandbox:
   seed: seeds/shop.sql
   allowWrite: true
@@ -24,7 +24,7 @@ En **constraint** er en regel databasen håndhæver. I café-seed’en er bl.a.:
 | `PRIMARY KEY` | `id`-kolonner |
 | `REFERENCES` (FK) | `orders.customer_id` → `customers` (må være `NULL` = walk-in) |
 
-Du må **ikke** køre `ALTER TABLE` i MVP — men du kan **mærke** reglerne.
+Her **mærker** du reglerne med DML. At *oprette* constraints med `ALTER TABLE` øver du i *Tabeller og E/R*.
 
 ## NOT NULL
 

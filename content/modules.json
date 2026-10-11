@@ -62,9 +62,9 @@
   {
     "slug": "ddl-er",
     "title": "Tabeller og E/R",
-    "description": "CREATE/ALTER/DROP TABLE, indeks og dokumentation med E/R-diagram.",
+    "description": "CREATE/ALTER/DROP TABLE, indeks, EXPLAIN og dokumentation med E/R — i din egen elev-database.",
     "order": 6,
-    "scaffoldOnly": true,
+    "scaffoldOnly": false,
     "objectives": [
       "Oprette, ændre og slette tabeller",
       "Tilføje indeks og constraints i DDL",
@@ -76,7 +76,7 @@
     "title": "Views",
     "description": "Oprette views, bruge dem i forespørgsler og begrunde sikkerhedsaspektet.",
     "order": 7,
-    "scaffoldOnly": true,
+    "scaffoldOnly": false,
     "objectives": [
       "CREATE/DROP VIEW",
       "Begrunde views ift. sikkerhed og forenkling",
@@ -86,21 +86,21 @@
   {
     "slug": "advanced",
     "title": "Rettigheder og avanceret SQL",
-    "description": "Roller, GRANT/REVOKE, parametre og kontrolstrukturer — hvem må hvad i databasen.",
+    "description": "GRANT/REVOKE, least privilege og parametre — hvem må hvad, og hvordan undgår man injection.",
     "order": 8,
-    "scaffoldOnly": true,
+    "scaffoldOnly": false,
     "objectives": [
-      "Oprette roller og tildele rettigheder",
       "Anvende GRANT/REVOKE på tabeller og views",
-      "Forstå parametre og enkle kontrolstrukturer"
+      "Forklare least privilege",
+      "Forstå parametre og SQL injection"
     ]
   },
   {
     "slug": "procedures",
     "title": "Procedures og funktioner",
-    "description": "Postgres-funktioner og procedures til administration og databehandling (stored procedures).",
+    "description": "Postgres-funktioner og procedures til genbrugelig databehandling.",
     "order": 9,
-    "scaffoldOnly": true,
+    "scaffoldOnly": false,
     "objectives": [
       "Oprette og kalde funktioner/procedures",
       "Skelne FUNCTION og PROCEDURE",
@@ -110,26 +110,26 @@
   {
     "slug": "triggers",
     "title": "Triggers",
-    "description": "Triggers der automatisk holder data konsistent ved INSERT/UPDATE/DELETE.",
+    "description": "Triggers der automatisk holder data konsistent eller logger ændringer ved INSERT/UPDATE/DELETE.",
     "order": 10,
-    "scaffoldOnly": true,
+    "scaffoldOnly": false,
     "objectives": [
       "CREATE TRIGGER og trigger-funktion",
       "Vælge BEFORE/AFTER og row-level",
-      "Bruge triggers til konsistensregler"
+      "Vælge constraint vs trigger vs app-logik"
     ]
   },
   {
     "slug": "drift",
     "title": "Drift og databaseserver",
-    "description": "Postgres som server: metadata, backup/restore, indeks og EXPLAIN, data ind/ud — kobles til Docker Compose i H1.",
+    "description": "Postgres som server: metadata, backup/restore, indeks/EXPLAIN og Docker Compose på H1.",
     "order": 11,
-    "scaffoldOnly": true,
+    "scaffoldOnly": false,
     "objectives": [
-      "Kende grundlæggende RDBMS-metadata (pg_catalog)",
-      "Tage backup og restore (pg_dump / restore)",
-      "Bruge indeks og EXPLAIN til performance",
-      "Flytte data ind og ud (COPY / dump)"
+      "Kende grundlæggende RDBMS-metadata",
+      "Tage backup og restore (pg_dump)",
+      "Bruge indeks og EXPLAIN",
+      "Koble til Docker Compose i H1"
     ]
   }
 ]

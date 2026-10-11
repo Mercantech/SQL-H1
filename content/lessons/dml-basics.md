@@ -43,7 +43,7 @@ Indtil nu har du primært **læst** data med `SELECT`. I dette modul **ændrer**
 | **DDL** | `CREATE TABLE`, `ALTER`, `DROP` | ændrer *struktur* |
 | **DCL** | `GRANT`, `REVOKE` | rettigheder |
 
-I SQL-H1’s MVP må du **ikke** køre DDL. Du skal mestre DML oven på det skema, caféen allerede har.
+DDL (`CREATE TABLE` m.m.) ligger i modulet *Tabeller og E/R*. Her mestrer du **DML** oven på café-skemaet — senere må du gerne ændre strukturen i din egen database.
 
 ## CRUD — broen til applikationer
 

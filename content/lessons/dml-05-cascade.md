@@ -58,10 +58,10 @@ Tommelfingerregel:
 
 ## FK-handlinger ved DELETE
 
-Når du opretter en fremmednøgle (DDL — du må ikke køre det i MVP, men du **skal** forstå det), kan du angive:
+Når du opretter en fremmednøgle (DDL — øves i *Tabeller og E/R*), kan du angive:
 
 ```sql
--- Eksempel (teori — kør ikke ALTER i SQL-H1 MVP)
+-- Eksempel: ON DELETE-strategi på FK
 customer_id INT REFERENCES customers(id)
   ON DELETE RESTRICT   -- eller NO ACTION, CASCADE, SET NULL, SET DEFAULT
 ```
@@ -201,10 +201,10 @@ JOIN products p ON p.id = o.product_id
 WHERE o.customer_id = (SELECT id FROM customers WHERE name = 'Anna Jensen');
 ```
 
-## Hvad du *ikke* skal gøre i SQL-H1 MVP
+## Hvad du skal undgå
 
-- `ALTER TABLE … ON DELETE CASCADE` (DDL — ikke tilladt)
-- Blindt slette uden preview
+- Blindt sætte `ON DELETE CASCADE` uden at forstå konsekvensen
+- Slette uden preview (`SELECT` først)
 - Antage at “det virker som i MySQL med løse FK”
 
 Du **skal** kunne forklare forskellen på strategierne til en eksamen eller en kollega.

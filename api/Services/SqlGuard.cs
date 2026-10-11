@@ -5,12 +5,20 @@ namespace SqlH1.Api.Services;
 
 public static class SqlGuard
 {
+    /// <summary>
+    /// Cluster-/host-farlige kommandoer. Elev har egen DB og må gerne DDL/DCL på egne objekter.
+    /// </summary>
     private static readonly Regex Banned = new(
-        @"\b(DROP\s+DATABASE|CREATE\s+DATABASE|CREATE\s+ROLE|ALTER\s+ROLE|DROP\s+ROLE|GRANT\s+|REVOKE\s+|COPY\s+|pg_read_file|pg_write_file|lo_import|lo_export|ALTER\s+SYSTEM|SET\s+ROLE|RESET\s+ROLE)\b",
+        @"\b(DROP\s+DATABASE|CREATE\s+DATABASE|CREATE\s+ROLE|ALTER\s+ROLE|DROP\s+ROLE|CREATE\s+USER|ALTER\s+USER|DROP\s+USER|COPY\s+|pg_read_file|pg_write_file|lo_import|lo_export|ALTER\s+SYSTEM|SET\s+ROLE|RESET\s+ROLE|CREATE\s+EXTENSION|ALTER\s+EXTENSION|DROP\s+EXTENSION|CREATE\s+TABLESPACE)\b",
         RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
     private static readonly Regex AllowedStart = new(
-        @"^\s*(WITH|SELECT|INSERT|UPDATE|DELETE|EXPLAIN)\b",
+        @"^\s*(WITH|SELECT|INSERT|UPDATE|DELETE|EXPLAIN|CREATE|ALTER|DROP|TRUNCATE|COMMENT|ANALYZE|VACUUM|GRANT|REVOKE|DO|CALL|BEGIN|COMMIT|ROLLBACK|SAVEPOINT|RELEASE|REINDEX)\b",
+        RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+    /// <summary>Kræver allowWrite (ændrer data/skema/rettigheder eller transaktion).</summary>
+    private static readonly Regex RequiresWrite = new(
+        @"^\s*(INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|TRUNCATE|GRANT|REVOKE|DO|CALL|COMMENT|VACUUM|REINDEX|BEGIN|COMMIT|ROLLBACK|SAVEPOINT|RELEASE)\b",
         RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
     public static string? Validate(string sql, bool allowWrite)
@@ -31,10 +39,10 @@ public static class SqlGuard
         foreach (var stmt in statements)
         {
             if (!AllowedStart.IsMatch(stmt))
-                return "Kun SELECT, INSERT, UPDATE, DELETE og WITH er tilladt i MVP.";
+                return "Kommandoen er ikke tilladt. Du må bl.a. bruge SELECT, DML, DDL (CREATE/ALTER/DROP), VIEW, FUNCTION, TRIGGER, GRANT og EXPLAIN.";
 
-            if (!allowWrite && Regex.IsMatch(stmt, @"^\s*(INSERT|UPDATE|DELETE)\b", RegexOptions.IgnoreCase))
-                return "Skrivende SQL er ikke tilladt i denne opgave. Brug SELECT.";
+            if (!allowWrite && RequiresWrite.IsMatch(stmt))
+                return "Skrivende SQL / DDL er ikke tilladt i denne opgave. Brug SELECT (eller Nulstil / skift lektion med skrivning).";
         }
 
         return null;
@@ -46,17 +54,44 @@ public static class SqlGuard
         var parts = new List<string>();
         var current = new StringBuilder();
         var inSingle = false;
+        string? dollarTag = null;
 
         for (var i = 0; i < cleaned.Length; i++)
         {
             var ch = cleaned[i];
+
+            if (dollarTag is not null)
+            {
+                if (StartsWithAt(cleaned, i, dollarTag))
+                {
+                    current.Append(dollarTag);
+                    i += dollarTag.Length - 1;
+                    dollarTag = null;
+                }
+                else
+                {
+                    current.Append(ch);
+                }
+                continue;
+            }
+
+            if (!inSingle && ch == '$')
+            {
+                var tag = TryReadDollarTag(cleaned, i);
+                if (tag is not null)
+                {
+                    dollarTag = tag;
+                    current.Append(tag);
+                    i += tag.Length - 1;
+                    continue;
+                }
+            }
 
             if (ch == '\'')
             {
                 current.Append(ch);
                 if (inSingle)
                 {
-                    // Postgres escape: '' inside string
                     if (i + 1 < cleaned.Length && cleaned[i + 1] == '\'')
                     {
                         current.Append('\'');
@@ -96,18 +131,46 @@ public static class SqlGuard
     }
 
     /// <summary>
-    /// Fjerner -- linjekommentarer og /* */ blokke uden for strenge,
+    /// Fjerner -- linjekommentarer og /* */ blokke uden for strenge og dollar-quotes,
     /// så fx "ORDER BY x; -- tip" ikke bliver til en ekstra sætning.
     /// </summary>
     internal static string StripComments(string sql)
     {
         var sb = new StringBuilder(sql.Length);
         var inSingle = false;
+        string? dollarTag = null;
 
         for (var i = 0; i < sql.Length; i++)
         {
             var ch = sql[i];
             var next = i + 1 < sql.Length ? sql[i + 1] : '\0';
+
+            if (dollarTag is not null)
+            {
+                if (StartsWithAt(sql, i, dollarTag))
+                {
+                    sb.Append(dollarTag);
+                    i += dollarTag.Length - 1;
+                    dollarTag = null;
+                }
+                else
+                {
+                    sb.Append(ch);
+                }
+                continue;
+            }
+
+            if (!inSingle && ch == '$')
+            {
+                var tag = TryReadDollarTag(sql, i);
+                if (tag is not null)
+                {
+                    dollarTag = tag;
+                    sb.Append(tag);
+                    i += tag.Length - 1;
+                    continue;
+                }
+            }
 
             if (!inSingle && ch == '-' && next == '-')
             {
@@ -155,5 +218,32 @@ public static class SqlGuard
         }
 
         return sb.ToString();
+    }
+
+    /// <summary>Læs $tag$ fra position i (inkl. tom $$).</summary>
+    private static string? TryReadDollarTag(string sql, int start)
+    {
+        if (start >= sql.Length || sql[start] != '$')
+            return null;
+
+        var j = start + 1;
+        while (j < sql.Length)
+        {
+            var c = sql[j];
+            if (c == '$')
+                return sql.Substring(start, j - start + 1);
+            if (!(char.IsLetterOrDigit(c) || c == '_'))
+                return null;
+            j++;
+        }
+
+        return null;
+    }
+
+    private static bool StartsWithAt(string sql, int index, string value)
+    {
+        if (index + value.Length > sql.Length)
+            return false;
+        return string.Compare(sql, index, value, 0, value.Length, StringComparison.Ordinal) == 0;
     }
 }

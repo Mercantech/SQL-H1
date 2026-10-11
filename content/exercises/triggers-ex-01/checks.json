@@ -1,0 +1,29 @@
+{
+  "description": "Validerer product_audit + trigger efter prisændring på Espresso.",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'product_audit'",
+      "expected": [[1]],
+      "message": "Tabellen product_audit findes"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM pg_trigger t JOIN pg_class c ON c.oid = t.tgrelid JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relname = 'products' AND t.tgname = 'trg_product_price' AND NOT t.tgisinternal",
+      "expected": [[1]],
+      "message": "Triggeren trg_product_price findes på products"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT price FROM products WHERE name = 'Espresso'",
+      "expected": [[30.00]],
+      "message": "Espresso koster 30.00 efter UPDATE"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT old_price, new_price FROM product_audit a JOIN products p ON p.id = a.product_id WHERE p.name = 'Espresso' ORDER BY a.id DESC LIMIT 1",
+      "expected": [[28.00, 30.00]],
+      "message": "Audit logger 28 → 30 for Espresso"
+    }
+  ]
+}
