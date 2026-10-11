@@ -97,3 +97,30 @@ ALTER TABLE suppliers DROP COLUMN IF EXISTS phone_number;
 4. Først derefter: indsæt data der bruger FK
 
 Samme tænkning som ved `DELETE` og cascading — **grafen** styrer rækkefølgen.
+
+## ALTER som migration
+
+I et hold-projekt er hver `ALTER` en **versioneret ændring**:
+
+1. Skriv SQL-scriptet (gerne idempotent med `IF EXISTS` hvor det giver mening)  
+2. Kør det mod en kopi / elev-DB først  
+3. Dokumentér breaking changes (API DTO’er, seeds)
+
+```sql
+-- Eksempel: tilføj kolonne + backfill + NOT NULL
+ALTER TABLE products ADD COLUMN IF NOT EXISTS vat_pct NUMERIC(5,2);
+UPDATE products SET vat_pct = 25.00 WHERE vat_pct IS NULL;
+ALTER TABLE products ALTER COLUMN vat_pct SET NOT NULL;
+```
+
+## Hvad ALTER *ikke* er god til
+
+- At “fikse data” midt i en forvirret session uden backup/nulstil  
+- At skifte PK-strategi uden plan  
+- At droppe kolonner appen stadig bruger  
+
+## Prøv selv
+
+1. Tilføj `phone` på `suppliers`, indsæt data, sæt derefter `NOT NULL` (med backfill).  
+2. Tilføj FK fra `products` til `suppliers` og bryd den bevidst med DML.  
+3. Nulstil, når du er færdig.

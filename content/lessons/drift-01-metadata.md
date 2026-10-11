@@ -72,3 +72,38 @@ Af sikkerhedshensyn er bl.a. blokeret:
 - `CREATE EXTENSION`
 
 I undervisningen/Docker som admin kan underviseren godt vise de ting uden for elev-sandboxen.
+
+## Server → database → schema → objekt
+
+```text
+Postgres-instans (port 5432)
+  ├── database sqlh1          (app/metadata)
+  ├── database student_…      (din sandbox)
+  │     └── schema public
+  │           ├── tables
+  │           ├── views
+  │           ├── functions
+  │           └── indexes
+  └── roller / privileges
+```
+
+## Nyttige katalogforespørgsler
+
+```sql
+-- Kolonner + nullability
+SELECT column_name, data_type, is_nullable, column_default
+FROM information_schema.columns
+WHERE table_schema = 'public' AND table_name = 'orders'
+ORDER BY ordinal_position;
+
+-- Constraints
+SELECT constraint_name, constraint_type
+FROM information_schema.table_constraints
+WHERE table_schema = 'public' AND table_name = 'orders';
+```
+
+## Prøv selv
+
+1. Kør `current_database` / `version()`.  
+2. List tabeller og indeks.  
+3. Find alle FK i `public` via `information_schema` (som i DDL/E/R-lektionen).

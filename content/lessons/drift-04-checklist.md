@@ -56,3 +56,29 @@ SELECT
   (SELECT COUNT(*) FROM pg_indexes WHERE schemaname = 'public') AS indeks,
   current_database() AS database;
 ```
+
+## Afleverings-tekst (skabelon)
+
+Kopiér og udfyld:
+
+> Vores Postgres kører som Docker-service `___` med volume `___`.  
+> API’en forbinder via env `___`.  
+> Skema genskabes med `___` (seed/migration).  
+> Backup: `___`.  
+> Vi har indeks på `___` fordi `___`.  
+> App-rollen må `___` og må ikke `___`.
+
+## Rød/gul/grøn
+
+| | Grøn | Gul | Rød |
+|--|------|-----|-----|
+| Secrets | i env | i compose men gitignored | i git |
+| Seed | idempotent script | manuel klik | “husker ikke” |
+| FK-indeks | på alle FK | på de tungeste | ingen |
+| EXPLAIN | dokumenteret på 1 hot query | “det føles hurtigt” | aldrig prøvet |
+
+## Prøv selv
+
+1. Udfyld skabelonen for SQL-H1 *eller* jeres projekt.  
+2. Kør status-SQL’en her.  
+3. Ret én gul ting til grøn i denne uge.

@@ -92,3 +92,24 @@ SELECT name, stock_label(in_stock) FROM products ORDER BY name;
 | C# API | Parametre i alle forespørgsler |
 | Postgres | Views + GRANT til least privilege |
 | Elev-DB her | Øv funktioner/views — men husk injection, når I bygger API |
+
+## Flere injection-varianter (kend dem)
+
+| Variant | Idé |
+|---------|-----|
+| Klassisk `OR 1=1` | omgå WHERE |
+| Comment-out `--` | afkort query |
+| Second-order | gemt payload der senere konkateners |
+
+Parametre + mindst privilegium + views = forsvar i dybden.
+
+## ORM vs. rå SQL
+
+Dapper/ADO.NET beskytter **kun**, hvis I bruger parametre.  
+`QueryAsync("… WHERE name = '" + name + "'")` er stadig farligt.
+
+## Prøv selv
+
+1. Opret `product_price` og kald den med to produktnavne.  
+2. Skriv (på papir) den *forkerte* C#-streng og den *rigtige* med `@name`.  
+3. Forklar hvorfor `product_price(p_name TEXT)` ikke er injection, selvom input kommer udefra.

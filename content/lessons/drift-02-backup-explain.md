@@ -73,3 +73,25 @@ ANALYZE products;
 1. Har FK-kolonner indeks?
 2. Kan I genskabe DB fra seed/migration + dump?
 3. Ved I, hvilken connection string Docker Compose bruger?
+
+## Backup-strategier (begreber)
+
+| Strategi | Idé |
+|----------|-----|
+| Logisk dump (`pg_dump`) | SQL/custom fil — god til flytning |
+| Volume-snapshot | disk-kopi af datafilerne |
+| PITR | point-in-time med WAL (avanceret) |
+
+Til H1: kunne tage et `pg_dump` og genskabe er nok til aflevering.
+
+## EXPLAIN ANALYZE-etikette
+
+- Brug på **dev/kopi**, ikke blindt mod prod under load  
+- Kør to gange (cold/warm cache) før I konkluderer  
+- Kig efter de dyre noder (`cost` / `actual time`)
+
+## Prøv selv
+
+1. Opret indeks + `EXPLAIN` på ordrer efter dato.  
+2. Kør `EXPLAIN ANALYZE` på et JOIN med `GROUP BY`.  
+3. Skriv i README hvordan I ville backup’e projekt-DB’en.

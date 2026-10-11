@@ -154,10 +154,46 @@ I SQL-H1 designer vi til **OLTP-undervisning**: sandhed først. Senere kan man *
 5. Tjek 1NF → 2NF → 3NF med anomalierne i baghovedet.
 6. Tegn E/R (se også Database-siden) og verificér med `SELECT`/`JOIN`.
 
+## Funktionelle afhængigheder (sproget bag normalformerne)
+
+Skriv **A → B** når værdien af A bestemmer B.
+
+I caféen (forenklet):
+
+| Afhængighed | Læsning |
+|-------------|---------|
+| `customers.id → name, city, email` | kendt kunde-id ⇒ kendt profil |
+| `products.id → name, category, price` | kendt produkt ⇒ kendt stamdata |
+| `orders.id → customer_id, product_id, quantity, order_date` | kendt ordre ⇒ kendt linje |
+
+2NF/3NF handler om at **ikke** have afhængigheder, der “hænger skævt” ift. nøglen (delnøgle eller transitativt via en ikke-nøgle).
+
+### Hurtig 3NF-test
+
+For hver ikke-nøgle-kolonne X i en tabel med PK K:
+
+1. Afhænger X af hele K? (ellers brud på 2NF ved sammensat K)  
+2. Afhænger X kun af K — ikke af en anden ikke-nøgle Y? (ellers brud på 3NF: K → Y → X)
+
+Hvis `category_manager` afhænger af `category`, og `category` ikke er PK, falder I på test 2.
+
+## BCNF — kort kendskab
+
+**Boyce–Codd Normal Form** er en skærpelse af 3NF: enhver determinant skal være en kandidatnøgle. I H1 skal du primært **kende navnet** og vide, at 3NF er nok i de fleste OLTP-apps. Nævn BCNF, hvis underviseren spørger til “findes der noget efter 3NF?”.
+
+## Normalisering i praksis (café-walkthrough)
+
+Start med den flade tabel (kunde, by, produkt, pris, antal, dato):
+
+1. **1NF:** én linje pr. køb — ikke kommaseparerede produkter.  
+2. **2NF:** træk `kunde/by` ud til `customers`, `produkt/pris` til `products` — `orders` beholder id’er + antal/dato.  
+3. **3NF:** hvis I tilføjer `category_manager`, så lav `categories` — ellers er I “3NF-light” med tekst-kategori.
+
 ## Prøv selv
 
 1. Kør den flade `SELECT` øverst. Peg på tre steder med **redundans**.
 2. Forklar med egne ord: hvad sker der ved opdateringsanomali, hvis Annas by kun fandtes på ordrelinjer?
 3. Argumentér for, hvorfor `price` ligger på `products` og ikke på `orders` i vores seed (tip: prisændring vs. historisk linjepris — begge designs findes; kend trade-off).
+4. Skriv tre funktionelle afhængigheder for caféen med pil-notation.
 
 Næste lektion: **designmønstre** (lookup, koblingstabel, soft delete, stjerne m.m.).

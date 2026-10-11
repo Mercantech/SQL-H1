@@ -66,3 +66,34 @@ Skriv (i README eller aflevering):
 - Hvordan genskaber I tom DB + start-data?
 
 Når I kan svare på det, har I koblet SQL-pensum til **Serverteknologi – Databaseserver** på H1.
+
+## Typisk Compose-udsnit (forståelse)
+
+```yaml
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: cafe
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    # ports: ["5432:5432"]  # kun lokalt / debug
+
+  api:
+    environment:
+      DATABASE_URL: postgres://app:${DB_PASSWORD}@db:5432/cafe
+```
+
+## Sundhed og logs
+
+- `docker compose ps` — kører `db`?  
+- `docker compose logs db` — migration/seed-fejl?  
+- Healthcheck på Postgres (`pg_isready`) i seriøse setups  
+
+## Prøv selv
+
+1. Find Compose-filen i jeres projekt og udpeg `db`-servicen.  
+2. Peg på volume og env.  
+3. Forklar forskellen på host `db` vs `localhost` fra API vs PC.

@@ -26,12 +26,27 @@ I har mærket `NOT NULL` og FK. Nu udvider I værktøjskassen — og **skriver**
 ## UNIQUE
 
 ```sql
--- Én e-mail pr. kunde (flere NULL er OK i Postgres UNIQUE)
+ALTER TABLE customers
+  DROP CONSTRAINT IF EXISTS customers_email_unique;
+
 ALTER TABLE customers
   ADD CONSTRAINT customers_email_unique UNIQUE (email);
 ```
 
-Prøv at indsætte to kunder med samme e-mail — Postgres svarer med `unique_violation`.
+Prøv at indsætte to kunder med samme e-mail — Postgres: `unique_violation`.
+
+### NULL og UNIQUE i Postgres
+
+Flere rækker må have `email IS NULL` under en `UNIQUE`-constraint. `NULL` betyder “ukendt” og kolliderer ikke med andre `NULL`. Skal e-mail være både unik *og* påkrævet: kombiner `NOT NULL` + `UNIQUE`.
+
+### Sammensat UNIQUE
+
+```sql
+-- Eksempel-mønster (ikke i seed): ét varenr. pr. leverandør
+-- UNIQUE (supplier_id, sku)
+```
+
+Bruges når unikhed er **kombinationen**, ikke enkeltkolonnen.
 
 ## CHECK
 
@@ -46,6 +61,21 @@ ALTER TABLE products
 UPDATE products SET price = -5 WHERE name = 'Te';
 ```
 
+Flere eksempler på nyttige checks:
+
+```sql
+-- Antal positivt
+-- CHECK (quantity > 0)
+
+-- Status i tilladt mængde
+-- CHECK (status IN ('draft', 'paid', 'cancelled'))
+
+-- Interval
+-- CHECK (discount_pct >= 0 AND discount_pct <= 100)
+```
+
+`CHECK` kan ikke (praktisk) kigge i *andre* tabeller — så brug FK til relationer, og triggers/app til tværgående forretningsregler.
+
 ## Fejlkoder I skal kunne genkende
 
 | Situation | Typisk SQLSTATE / tip |
@@ -55,7 +85,7 @@ UPDATE products SET price = -5 WHERE name = 'Te';
 | UNIQUE brudt | `unique_violation` |
 | CHECK brudt | `check_violation` |
 
-Læs fejlteksten — den nævner ofte constraint-navnet (`products_price_positive`). **Navngiv constraints**, så fejlsøgning er nem.
+I Npgsql/C# lander det ofte som `PostgresException` med `SqlState` — map til 400-svar i API’en.
 
 ## Hvad hører hvor?
 
@@ -63,10 +93,20 @@ Læs fejlteksten — den nævner ofte constraint-navnet (`products_price_positiv
 |-------|------------|
 | Skal udfyldes | `NOT NULL` |
 | Unik forretningsnøgle | `UNIQUE` / PK |
-| Tal i interval | `CHECK` |
+| Tal i interval / enum-lignende | `CHECK` |
 | Peger på anden tabel | `FOREIGN KEY` |
 | Kompleks regel på tværs af tabeller | trigger eller app |
+
+## Deferred constraints (kendskab)
+
+I avancerede migrationer kan constraints sættes til at tjekkes ved **COMMIT** i stedet for pr. statement (`DEFERRABLE`). Sjældent nødvendigt i H1 — men forklarer, hvorfor nogle ETL-jobs midlertidigt kan bryde rækkefølgen inde i en transaktion.
 
 ## Nulstil
 
 Når I har eksperimenteret færdigt: **Nulstil database**, så café-seed’en er ren igen til næste lektion.
+
+## Prøv selv
+
+1. Tilføj `products_price_positive` og fremprovokér fejlen.  
+2. Tilføj `customers_email_unique` og prøv dublet-e-mail.  
+3. Diskutér: skal `quantity > 0` være CHECK på `orders` eller kun validering i API’en? (Ideelt: begge — DB som sikkerhedsnet.)

@@ -96,3 +96,27 @@ Skal noget ske automatisk ved DML (log, afledt felt)?
 Er det forretningsflow (e-mail, betaling, Auth)?
   → C# API
 ```
+
+## RAISE i BEFORE-trigger
+
+```sql
+IF NEW.quantity <= 0 THEN
+  RAISE EXCEPTION 'quantity skal være > 0 (fik %)', NEW.quantity;
+END IF;
+RETURN NEW;  -- vigtigt: BEFORE skal returnere NEW (eller NULL for at springe række over)
+```
+
+Returnér `NULL` i BEFORE ROW for at **stille** springe rækken over (sjældent ønsket — vær eksplicit med EXCEPTION i stedet).
+
+## Idempotens og bulk
+
+Triggers kører pr. række ved `UPDATE … WHERE …` der rammer 1000 rækker = 1000 kald. Ved store imports:
+
+- midlertidigt `ALTER TABLE … DISABLE TRIGGER` (kræver rettigheder), eller  
+- læg logikken i et batch-job i C#
+
+## Prøv selv
+
+1. Opret `trg_orders_qty` og prøv `quantity = 0`.  
+2. Tilføj `CHECK (quantity > 0)` i stedet — sammenlign fejloplevelsen.  
+3. Skriv i README: “Triggers bruges til X; constraints til Y; API til Z.”

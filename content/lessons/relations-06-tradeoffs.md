@@ -51,10 +51,46 @@ Besvar for jer selv / i gruppen:
 3. Hvad sker der med historik, hvis `products.price` ændres?
 4. Hvor ville I lægge soft delete (`deleted_at`) hvis kunder ikke må fjernes fysisk?
 
+## Beslutningsramme (brug den i projektet)
+
+For hvert “skævt” felt I overvejer at denormalisere:
+
+1. **Hvor ofte opdateres kilden?** (sjældent → snapshot er sikrere)  
+2. **Hvem ejer sandheden?** (én tabel vs. flere lag)  
+3. **Hvad koster en inkonsistens?** (faktura ≠ dashboard-cache)  
+4. **Kan et view / materialized view løse læsebehovet uden at kopiere?**  
+
+```sql
+-- Læsevenlig “rapport” uden at denormalisere stamdata
+SELECT c.city, COUNT(*) AS ordrer, SUM(o.quantity * p.price) AS approx_omsaetning
+FROM orders o
+JOIN customers c ON c.id = o.customer_id
+JOIN products p ON p.id = o.product_id
+GROUP BY c.city
+ORDER BY approx_omsaetning DESC;
+```
+
+Bemærk: `approx_omsaetning` bruger **nutidens** pris — det er præcis trade-offen fra tidligere.
+
+## OLTP vs. OLAP (kort)
+
+| | OLTP (daglig app) | OLAP / BI |
+|--|-------------------|-----------|
+| Design | 3NF, mange små tabeller | stjerne, færre JOIN |
+| Belastning | mange små skrivninger | tunge aggregeringer |
+| Café-seed | her | kunne spejles i et view senere |
+
 ## Til H1-projektet
 
 Afleveringen bør kunne pege på:
 
-- E/R eller skema-diagram
-- Mindst én bevidst trade-off (“vi valgte X fordi …”)
-- Hvordan API’en mapper til tabeller (senere: ADO.NET/Dapper)
+- E/R eller skema-diagram  
+- Mindst én bevidst trade-off (“vi valgte X fordi …”)  
+- Hvordan API’en mapper til tabeller (ADO.NET/Dapper)  
+- Hvor I *ikke* denormaliserer — og hvorfor  
+
+## Prøv selv
+
+1. Skriv én sætning: “Vi denormaliserer ___ fordi ___ ; sandheden bor stadig i ___.”  
+2. Peg på én ting i café-seed’en I ville ændre i et rigtigt kassesystem.  
+3. Diskutér: er `category` som tekst acceptabelt i en MVP? Hvornår stopper det med at være det?

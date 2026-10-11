@@ -83,3 +83,29 @@ string? email = reader.IsDBNull(3) ? null : reader.GetString(3);
 ```
 
 Samme tre-værdi-logik som i SQL — husk `IS NULL` / `COALESCE` når I designer forespørgslen.
+
+## Ordinal vs. navn
+
+```csharp
+var name = reader.GetString(reader.GetOrdinal("name"));
+```
+
+Navne er mere robuste end hårde indeks, hvis `SELECT`-listen ændrer sig.
+
+## CommandTimeout
+
+```csharp
+cmd.CommandTimeout = 30; // sekunder
+```
+
+Undgå at hænge request-tråde på tunge queries — sæt timeout bevidst.
+
+## Buffret vs. streaming
+
+`ExecuteReaderAsync` streamer rækker. Materialisér til liste/DTO i repository, så controlleren ikke holder reader åben.
+
+## Prøv selv
+
+1. Kør Viborg-SQL’en i SQL-H1.  
+2. Skriv C#-skitsen der mapper til `record Customer(int Id, string Name, string City)`.  
+3. Håndter `email` som nullable.

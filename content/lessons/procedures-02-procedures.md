@@ -72,3 +72,23 @@ Tommelfinger: **constraints + enkelte triggers/funktioner** i DB; **applikations
 ```sql
 DROP PROCEDURE IF EXISTS restock_product(TEXT);
 ```
+
+## Hvornår PROCEDURE frem for FUNCTION?
+
+| Vælg PROCEDURE når… | Vælg FUNCTION når… |
+|---------------------|---------------------|
+| Side effects er hovedformålet | I skal bruge resultatet i `SELECT` |
+| Batch/admin (“kør natjob”) | Ren beregning / tabel-retur |
+| I vil `CALL` eksplicit | Indlejring i SQL-udtryk |
+
+I mange kodebaser lever det meste stadig som **FUNCTION** + app-orchestration. Procedures er nyttige at kende til H1-pensum og Postgres-dokumentation.
+
+## Rettigheder
+
+`GRANT EXECUTE ON FUNCTION/PROCEDURE … TO …` styrer hvem der må kalde. Samme least-privilege-tænkning som ved tabeller.
+
+## Prøv selv
+
+1. Opret `restock_product` og `CALL` den på Chokoladebolle.  
+2. Verificér med `SELECT`.  
+3. Skriv tre linjer: hvad hører i DB vs. i C# i *jeres* projekt.

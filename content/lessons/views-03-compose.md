@@ -84,3 +84,33 @@ DROP VIEW v_order_lines;
 ## Til API’en
 
 Appen kan `SELECT` fra `v_sales_by_category` uden at kende JOIN-detaljerne — stabilt “read model”. Skriv stadig til basistabellerne.
+
+## Versionering af views
+
+Når kontrakten ændrer sig:
+
+```sql
+CREATE OR REPLACE VIEW v_sales_by_category AS
+  -- ny definition
+  ...
+```
+
+`OR REPLACE` kan fejle, hvis kolonner ændrer type/rækkefølge på en måde Postgres ikke kan. Så: `DROP VIEW … CASCADE` (pas på!) og opret forfra — eller opret `v_sales_by_category_v2` og migrér API’en.
+
+## Afhængighedsgraf
+
+```text
+orders + products + customers
+        ↓
+  v_order_lines
+        ↓
+  v_sales_by_category
+```
+
+Ændrer I basistabeller (omdøb kolonne), knækker views. Derfor: E/R + views høører sammen i review.
+
+## Prøv selv
+
+1. Byg begge lag.  
+2. Ændr noget i `v_order_lines` og se effekten i aggregatet.  
+3. Prøv `DROP VIEW v_order_lines` uden at droppe barnet — læs fejlen.

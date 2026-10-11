@@ -75,7 +75,35 @@ price REAL
 price NUMERIC(10,2) NOT NULL
 ```
 
-## Øvelse
+## TEXT vs VARCHAR
+
+I Postgres er `TEXT` og `VARCHAR` (uden hård grund) ofte lige hurtige. Brug `VARCHAR(n)` når **forretningen** har max-længde (fx kuponkode 16 tegn) — ellers `TEXT`.
+
+## Tid og tidzoner
+
+| Type | Brug |
+|------|------|
+| `DATE` | fødselsdag, ordredato uden klokkeslæt |
+| `TIMESTAMP` | uden tidzone (undgå i distribuerede apps) |
+| `TIMESTAMPTZ` | “skete hvornår” i den virkelige verden |
+
+`now()` returnerer `timestamptz`. Gem UTC i tankerne; vis lokal tid i UI.
+
+## Domæne vs. applikationstype
+
+| SQL | C# (typisk) |
+|-----|-------------|
+| `INT` | `int` |
+| `BIGINT` | `long` |
+| `NUMERIC` | `decimal` |
+| `TEXT` | `string` |
+| `BOOLEAN` | `bool` |
+| `TIMESTAMPTZ` | `DateTimeOffset` |
+| `DATE` | `DateOnly` |
+
+Forkerte mappinger (fx `float` til penge) giver snigende bugs.
+
+## Prøv selv
 
 Opret `promo_codes`, indsæt 2 koder, og kør:
 
@@ -85,3 +113,5 @@ FROM information_schema.columns
 WHERE table_name = 'promo_codes'
 ORDER BY ordinal_position;
 ```
+
+Argumentér: hvorfor `NUMERIC` til `discount_pct` og ikke `REAL`?

@@ -69,3 +69,22 @@ LIMIT 5;
 | I vil eje SQL’en | I vil have fuld change-tracker |
 | API’en er CRUD + rapporter | Kompleks objektgraf med lazy load |
 | Performance og enkelhed tæller | Teamet allerede er tungt i EF |
+
+## Mapping-regler (praktisk)
+
+- Kolonnenavne matches case-insensitive til properties  
+- Brug `AS Id` hvis SQL er `id` og property er `Id` (virker ofte alligevel)  
+- `record` / `class` med `get`/`init` fungerer fint  
+- Match NULL-bare kolonner til `string?`, `int?`, …
+
+## Hvad Dapper *ikke* er
+
+- Ikke change tracker (ingen `SaveChanges`)  
+- Ikke automatiske migrationer  
+- Ikke beskyttelse mod dårlig SQL — I ejer den stadig  
+
+## Prøv selv
+
+1. Kør kundelisten i SQL-H1.  
+2. Skriv `Customer`-record og `QueryAsync`-kaldet.  
+3. Sammenlign linjetal med rå ADO.NET-reader-løkke.

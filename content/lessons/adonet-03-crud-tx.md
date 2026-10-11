@@ -94,3 +94,34 @@ catch
 - [ ] Multi-step skrivning i transaktion  
 - [ ] `RETURNING` til nye id’er  
 - [ ] DTO’er — ikke `DataTable` overalt i API’en  
+
+## DBNull vs. null
+
+```csharp
+cmd.Parameters.AddWithValue("cid", (object?)customerId ?? DBNull.Value);
+```
+
+Npgsql skal have `DBNull.Value` for SQL `NULL` — C# `null` alene er ikke altid nok afhængigt af API.
+
+## Isolation af SQL
+
+Hold SQL i repository/DAL — ikke i controllers. Så kan I:
+
+- genbruge queries  
+- teste dem i SQL-H1 først  
+- skifte til Dapper senere uden at røre endpoints  
+
+## Fejl → HTTP
+
+| Postgres | Typisk API |
+|----------|------------|
+| unique_violation | 409 Conflict |
+| foreign_key_violation | 400/409 |
+| check_violation | 400 |
+| timeout | 503 / 504 |
+
+## Prøv selv
+
+1. Kør `INSERT … RETURNING` for en ordre i SQL-H1.  
+2. Skitsér `CreateOrderAsync` med transaktion.  
+3. List tre ting fra checklisten I vil kræve i code review.

@@ -79,3 +79,29 @@ Tommelfingerregel til projektet:
 3. Migrations/admin kører med en anden (stærkere) bruger
 
 Det er samme tankegang som Mercantec Auth-roller i API’et — bare inde i Postgres.
+
+## GRANT på views (anbefalet mønster)
+
+```sql
+CREATE OR REPLACE VIEW v_menu AS
+SELECT name, category, price FROM products WHERE in_stock = TRUE;
+
+GRANT SELECT ON v_menu TO PUBLIC;
+-- I produktion: GRANT SELECT ON v_menu TO app_readonly;
+```
+
+Kombinér med `REVOKE` på basistabeller for rigtig least privilege (kræver separate roller — **cluster-roller** opretter I ikke i SQL-H1-sandboxen; det viser underviseren / I gør det i jeres Compose-setup).
+
+## Hvad I *ikke* kan i elev-sandboxen
+
+Blokeret af sikkerhedshensyn: `CREATE ROLE`, `CREATE DATABASE`, m.m. I øver `GRANT`/`REVOKE` på **egne objekter** (fx `TO PUBLIC`).
+
+## Default privileges (kendskab)
+
+I team-databaser sætter man ofte `ALTER DEFAULT PRIVILEGES`, så nye tabeller automatisk får rigtige GRANT til app-rollen. Nævn det i driftsdokumentationen.
+
+## Prøv selv
+
+1. Opret et view og `GRANT SELECT … TO PUBLIC`.  
+2. Kør `role_table_grants`-forespørgslen og find jeres grant.  
+3. `REVOKE` igen og se forskellen.

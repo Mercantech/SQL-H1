@@ -67,3 +67,31 @@ Til H1: husk at **DEFINER** er kraftfuldt og skal bruges bevidst (sjældent i el
 | `VOLATILE` | kan ændre sig / have side effects (default) |
 
 Forkert markør kan give forkerte planer — start med default, og sæt `STABLE`/`IMMUTABLE` når I er sikre.
+
+## RAISE-niveauer
+
+```sql
+RAISE NOTICE 'debug: %', p_n;      -- log / klient-notice
+RAISE WARNING '…';
+RAISE EXCEPTION '…';              -- aborterer statement/transaktion
+```
+
+Til validering: brug **EXCEPTION**. NOTICE er til debug.
+
+## EXCEPTION-blok (kendskab)
+
+```sql
+BEGIN
+  -- …
+EXCEPTION WHEN unique_violation THEN
+  RAISE EXCEPTION 'e-mail findes allerede';
+END;
+```
+
+Fang specifikke SQLSTATE-navne i stedet for blind `WHEN OTHERS`.
+
+## Prøv selv
+
+1. Opret `require_positive` og kald med `3` og `0`.  
+2. Læs fejlbeskeden ved `0`.  
+3. Diskutér: skal denne regel være CHECK i stedet? (Ja, hvis den er simpel — funktioner til det mere dynamiske.)

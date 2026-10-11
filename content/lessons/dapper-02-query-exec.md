@@ -74,3 +74,30 @@ FROM products
 WHERE category = 'Drikke'
 ORDER BY name;
 ```
+
+## QueryFirst vs. Single
+
+| Metode | Forventning |
+|--------|-------------|
+| `QueryFirstAsync` | mindst én — tager første |
+| `QueryFirstOrDefaultAsync` | 0 eller flere — null hvis 0 |
+| `QuerySingleAsync` | præcis én — ellers exception |
+| `QuerySingleOrDefaultAsync` | 0 eller 1 |
+
+Brug `Single` når PK-opslag *skal* være unikt.
+
+## Dynamiske parametre
+
+```csharp
+var p = new DynamicParameters();
+p.Add("category", "Drikke");
+p.Add("min_price", 30m);
+```
+
+Nyttigt når I bygger WHERE dynamisk — stadig parametre, aldrig streng-konkat af værdier.
+
+## Prøv selv
+
+1. Kør drikke-SQL’en.  
+2. Skitsér `GetByCategoryAsync` med Dapper.  
+3. Skitsér `UpdatePriceAsync` med `ExecuteAsync` + tjek `rows == 1`.

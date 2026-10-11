@@ -72,6 +72,26 @@ Hvis andre views afhænger af dette view, kan du få brug for `CASCADE` — tæn
 
 Simple views (én tabel, ingen aggregation) kan nogle gange `INSERT`/`UPDATE` direkte. I praksis opdaterer man ofte **basistabellerne** og lader view’et være read-model. Til H1: **læs via views**, skriv via tabeller.
 
+## View vs. tabel vs. CTE
+
+| | View | Tabel | CTE (`WITH`) |
+|--|------|-------|--------------|
+| Gemt i kataloget | ja | ja | nej (pr. query) |
+| Data på disk | nej* | ja | nej |
+| Genbrug på tværs af queries | ja | ja | kun samme statement |
+
+\*Materialized views er undtagelsen (egne lektion senere i tankerne — vi holder os til almindelige views).
+
+## Navngivning
+
+Prefix `v_` (eller `vw_`) gør det tydeligt i `SELECT` og i API-docs: *dette er et read-model*.
+
+## Performance-note
+
+Et view **cacher ikke** automatisk. Tunge views kørt ofte → overvej indeks på basistabeller, forenkling af SQL, eller (senere) materialized view.
+
 ## Prøv selv
 
-Lav `v_product_sales` med produktnavn, kategori og samlet `SUM(quantity)` fra `orders`. Forespørg de 3 mest solgte.
+1. Lav `v_product_sales` med produktnavn, kategori og `SUM(quantity)`.  
+2. Forespørg de 3 mest solgte.  
+3. Forklar forskellen på view og CTE til en makker.

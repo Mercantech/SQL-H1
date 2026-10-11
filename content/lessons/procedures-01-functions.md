@@ -100,3 +100,37 @@ DROP FUNCTION IF EXISTS top_products(INT);
 ```
 
 I Postgres kan flere funktioner dele navn med forskellige argumenttyper — derfor angiver man ofte signaturen ved `DROP`.
+
+## LANGUAGE sql vs plpgsql
+
+| | `LANGUAGE sql` | `LANGUAGE plpgsql` |
+|--|----------------|---------------------|
+| Krop | ét SQL-udtryk / query | blokke, `IF`, loops |
+| Enkelhed | bedst til rene beregninger | bedst til logik |
+| Plan | kan inlines ofte | mere procedurelt |
+
+Start med `sql`, skift til `plpgsql` når I får brug for kontrolstrukturer.
+
+## Parametre: IN (og OUT — kendskab)
+
+```sql
+CREATE OR REPLACE FUNCTION add_vat(amount NUMERIC, vat NUMERIC DEFAULT 0.25)
+RETURNS NUMERIC
+LANGUAGE sql IMMUTABLE
+AS $$
+  SELECT round(amount * (1 + vat), 2);
+$$;
+
+SELECT name, price, add_vat(price) AS med_moms FROM products LIMIT 5;
+```
+
+## Searched vs. table functions
+
+- **Skalar:** én værdi pr. kald (`order_line_total`)  
+- **Set-returning / `RETURNS TABLE`:** bruges i `FROM` (`top_products(3)`)
+
+## Prøv selv
+
+1. Opret `order_line_total` og `top_products`.  
+2. Skriv en `IMMUTABLE` hjælpefunktion (`add_vat`).  
+3. `DROP` med fuld signatur.

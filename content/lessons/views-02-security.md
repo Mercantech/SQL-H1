@@ -72,3 +72,30 @@ SELECT table_name, view_definition
 FROM information_schema.views
 WHERE table_schema = 'public';
 ```
+
+## Security barrier (idéen)
+
+I streng opsætning:
+
+1. App-rollen har **ingen** `SELECT` på basistabeller  
+2. App-rollen har `SELECT` på udvalgte views  
+3. Views eksponerer kun tilladte kolonner/rækker  
+
+Så kan en SQL-injection i værste fald kun læse det, view’et tillader — ikke hele skemaet.
+
+I SQL-H1 er I ejer af DB’en (til læring). I projektet: tænk least privilege fra starten.
+
+## Column-level vs. view
+
+| Tilgang | Pros |
+|---------|------|
+| `GRANT SELECT (col1, col2) ON t` | simpelt |
+| View `v_…` | klarere API, kan joine/filtrere, lettere at versionere |
+
+Til H1-projekter anbefales **views som læse-API** + Dapper `QueryAsync` mod viewet.
+
+## Prøv selv
+
+1. Opret `v_public_products` uden `in_stock`.  
+2. Opret `v_viborg_customers` uden e-mail.  
+3. Forklar hvilken “rolle” der må bruge hvilket view.

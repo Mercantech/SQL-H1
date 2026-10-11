@@ -67,3 +67,42 @@ I kan øve `BEGIN`/`COMMIT`/`ROLLBACK` i editoren. I C# bruger I typisk `await u
 ## Isolation (smagsprøve)
 
 Postgres’ default er typisk **READ COMMITTED**. Til eksamen/H1: kend ordet *isolation* og at højere niveauer (`REPEATABLE READ`, `SERIALIZABLE`) findes, når samtidighed bliver kritisk.
+
+### Hvad kan gå galt uden transaktion?
+
+1. Insert ordre OK → crash → lager ikke opdateret  
+2. To samtidige køb ser begge “på lager” → overbook  
+
+Transaktioner + evt. `SELECT … FOR UPDATE` (kendskab) er værktøjerne.
+
+## SAVEPOINT (kendskab)
+
+Inde i en transaktion kan I rulle *dele* tilbage:
+
+```sql
+BEGIN;
+UPDATE products SET price = price + 1 WHERE category = 'Drikke';
+SAVEPOINT kun_drikke;
+UPDATE products SET price = -1 WHERE name = 'Te';  -- fejler evt.
+ROLLBACK TO SAVEPOINT kun_drikke;
+COMMIT;
+```
+
+## I C# (forhåndsblik)
+
+```csharp
+await using var tx = await conn.BeginTransactionAsync();
+try {
+  // flere commands med transaction: tx
+  await tx.CommitAsync();
+} catch {
+  await tx.RollbackAsync();
+  throw;
+}
+```
+
+## Prøv selv
+
+1. Kør `BEGIN` … to updates … `COMMIT` og verificér.  
+2. Gentag med `ROLLBACK` midtvejs — se at intet slog igennem.  
+3. Skriv et café-scenarie der *kræver* transaktion (2–3 punkter).

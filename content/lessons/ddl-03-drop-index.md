@@ -80,8 +80,39 @@ GROUP BY c.name;
 - Indeks på kolonner I ofte filtrerer på (`WHERE`, `JOIN`)
 - For mange indeks = langsommere `INSERT`/`UPDATE` (hver skrivning opdaterer indeks)
 
+## Hvilke indeks betaler sig?
+
+| Situation | Indeks? |
+|-----------|---------|
+| FK-kolonne (`orders.customer_id`) | næsten altid |
+| `WHERE` / `JOIN` på samme kolonne ofte | ja |
+| Kolonne der næsten aldrig filtreres | nej (skriv-omkostning) |
+| Lav kardinalitet alene (`boolean`) | ofte svagt alene; kombinér evt. |
+
+### Covering / partial (kendskab)
+
+```sql
+-- Kun aktive produkter i indekset
+CREATE INDEX IF NOT EXISTS ix_products_cat_active
+  ON products (category)
+  WHERE in_stock = TRUE;
+```
+
+Partial indexes er mindre og hurtigere, når filteret matcher.
+
+## EXPLAIN-læsning (minimum)
+
+| Node | Betydning |
+|------|-----------|
+| `Seq Scan` | læs hele tabellen |
+| `Index Scan` / `Bitmap …` | brug indeks |
+| `Nested Loop` / `Hash Join` | JOIN-strategi |
+
+På små café-tabeller vælger planneren ofte seq scan — det er OK. Målet er at **kunne læse** planen, ikke at “tvinge indeks” blindly.
+
 ## Prøv selv
 
 1. Opret `ix_orders_customer` hvis den ikke findes.
 2. Kør `EXPLAIN` før/efter (efter `DROP INDEX` og opret igen).
 3. Opret en midlertidig tabel, fyld den, drop den igen.
+4. Sammenlign `EXPLAIN` på `WHERE customer_id = 1` med og uden indeks.

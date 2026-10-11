@@ -99,3 +99,26 @@ I H1-projektet skal I kunne:
 - forklare skemaet til hinanden og underviseren
 - ændre struktur uden at “gætte” i blinde
 - pege på hvor applikationen (C#/API) mapper til tabeller
+
+## E/R-checkliste før I koder API
+
+1. Er hver entitet en tabel (eller bevidst sammenslået)?  
+2. Ligger FK på “mange”-siden?  
+3. Er n:n brudt med koblingstabel?  
+4. Er naturlige unikheder markeret (`UNIQUE`)?  
+5. Matcher diagrammet det, `information_schema` viser?
+
+## Crow’s foot (kort)
+
+```text
+||───<   én-til-mange (obligatorisk på mange-siden kan variere)
+|O───<   valgfri på én-siden
+```
+
+I behøver ikke tegne perfekt UML — men pil/kardinalitet skal være entydig.
+
+## Prøv selv
+
+1. Tegn caféen med kardinalitet.  
+2. Udvid med `suppliers` og opdatér **Database**-siden.  
+3. Kør FK-metadata-forespørgslen og match den til tegningen.

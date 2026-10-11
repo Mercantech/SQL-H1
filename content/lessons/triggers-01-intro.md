@@ -105,3 +105,27 @@ SELECT * FROM product_audit ORDER BY id DESC;
 DROP TRIGGER IF EXISTS trg_product_price ON products;
 DROP FUNCTION IF EXISTS log_product_price_change();
 ```
+
+## NEW og OLD
+
+| Event | `OLD` | `NEW` |
+|-------|-------|-------|
+| INSERT | — | den nye række |
+| UPDATE | før | efter |
+| DELETE | den slettede | — |
+
+`IS DISTINCT FROM` er NULL-sikkert — brug det til “ændrede pris?”.
+
+## Statement-level (kendskab)
+
+`FOR EACH STATEMENT` kører én gang pr. SQL — har ikke række-`NEW`/`OLD` på samme måde. Til audit pr. række: **ROW**.
+
+## Transition tables (kendskab)
+
+Nyere Postgres kan give `REFERENCING NEW TABLE AS …` til statement-triggers — nyttigt til bulk, men uden for H1-kerne.
+
+## Prøv selv
+
+1. Opret audit-tabellen + triggeren.  
+2. Opdatér Espresso-prisen to gange — se flere loglinjer.  
+3. Opdatér kun `name` — forvent **ingen** ny audit, hvis I kun logger pris.

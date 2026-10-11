@@ -95,3 +95,17 @@ await tx.CommitAsync();
 | Begge | samme SQL, samme parametre, samme transaktioner |
 
 Næste skridt i projektet: vælg **én** stil i DAL’en (helst Dapper oven på Npgsql) og vær konsekvente.
+
+## Multi-mapping (kort kendskab)
+
+Dapper kan splitte en JOIN-række ud i flere objekter (`QueryAsync<Order, Customer, Order>(…)`). Det er kraftfuldt — og nemt at gøre ulæseligt. Til H1: **flade DTO’er** først; multi-mapping kun hvis I har brug for nestede objekter.
+
+## Buffered
+
+`QueryAsync` buffer som default (hele resultatet i hukommelse). Til kæmpe exports: `buffered: false` og stream — men pas på connection-levetid.
+
+## Prøv selv
+
+1. Kør Viborg-JOIN’en i SQL-H1.  
+2. Definér `OrderLineDto` og skitsér `QueryAsync`.  
+3. Skriv i README: “Vi bruger Dapper til X; rå Npgsql til Y (hvis noget).”

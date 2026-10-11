@@ -70,3 +70,32 @@ EXECUTE FUNCTION touch_updated_at();
 2. Kan appen sætte værdien eksplicit?  
 3. Er side effects dokumenteret?  
 4. Har I en plan for bulk-load (disable trigger midlertidigt)?
+
+## created_at / updated_at sammen
+
+```sql
+-- created_at: DEFAULT now() på kolonnen er ofte nok
+-- updated_at: BEFORE UPDATE trigger (som her)
+```
+
+Undgå at sætte `created_at` i en UPDATE-trigger — den skal være immutable.
+
+## Audit: hvem ændrede hvad?
+
+Udvid `product_audit` med `changed_by TEXT` og sæt værdien fra appen (`current_setting('app.user', true)`) eller fra C# via separat kolonne. I SQL-H1 er `session`-bruger typisk elev-rollen — fint til demo.
+
+## Disable til import
+
+```sql
+ALTER TABLE products DISABLE TRIGGER trg_products_touch;
+-- bulk load …
+ALTER TABLE products ENABLE TRIGGER trg_products_touch;
+```
+
+Kun når I forstår konsekvensen.
+
+## Prøv selv
+
+1. Tilføj `updated_at` + trigger.  
+2. Opdatér Te og læs `updated_at`.  
+3. Opdatér uden at ændre værdier (`SET price = price`) — se at trigger stadig kører (BEFORE UPDATE kører alligevel).

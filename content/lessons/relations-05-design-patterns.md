@@ -197,10 +197,36 @@ Matcher `ON DELETE SET NULL` og anonymisering — du så det i DML-cascading-lek
 | `created_at` | Audit |
 | `customer_id NULL` | Valgfri FK / walk-in |
 
+## 11) Statusmaskine (state column)
+
+**Mønster:** en kolonne som `status TEXT` eller `status_id` med tilladte værdier (`draft`, `paid`, `shipped`, `cancelled`).
+
+- Ofte kombineret med `CHECK` eller lookup-tabel  
+- Undgå “magiske” booleans der overlapper (`is_paid`, `is_shipped` der kan modsige hinanden)
+
+Caféen har kun `in_stock` — et minimalt statusflag.
+
+## 12) Event / outbox (kendskab)
+
+Når API’en skal fortælle andre systemer om en ændring, gemmes begivenheden ofte i en **outbox-tabel** i samme transaktion som forretningsdata. Det er et integrationsmønster oven på relational design — nævn det i projektet, hvis I har flere services.
+
+## Anti-mønstre (undgå)
+
+| Anti-mønster | Hvorfor skidt |
+|--------------|---------------|
+| Én “godtabel” med 80 kolonner | umulig at forstå, mange NULL |
+| Array/CSV i en celle i stedet for barn-tabel | bryder 1NF, umulig FK |
+| Slette PK/FK “for at det skal være nemt” | mister integritet |
+| Gemme JSON *i stedet for* tabeller til kernedata | svært at joine og constrainte |
+| Skifte naturlige nøgler ofte | knækker historik og FK |
+
+JSON/JSONB i Postgres er fint til **fleksible** attributter — ikke som erstatning for kerne-entiteter.
+
 ## Prøv selv
 
 1. Foreslå en `categories`-tabel (kolonner + FK fra `products`) — skriv den som skitse i en kommentar eller på papir.
 2. Skitsér `order_lines` adskilt fra `orders` (hvilke kolonner flytter hvorhen?).
 3. Argumentér: hvornår vil du gemme `unit_price` på ordren i stedet for kun at joine `products.price`?
+4. Peg på ét anti-mønster, I bevidst *ikke* vil bruge i H1-projektet.
 
-Du kan nu både **normalisere** og **genkende mønstre** — det er kernen i database-design, før du senere får lov til fuld DDL/`CREATE TABLE`.
+Du kan nu både **normalisere** og **genkende mønstre** — det er kernen i database-design.

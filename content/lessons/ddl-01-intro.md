@@ -88,10 +88,36 @@ CREATE TABLE IF NOT EXISTS suppliers (
 
 Godt når du kører scripts flere gange — men i undervisning er det ofte klarere at **DROP** og oprette forfra, når du øver dig.
 
+## Navngivning og schema
+
+- Brug **snake_case** til tabeller/kolonner (`order_date`, ikke `OrderDate` i SQL).  
+- Ét schema (`public`) er nok i H1; i større systemer ses `app`, `staging`, …  
+- Undgå reserved words som kolonnenavne (`user`, `order` → `orders`).
+
+```sql
+SELECT table_schema, table_name
+FROM information_schema.tables
+WHERE table_type = 'BASE TABLE'
+ORDER BY table_schema, table_name;
+```
+
+## DDL er en kontrakt
+
+Når I `CREATE TABLE`, lover I API’en og hinanden en struktur. Ændringer senere = **migration** (`ALTER`), ikke “ret det stille i prod”. I SQL-H1 må I eksperimentere frit — i projektet: script + review.
+
+## Fejl du møder tidligt
+
+| Fejl | Typisk årsag |
+|------|----------------|
+| `already exists` | tabel findes — `IF NOT EXISTS` eller `DROP` først |
+| `syntax error` | manglende komma/parentes i kolonneliisten |
+| `type … does not exist` | stavefejl i datatype |
+
 ## Prøv selv
 
 1. Opret `suppliers` (eller et andet navn).
 2. Indsæt 2 rækker.
 3. Kør `SELECT` og kig også under **Database** (E/R opdateres efter dine tabeller).
+4. List alle basistabeller via `information_schema`.
 
 > Tip: Hold dig til små hjælpetabeller ved siden af caféen — eller nulstil, når du er færdig med eksperimentet.

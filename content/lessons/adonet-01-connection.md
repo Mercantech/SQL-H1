@@ -69,3 +69,29 @@ I har allerede en elev-DB. Tænk: *hvis min API skulle læse caféen, hvilken co
 ```sql
 SELECT current_database() AS db, current_user AS rolle;
 ```
+
+## Connection string-byggeklodser
+
+| Nøgle | Eksempel | Note |
+|-------|----------|------|
+| Host | `localhost` / `db` | Compose-servicenavn internt |
+| Port | `5432` | standard Postgres |
+| Database | `cafe` | ikke forveksle med server |
+| Username / Password | env | aldrig commit |
+| SSL Mode | `Prefer` / `Require` | afhænger af host |
+
+Npgsql accepterer også URI: `postgres://user:pass@host:5432/db`.
+
+## Fejl ved opstart
+
+| Symptom | Tjek |
+|---------|------|
+| Timeout | forkert host/port, DB ikke oppe |
+| Auth failed | user/password/env |
+| Database does not exist | `POSTGRES_DB` / forkert navn |
+
+## Prøv selv
+
+1. Kør SQL’en øverst i SQL-H1.  
+2. Skriv (lokalt) en minimal console der åbner Npgsql og kører samme SQL.  
+3. Luk med `await using` — ingen lækket connection.
