@@ -9,6 +9,7 @@ import {
 } from "../api";
 import { isLoggedIn } from "../auth";
 import postgresLogo from "../assets/postgresql.svg";
+import { buildFlatPath } from "../lib/contentPath";
 
 type Props = {
   moduleSlug: string;
@@ -18,30 +19,6 @@ type Props = {
   onNavigate?: () => void;
   onToggle?: () => void;
 };
-
-type FlatStep = {
-  moduleSlug: string;
-  moduleTitle: string;
-  moduleOrder: number;
-  item: ModuleDto["items"][number];
-};
-
-function buildFlatPath(modules: ModuleDto[]): FlatStep[] {
-  const sorted = [...modules].sort((a, b) => a.order - b.order);
-  const steps: FlatStep[] = [];
-  for (const mod of sorted) {
-    const items = [...mod.items].sort((a, b) => a.order - b.order);
-    for (const item of items) {
-      steps.push({
-        moduleSlug: mod.slug,
-        moduleTitle: mod.title,
-        moduleOrder: mod.order,
-        item,
-      });
-    }
-  }
-  return steps;
-}
 
 function progressMap(rows: ProgressRow[]) {
   const map = new Map<string, string>();
