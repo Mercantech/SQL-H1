@@ -2168,6 +2168,15 @@ body.is-resizing-split .lesson {
   transform: translateX(2px);
 }
 
+.db-why-bar-rank {
+  display: inline-block;
+  min-width: 1.6rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.65;
+  font-weight: 700;
+  font-size: 0.78em;
+}
+
 .db-why-bar-name {
   font-size: 0.8rem;
   font-weight: 600;
@@ -2188,25 +2197,12 @@ body.is-resizing-split .lesson {
 }
 
 .db-why-bar-score {
+  min-width: 4.2rem;
   font-family: var(--font-mono);
   font-size: 0.78rem;
   font-weight: 600;
   text-align: right;
-}
-
-.db-why-bar-yoy {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-align: right;
-}
-
-.db-why-bar-yoy.up {
-  color: var(--ok);
-}
-
-.db-why-bar-yoy.down {
-  color: var(--danger);
+  font-variant-numeric: tabular-nums;
 }
 
 .db-why-rank-focus {

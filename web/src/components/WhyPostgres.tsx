@@ -1,33 +1,74 @@
 import { useState } from "react";
 import postgresLogo from "../assets/postgresql.svg";
 
-/** DB-Engines Ranking, juni 2026 (db-engines.com). Score er deres popularitetsindeks — ikke markedsandel. */
+/**
+ * Stack Overflow Developer Survey 2026 — Databases
+ * https://survey.stackoverflow.co/2026/technology
+ * Procent = andel af respondenter der brugte databasen (flere valg mulige).
+ */
 type RankRow = {
   id: string;
   name: string;
-  score: number;
-  yoy: number;
-  license: string;
+  percent: number;
+  rank: number;
+  kind: string;
   accent: string;
   highlight?: boolean;
 };
 
 const RANKING: RankRow[] = [
-  { id: "oracle", name: "Oracle", score: 1140, yoy: -90, license: "Proprietær", accent: "#c45c26" },
-  { id: "mysql", name: "MySQL", score: 856, yoy: -97, license: "Open source", accent: "#3d7ea6" },
-  { id: "mssql", name: "SQL Server", score: 698, yoy: -79, license: "Proprietær", accent: "#5a6b8c" },
   {
     id: "postgres",
     name: "PostgreSQL",
-    score: 688,
-    yoy: 8,
-    license: "Open source",
+    percent: 57.9,
+    rank: 1,
+    kind: "Relationel · open source",
     accent: "#1f6b4a",
     highlight: true,
   },
+  {
+    id: "sqlite",
+    name: "SQLite",
+    percent: 42.1,
+    rank: 2,
+    kind: "Embedded · open source",
+    accent: "#3d6b8c",
+  },
+  {
+    id: "mysql",
+    name: "MySQL",
+    percent: 35.1,
+    rank: 3,
+    kind: "Relationel · open source",
+    accent: "#3d7ea6",
+  },
+  {
+    id: "redis",
+    name: "Redis",
+    percent: 28.3,
+    rank: 4,
+    kind: "Cache / nøgle-værdi",
+    accent: "#b84a3a",
+  },
+  {
+    id: "mssql",
+    name: "SQL Server",
+    percent: 27.1,
+    rank: 5,
+    kind: "Relationel · proprietær",
+    accent: "#5a6b8c",
+  },
+  {
+    id: "mongodb",
+    name: "MongoDB",
+    percent: 19.0,
+    rank: 7,
+    kind: "Dokument-DB",
+    accent: "#4a7a4a",
+  },
 ];
 
-const MAX_SCORE = Math.max(...RANKING.map((r) => r.score));
+const MAX_PCT = Math.max(...RANKING.map((r) => r.percent));
 
 const ARGUMENTS = [
   {
@@ -74,9 +115,9 @@ const ARGUMENTS = [
   },
   {
     id: "trend",
-    title: "Den der stadig stiger",
-    teaser: "Top-4 relationel — og den eneste i vækst.",
-    body: "Ifølge DB-Engines (juni 2026) ligger Postgres lige under SQL Server, men er den eneste blandt de store relationelle der stiger år-til-år. MySQL og SQL Server falder i indeks — Postgres vokser stille og roligt.",
+    title: "Udviklernes #1 database",
+    teaser: "57,9 % i Stack Overflow 2026.",
+    body: "I Stack Overflow Developer Survey 2026 er PostgreSQL den mest brugte database blandt respondenterne (57,9 %) — foran SQLite, MySQL og SQL Server. Det understøtter valget af Postgres til både undervisning og moderne backends.",
   },
 ] as const;
 
@@ -96,11 +137,15 @@ function Cell({ value }: { value: true | false | string }) {
   return <span className="db-why-partial">{value}</span>;
 }
 
+function formatPct(n: number) {
+  return n.toLocaleString("da-DK", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + " %";
+}
+
 export function WhyPostgres() {
   const [hoverRank, setHoverRank] = useState<string | null>("postgres");
   const [activeArg, setActiveArg] = useState<(typeof ARGUMENTS)[number]["id"]>("students");
   const active = ARGUMENTS.find((a) => a.id === activeArg) ?? ARGUMENTS[0];
-  const focused = RANKING.find((r) => r.id === (hoverRank ?? "postgres")) ?? RANKING[3];
+  const focused = RANKING.find((r) => r.id === (hoverRank ?? "postgres")) ?? RANKING[0];
 
   return (
     <section className="db-why" aria-labelledby="why-postgres-title">
@@ -122,17 +167,17 @@ export function WhyPostgres() {
       <div className="db-why-layout">
         <div className="db-why-panel db-why-rank">
           <div className="db-why-panel-head">
-            <h3>Popularitet (DB-Engines)</h3>
-            <span className="db-why-source">Juni 2026</span>
+            <h3>Brugt af udviklere (Stack Overflow)</h3>
+            <span className="db-why-source">Survey 2026</span>
           </div>
           <p className="db-why-panel-lead">
-            Hold musen over en søjle. Postgres er #4 blandt alle DBMS — og den eneste af de store
-            relationelle der stiger år-til-år.
+            Hold musen over en søjle. Postgres er den mest brugte database blandt respondenterne —
+            foran SQLite, MySQL og SQL Server.
           </p>
 
           <ul className="db-why-bars" onMouseLeave={() => setHoverRank("postgres")}>
             {RANKING.map((r) => {
-              const pct = Math.max(8, Math.round((r.score / MAX_SCORE) * 100));
+              const pct = Math.max(8, Math.round((r.percent / MAX_PCT) * 100));
               const on = hoverRank === r.id;
               return (
                 <li key={r.id}>
@@ -143,18 +188,16 @@ export function WhyPostgres() {
                     onFocus={() => setHoverRank(r.id)}
                     aria-pressed={on}
                   >
-                    <span className="db-why-bar-name">{r.name}</span>
+                    <span className="db-why-bar-name">
+                      <span className="db-why-bar-rank">#{r.rank}</span> {r.name}
+                    </span>
                     <span className="db-why-bar-track">
                       <span
                         className="db-why-bar-fill"
                         style={{ width: `${pct}%`, background: r.accent }}
                       />
                     </span>
-                    <span className="db-why-bar-score">{r.score}</span>
-                    <span className={`db-why-bar-yoy ${r.yoy >= 0 ? "up" : "down"}`}>
-                      {r.yoy >= 0 ? "+" : ""}
-                      {r.yoy}
-                    </span>
+                    <span className="db-why-bar-score">{formatPct(r.percent)}</span>
                   </button>
                 </li>
               );
@@ -162,10 +205,11 @@ export function WhyPostgres() {
           </ul>
 
           <div className="db-why-rank-focus" aria-live="polite">
-            <strong>{focused.name}</strong>
+            <strong>
+              #{focused.rank} {focused.name}
+            </strong>
             <span>
-              Score {focused.score} · år-til-år {focused.yoy >= 0 ? "+" : ""}
-              {focused.yoy} · {focused.license}
+              {formatPct(focused.percent)} af respondenterne · {focused.kind}
             </span>
             {focused.highlight && (
               <span className="db-why-rank-tag">Vores valg til SQL-H1</span>
@@ -174,11 +218,15 @@ export function WhyPostgres() {
 
           <p className="db-why-cite muted">
             Kilde:{" "}
-            <a href="https://db-engines.com/en/ranking" target="_blank" rel="noreferrer">
-              DB-Engines Ranking
+            <a
+              href="https://survey.stackoverflow.co/2026/technology"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Stack Overflow Developer Survey 2026 — Technology
             </a>
-            , juni 2026 (score afrundet). Indeks baseret på omtale, jobs og søgninger — ikke ren
-            markedsandel. År-til-år er afrundet fra samme kilde.
+            . Procent = andel der har brugt databasen (flere valg mulige). Top-listen er forkortet;
+            MariaDB (#6, 20,3 %) er udeladt her for overskuelighed.
           </p>
         </div>
 
