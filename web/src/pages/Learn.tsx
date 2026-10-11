@@ -16,6 +16,7 @@ import { LearnPager, ModuleNav } from "../components/ModuleNav";
 import { SqlEditor } from "../components/SqlEditor";
 import { useLearnSplit } from "../hooks/useLearnSplit";
 import { useModuleNavOpen } from "../hooks/useModuleNavOpen";
+import { useSandboxOpen } from "../hooks/useSandboxOpen";
 
 export function Learn() {
   const { slug } = useParams();
@@ -27,6 +28,7 @@ export function Learn() {
   const [checkPassed, setCheckPassed] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [navOpen, setNavOpen] = useModuleNavOpen();
+  const [sandboxOpen, setSandboxOpen] = useSandboxOpen();
   const split = useLearnSplit();
 
   useEffect(() => {
@@ -106,9 +108,18 @@ export function Learn() {
   if (!item) return <p className="muted learn-loading">Henter lektion…</p>;
 
   const showSandbox = Boolean(item.sandbox);
+  const editorVisible = showSandbox && sandboxOpen;
+
+  function openSandbox() {
+    setSandboxOpen(true);
+  }
 
   return (
-    <div className={`learn-shell ${navOpen ? "nav-open" : "nav-closed"}`}>
+    <div
+      className={`learn-shell ${navOpen ? "nav-open" : "nav-closed"} ${
+        showSandbox ? (sandboxOpen ? "sandbox-open" : "sandbox-closed") : ""
+      }`}
+    >
       {navOpen && (
         <button
           type="button"
@@ -130,14 +141,20 @@ export function Learn() {
 
       <div className="learn-body">
         <div
-          ref={showSandbox ? split.containerRef : undefined}
-          className={`learn-main ${showSandbox ? "with-sandbox" : ""}`}
+          ref={editorVisible ? split.containerRef : undefined}
+          className={`learn-main ${editorVisible ? "with-sandbox" : ""} ${
+            showSandbox ? (sandboxOpen ? "sandbox-open" : "sandbox-closed") : ""
+          }`}
           style={
-            showSandbox
+            editorVisible
               ? {
-                  gridTemplateColumns: `minmax(0, ${split.percent}fr) 10px minmax(0, ${100 - split.percent}fr)`,
+                  gridTemplateColumns: `minmax(0, ${split.percent}fr) 10px minmax(0, ${
+                    100 - split.percent
+                  }fr) 22px`,
                 }
-              : undefined
+              : showSandbox
+                ? { gridTemplateColumns: "minmax(0, 1fr) 22px" }
+                : undefined
           }
         >
           <article className="lesson">
@@ -152,12 +169,16 @@ export function Learn() {
               <Markdown
                 onInsertCode={
                   showSandbox
-                    ? (code) => setSql((prev) => appendCodeToEditor(prev, code))
+                    ? (code) => {
+                        openSandbox();
+                        setSql((prev) => appendCodeToEditor(prev, code));
+                      }
                     : undefined
                 }
                 onRunCode={
                   showSandbox
                     ? (code) => {
+                        openSandbox();
                         setSql(code);
                         void onRun(code);
                       }
@@ -171,7 +192,7 @@ export function Learn() {
             <LearnPager moduleSlug={item.module} currentSlug={item.slug} />
           </article>
 
-          {showSandbox && (
+          {showSandbox && editorVisible && (
             <>
               <div
                 className="learn-split"
@@ -185,7 +206,7 @@ export function Learn() {
                 onPointerDown={split.onPointerDown}
                 onKeyDown={split.onKeyDown}
               />
-              <aside className="sandbox">
+              <aside id="learn-sandbox" className="sandbox">
                 <SqlEditor
                   value={sql}
                   onChange={setSql}
@@ -200,6 +221,20 @@ export function Learn() {
                 />
               </aside>
             </>
+          )}
+
+          {showSandbox && (
+            <button
+              type="button"
+              className="sandbox-fold"
+              onClick={() => setSandboxOpen((v) => !v)}
+              aria-expanded={sandboxOpen}
+              aria-controls="learn-sandbox"
+              title={sandboxOpen ? "Skjul SQL-editor" : "Vis SQL-editor"}
+              aria-label={sandboxOpen ? "Skjul SQL-editor" : "Vis SQL-editor"}
+            >
+              <span aria-hidden="true">{sandboxOpen ? "›" : "‹"}</span>
+            </button>
           )}
         </div>
       </div>
