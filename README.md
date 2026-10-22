@@ -29,13 +29,13 @@ Kopiér [`.env.example`](.env.example) til `.env` ved behov.
 
 Mercantec Auth (authorization code + PKCE). SPA-klient `sqlh1`.
 
-OAuth-klient `sqlh1` er oprettet. Tilføj manuelt i [Auth Admin → Klienter](https://auth.mercantec.tech/Admin/Clients) (MCP `auth_add_redirect_uri` fejlede med 500):
+OAuth-klient `sqlh1` er oprettet med følgende redirect-URI'er i [Auth Admin → Klienter](https://auth.mercantec.tech/Admin/Clients):
 
 - `http://localhost:5173/auth/callback`
 - `http://localhost:3000/auth/callback`
-- `https://sqlh1.mercantec.tech/auth/callback`
+- `https://sql.mercantec.tech/auth/callback`
 
-Prod: https://sqlh1.mercantec.tech (Dokploy compose `SQL-H1` under Hovedforløb Repos).
+Prod: https://sql.mercantec.tech (Dokploy compose `SQL-H1` under Hovedforløb Repos).
 
 ## Indhold
 
@@ -55,7 +55,7 @@ C#-modulerne (ADO.NET/Dapper) har teori med Npgsql-eksempler; elever øver den t
 docker compose up -d --build
 ```
 
-Kun `web` eksponeres via Traefik (`sqlh1.mercantec.tech`). Sæt env i Dokploy fra `.env.example`.
+Kun `web` eksponeres via Traefik (`sql.mercantec.tech`). Sæt `APP_HOST` og `CORS_ORIGIN` samt øvrige env i Dokploy fra `.env.example`.
 
 ## API (uddrag)
 

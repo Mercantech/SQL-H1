@@ -40,7 +40,7 @@ services:
       AUTH_ISSUER: ${AUTH_ISSUER:-https://auth.mercantec.tech}
       AUTH_AUDIENCE: ${AUTH_AUDIENCE:-mercantec-apps}
       JWKS_URI: ${JWKS_URI:-https://auth.mercantec.tech/.well-known/jwks.json}
-      CORS_ORIGIN: ${CORS_ORIGIN:-https://sqlh1.mercantec.tech}
+      CORS_ORIGIN: ${CORS_ORIGIN:-https://sql.mercantec.tech}
     networks:
       - internal
     depends_on:
@@ -76,7 +76,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=dokploy-network
-      - traefik.http.routers.sqlh1.rule=Host(`sqlh1.mercantec.tech`)
+      - traefik.http.routers.sqlh1.rule=Host(`${APP_HOST:-sql.mercantec.tech}`)
       - traefik.http.routers.sqlh1.entrypoints=web
       - traefik.http.routers.sqlh1.service=sqlh1
       - traefik.http.services.sqlh1.loadbalancer.server.port=3000
