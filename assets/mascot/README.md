@@ -1,6 +1,14 @@
 # Elefantmaskot til SQL-H1
 
-Fire visuelle forslag til en hjælpsom SQL-underviser. Udarbejdet 22. oktober 2026 med den indbyggede ImageGen-funktion. Ingen variant er valgt eller koblet på brugerfladen endnu.
+Visuelle forslag til en hjælpsom SQL-underviser, lavet med den indbyggede ImageGen-funktion. Ingen variant er endeligt valgt eller koblet på brugerfladen endnu.
+
+## Seneste retning: mere seriøs professor
+
+Den 31. oktober 2026 blev nr. 1 valgt som hovedreference for en ny runde: mindre cartoon, mere seriøst design og fortsat professorpræg. Nr. 2 og 3 er også relevante referencer, men nr. 1 er tættest på det ønskede.
+
+Tre nye forslag findes i [professor-runde-2](professor-runde-2/README.md). De oprindelige billeder er bevaret.
+
+## Første runde, 22. oktober 2026
 
 | Nr. | Forslag | Udtryk og anvendelse | Fil |
 | --- | --- | --- | --- |
