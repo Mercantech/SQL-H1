@@ -1,6 +1,17 @@
 {
   "version": 1,
   "mascot": "sql-professor-original",
+  "identity": {
+    "fullName": "Raymond Stonebraker Codd",
+    "formalName": "Professor Codd",
+    "callName": "Raymond",
+    "introduction": "Jeg er Professor Codd, men I kan kalde mig Raymond.",
+    "nameTributes": [
+      { "namePart": "Raymond", "person": "Raymond Boyce", "contribution": "Udviklede SQL sammen med Donald Chamberlin", "sourceUrl": "https://www.ibm.com/history/relational-database" },
+      { "namePart": "Stonebraker", "person": "Michael Stonebraker", "contribution": "Ledede det oprindelige POSTGRES-projekt på Berkeley", "sourceUrl": "https://www.postgresql.org/docs/current/history.htm" },
+      { "namePart": "Codd", "person": "Edgar F. Codd", "contribution": "Fremlagde den relationelle datamodel i 1970", "sourceUrl": "https://doi.org/10.1145/362384.362685" }
+    ]
+  },
   "created": "2026-10-31",
   "generator": "built-in ImageGen",
   "source": "../candidates/01-sql-underviseren.png",
@@ -8,9 +19,9 @@
   "transparentBackground": true,
   "canvas": { "width": 1254, "height": 1254 },
   "variants": [
-    { "id": "head-neutral", "file": "head-neutral.png", "label": "Fritsvævende hoved", "alt": "Den blå SQL-professors venlige hoved med runde briller" },
-    { "id": "summer-holiday", "file": "summer-holiday.png", "label": "Sommerferie", "alt": "SQL-professoren i sommerskjorte, shorts og sandaler med stråhat og bog" },
-    { "id": "fancy", "file": "fancy.png", "label": "Fancy", "alt": "SQL-professoren i smoking med butterfly, lommeklud og bog" }
+    { "id": "head-neutral", "file": "head-neutral.png", "label": "Fritsvævende hoved", "alt": "Professor Codds venlige blå hoved med runde briller" },
+    { "id": "summer-holiday", "file": "summer-holiday.png", "label": "Sommerferie", "alt": "Raymond i sommerskjorte, shorts og sandaler med stråhat og bog" },
+    { "id": "fancy", "file": "fancy.png", "label": "Fancy", "alt": "Professor Codd i smoking med butterfly, lommeklud og bog" }
   ],
   "feedback": [
     { "id": "neutral", "file": "head-neutral.png", "label": "Klar", "alt": "Professoren smiler venligt", "suggestedMessage": "Klar til en ny forespørgsel?" },

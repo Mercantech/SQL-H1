@@ -1,6 +1,12 @@
-# Elefantmaskot til SQL-H1
+# Raymond Stonebraker Codd — elefantmaskot til SQL-H1
 
 Elefantmaskot til SQL-H1, lavet med den indbyggede ImageGen-funktion. Brugeren har valgt den oprindelige SQL-underviser fra første runde som grundfigur. Maskotten er endnu ikke koblet på brugerfladen.
+
+Hans navn er **Raymond Stonebraker Codd**. Han præsenterer sig sådan:
+
+> Jeg er Professor Codd, men I kan kalde mig Raymond.
+
+Navnet hylder Raymond Boyce, Michael Stonebraker og Edgar F. Codd. Se [maskotpakken](professor-pack/README.md) for navnets baggrund og figurens faste identitet.
 
 ## Valgt grundfigur og maskotpakke
 

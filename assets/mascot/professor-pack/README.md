@@ -1,4 +1,19 @@
-# SQL-professoren: maskotpakke
+# Raymond Stonebraker Codd: maskotpakke
+
+## Navn og præsentation
+
+- **Fuldt navn:** Raymond Stonebraker Codd
+- **Titel og efternavn:** Professor Codd
+- **Kaldenavn:** Raymond
+- **Fast præsentation:** "Jeg er Professor Codd, men I kan kalde mig Raymond."
+
+Navnet på den fiktive elefantprofessor hylder tre personer i databasehistorien:
+
+- **Raymond** efter **Raymond Boyce**, der udviklede SQL sammen med Donald Chamberlin. [IBM: The relational database](https://www.ibm.com/history/relational-database).
+- **Stonebraker** efter **Michael Stonebraker**, der ledede det oprindelige POSTGRES-projekt på Berkeley. [PostgreSQLs historie](https://www.postgresql.org/docs/current/history.htm).
+- **Codd** efter **Edgar F. Codd**, der fremlagde den relationelle datamodel i 1970. [Originalartiklen](https://doi.org/10.1145/362384.362685).
+
+## Visuel identitet
 
 Udgangspunktet er den [oprindelige SQL-underviser](../candidates/01-sql-underviseren.png), som brugeren har valgt. Hans oprindelige varme tegneseriestil, store brune øjne, blå farve, bronzebriller, lille hårtot og krøllede snabel er bevaret.
 
