@@ -1,8 +1,14 @@
 # Elefantmaskot til SQL-H1
 
-Visuelle forslag til en hjælpsom SQL-underviser, lavet med den indbyggede ImageGen-funktion. Ingen variant er endeligt valgt eller koblet på brugerfladen endnu.
+Elefantmaskot til SQL-H1, lavet med den indbyggede ImageGen-funktion. Brugeren har valgt den oprindelige SQL-underviser fra første runde som grundfigur. Maskotten er endnu ikke koblet på brugerfladen.
 
-## Seneste retning: mere seriøs professor
+## Valgt grundfigur og maskotpakke
+
+Den oprindelige [SQL-underviser](candidates/01-sql-underviseren.png) er valgt frem for de mere seriøse bearbejdninger. Bevar hans oprindelige store brune øjne, blå farve, runde bronzebriller, lille hårtot og venlige tegneseriepræg.
+
+Den nye [maskotpakke](professor-pack/README.md) indeholder et fritsvævende hoved, en sommerferievariant, en fancy variant og seks ansigtsudtryk til feedback. Alle nye PNG-filer har transparent baggrund.
+
+## Tidligere udforskning: mere seriøs professor
 
 Den 31. oktober 2026 blev nr. 1 valgt som hovedreference for en ny runde: mindre cartoon, mere seriøst design og fortsat professorpræg. Nr. 2 og 3 er også relevante referencer, men nr. 1 er tættest på det ønskede.
 

@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "mascot": "sql-professor-original",
+  "created": "2026-10-31",
+  "generator": "built-in ImageGen",
+  "source": "../candidates/01-sql-underviseren.png",
+  "format": "png",
+  "transparentBackground": true,
+  "canvas": { "width": 1254, "height": 1254 },
+  "variants": [
+    { "id": "head-neutral", "file": "head-neutral.png", "label": "Fritsvævende hoved", "alt": "Den blå SQL-professors venlige hoved med runde briller" },
+    { "id": "summer-holiday", "file": "summer-holiday.png", "label": "Sommerferie", "alt": "SQL-professoren i sommerskjorte, shorts og sandaler med stråhat og bog" },
+    { "id": "fancy", "file": "fancy.png", "label": "Fancy", "alt": "SQL-professoren i smoking med butterfly, lommeklud og bog" }
+  ],
+  "feedback": [
+    { "id": "neutral", "file": "head-neutral.png", "label": "Klar", "alt": "Professoren smiler venligt", "suggestedMessage": "Klar til en ny forespørgsel?" },
+    { "id": "success", "file": "feedback/success.png", "label": "Det virker", "alt": "Professoren smiler tilfreds med afslappede øjne", "suggestedMessage": "Det virker! Din forespørgsel er kørt." },
+    { "id": "error", "file": "feedback/error.png", "label": "Koden driller", "alt": "Professoren ser tålmodigt bekymret ud med let rynkede bryn", "suggestedMessage": "Koden driller. Lad os kigge på fejlen sammen." },
+    { "id": "help", "file": "feedback/help.png", "label": "Brug for hjælp", "alt": "Professoren løfter et øjenbryn og smiler opmuntrende", "suggestedMessage": "Brug for et hint?" },
+    { "id": "thinking", "file": "feedback/thinking.png", "label": "Tænkepause", "alt": "Professoren kigger eftertænksomt opad", "suggestedMessage": "Hvad forventer du, at forespørgslen returnerer?" },
+    { "id": "warning", "file": "feedback/warning.png", "label": "Pas på", "alt": "Professoren hæver brynene og åbner munden i mild overraskelse", "suggestedMessage": "Stop et øjeblik, og kontrollér dit WHERE-filter." },
+    { "id": "celebration", "file": "feedback/celebration.png", "label": "Flot klaret", "alt": "Professoren smiler begejstret med glade øjne", "suggestedMessage": "Flot! Opgaven er løst." }
+  ]
+}
