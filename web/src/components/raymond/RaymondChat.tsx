@@ -39,7 +39,7 @@ type FailedRequest = {
 function LoginPrompt() {
   return (
     <div className="raymond-chat-login">
-      <RaymondAvatar mood="help" size={128} />
+      <RaymondAvatar mood="help" size={96} />
       <h3>Hvad vil du gerne forstå?</h3>
       <p>Spørg Raymond om SQL, en opgave eller en fejl, du arbejder med.</p>
       <button type="button" className="btn primary" onClick={() => beginLogin()}>
@@ -227,7 +227,7 @@ function StudentChat({ owner, active, pathname, workContext }: {
       >
         {!messages.length && (
           <div className="raymond-chat-empty">
-            <RaymondAvatar mood="help" size={120} />
+            <RaymondAvatar mood="help" size={88} />
             <h3>Lad os undersøge det sammen</h3>
             <p>Hvad prøver du at finde ud af? Fortæl gerne, hvad du allerede har forsøgt.</p>
             <button type="button" onClick={() => {
@@ -251,8 +251,8 @@ function StudentChat({ owner, active, pathname, workContext }: {
               </div>
             )}
             {!!message.sources?.length && (
-              <div className="raymond-chat-sources">
-                <span>Læs videre i pensum</span>
+              <details className="raymond-chat-sources">
+                <summary>Kilder ({message.sources.length})</summary>
                 <ul>{message.sources.map((source) => (
                   <li key={source.slug}>
                     <Link to={`/learn/${encodeURIComponent(source.slug)}`} target="_blank" rel="noopener noreferrer" aria-label={`${source.title} (åbner ny fane)`}>
@@ -260,7 +260,7 @@ function StudentChat({ owner, active, pathname, workContext }: {
                     </Link>
                   </li>
                 ))}</ul>
-              </div>
+              </details>
             )}
           </article>
         ))}
@@ -298,46 +298,54 @@ function StudentChat({ owner, active, pathname, workContext }: {
       </div>
 
       <form className="raymond-chat-compose" onSubmit={(event) => { event.preventDefault(); sendQuestion(); }}>
-        <label className="raymond-chat-work" htmlFor={workId}>
-          <input id={workId} type="checkbox" checked={includeWork} onChange={(event) => setIncludeWork(event.target.checked)} />
-          <span>Medtag mit aktuelle SQL-arbejde</span>
-        </label>
-        <p className="raymond-chat-work-description">
-          {includeWork
-            ? "Din SQL, resultatoversigt, seneste fejl, opgavetjek og seneste kørsler kan indgå."
-            : "Aktuelt SQL-arbejde udelades. Tidligere beskeder i samtalen og den aktuelle lektion kan stadig indgå."}
-        </p>
-        <label htmlFor={questionId} className="raymond-chat-input-label">Dit spørgsmål</label>
-        <textarea
-          id={questionId}
-          ref={textareaRef}
-          rows={3}
-          maxLength={4000}
-          value={draft}
-          onChange={(event) => setDraft(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" && (event.ctrlKey || event.metaKey) && !event.nativeEvent.isComposing) {
-              event.preventDefault();
-              sendQuestion();
-            }
-          }}
-          aria-describedby={privacyId}
-          placeholder="Fx: Hvorfor giver min JOIN flere rækker end forventet?"
-        />
-        <div className="raymond-chat-send-row">
-          <span>Ctrl+Enter sender</span>
-          <button type="submit" className="btn primary" disabled={sending || !draft.trim()}>Send spørgsmål</button>
+        <label htmlFor={questionId} className="raymond-chat-visually-hidden">Dit spørgsmål til Raymond</label>
+        <div className="raymond-chat-compose-row">
+          <textarea
+            id={questionId}
+            ref={textareaRef}
+            rows={2}
+            maxLength={4000}
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && (event.ctrlKey || event.metaKey) && !event.nativeEvent.isComposing) {
+                event.preventDefault();
+                sendQuestion();
+              }
+            }}
+            aria-describedby={privacyId}
+            title="Dit spørgsmål til Raymond. Ctrl+Enter sender."
+            placeholder="Spørg om SQL eller din opgave…"
+          />
+          <button type="submit" className="btn primary" title="Send spørgsmål (Ctrl+Enter)" aria-label="Send spørgsmål" disabled={sending || !draft.trim()}>Send</button>
         </div>
-        <p id={privacyId} className="raymond-chat-privacy">
-          Dit spørgsmål og den valgte kontekst sendes til OpenAI. AI kan tage fejl.
-        </p>
-        {matchingContext && (
-          <p className="raymond-chat-used-context">
-            Seneste svar: {matchingContext.includesWork ? "med SQL-arbejde" : "uden SQL-arbejde"}
-            {matchingContext.includesWork && matchingContext.recentQueries > 0
-              ? ` · ${matchingContext.recentQueries} seneste kørsler` : ""}.
-          </p>
-        )}
+        <details className="raymond-chat-settings">
+          <summary title="Dit spørgsmål og den valgte kontekst sendes til OpenAI. AI kan tage fejl.">
+            <span>Kontekst og privatliv</span>
+            <span className="raymond-chat-sharing">{includeWork ? "SQL-arbejde med" : "SQL-arbejde udeladt"}</span>
+          </summary>
+          <div className="raymond-chat-settings-body">
+            <label className="raymond-chat-work" htmlFor={workId}>
+              <input id={workId} type="checkbox" checked={includeWork} onChange={(event) => setIncludeWork(event.target.checked)} />
+              <span>Medtag mit aktuelle SQL-arbejde</span>
+            </label>
+            <p className="raymond-chat-work-description">
+              {includeWork
+                ? "Din SQL, resultatoversigt, seneste fejl, opgavetjek og seneste kørsler kan indgå."
+                : "Aktuelt SQL-arbejde udelades. Tidligere beskeder i samtalen og den aktuelle lektion kan stadig indgå."}
+            </p>
+            <p id={privacyId} className="raymond-chat-privacy">
+              Dit spørgsmål og den valgte kontekst sendes til OpenAI. AI kan tage fejl.
+            </p>
+            {matchingContext && (
+              <p className="raymond-chat-used-context">
+                Seneste svar: {matchingContext.includesWork ? "med SQL-arbejde" : "uden SQL-arbejde"}
+                {matchingContext.includesWork && matchingContext.recentQueries > 0
+                  ? ` · ${matchingContext.recentQueries} seneste kørsler` : ""}.
+              </p>
+            )}
+          </div>
+        </details>
       </form>
     </section>
   );

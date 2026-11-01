@@ -103,9 +103,9 @@ export function RaymondCompanion() {
         <span className="raymond-launcher-symbol" aria-hidden="true">{helpOpen ? "×" : "?"}</span>
       </button>
         <aside id={panelId} className={`raymond-panel${tab === "chat" ? " raymond-panel--chat" : ""}`} hidden={!helpOpen} role="dialog" aria-modal="false" aria-labelledby={headingId}>
-          <header className="raymond-panel-head"><RaymondAvatar mood="help" size={72} /><div><p>Din SQL-guide</p><h2 id={headingId}>Spørg Raymond</h2></div><button ref={closeRef} type="button" className="raymond-close" onClick={state.closeHelp} aria-label="Luk Raymonds hjælp">×</button></header>
+          <header className="raymond-panel-head"><RaymondAvatar mood="help" size={40} /><h2 id={headingId}>Raymond</h2><button ref={closeRef} type="button" className="raymond-close" onClick={state.closeHelp} aria-label="Luk Raymonds hjælp">×</button></header>
           <div className="raymond-tabs" role="group" aria-label="Vælg hjælp">
-            {([ ["chat", "Spørg Raymond"], ["page", "Guide"], ["errors", "SQL-hjælp"], ["about", "Om"] ] as const).map(([id, label]) => <button key={id} type="button" aria-pressed={tab === id} className={tab === id ? "active" : ""} onClick={() => setSelection({ path: pathname, tab: id })}>{label}</button>)}
+            {([ ["chat", "Chat"], ["page", "Guide"], ["errors", "SQL-hjælp"], ["about", "Om"] ] as const).map(([id, label]) => <button key={id} type="button" aria-pressed={tab === id} className={tab === id ? "active" : ""} onClick={() => setSelection({ path: pathname, tab: id })}>{label}</button>)}
           </div>
           <div className="raymond-panel-content">
             <div className="raymond-chat-slot" hidden={tab !== "chat"}>
