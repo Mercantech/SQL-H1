@@ -8,7 +8,7 @@ SQL-læringsplatform til H1: teori, praktiske opgaver og egen Postgres-database 
 
 - En firetrins rundvisning åbnes fra forsiden, Raymonds hjælp eller elevprofilen. Velkomstinvitationen huskes i denne browser.
 - Raymond-knappen følger siderne med en AI-samtale samt emneforklaringer, eksempler, refleksionsspørgsmål og links til PostgreSQLs dokumentation.
-- Alle 28 opgaver har tre gradvise hints. Hjælpen ændrer eller kører ikke elevens SQL.
+- Alle 28 opgaver har tre gradvise hints under **Guide** i det flydende Raymond-panel. Teori- og modulindholdet vises uden en ekstra Raymond-boks.
 - Editorens ansigtsudtryk følger den faktiske kørsel og opgavekontrol. En vellykket kørsel adskilles fra en bestået opgave.
 - Kendte Postgres-fejlkoder forklares med næste skridt. Den faste guide og SQL-hjælp er fortsat tilgængelige uden AI og uden login.
 

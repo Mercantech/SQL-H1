@@ -1,11 +1,13 @@
 import { useCallback, useContext, useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { fetchContent, type ContentDto } from "../../api";
 import { explainPostgresError, getRaymondTopic } from "../../lib/raymond";
 import { RaymondContext, type RaymondWorkContext } from "./RaymondContext";
 import { RaymondAvatar } from "./RaymondUI";
 export { RaymondAvatar, RaymondNote } from "./RaymondUI";
 import { RaymondOnboarding } from "./RaymondOnboarding";
 import { RaymondChat } from "./RaymondChat";
+import { RaymondExerciseHints } from "./RaymondExercise";
 import "./raymond.css";
 
 const welcomeKey = "sqlh1_raymond_welcome_v1";
@@ -56,6 +58,17 @@ export function RaymondCompanion() {
   const explanation = submittedError ? explainPostgresError(submittedError) : null;
   const helpOpen = state?.helpOpen ?? false;
   const closeHelp = state?.closeHelp;
+  const guideSlug = /^\/(?:learn|present)\/([^/]+)\/?$/.exec(pathname)?.[1];
+  const [guideContent, setGuideContent] = useState<ContentDto | null>(null);
+
+  useEffect(() => {
+    if (!helpOpen || tab !== "page" || !guideSlug || guideContent?.slug === guideSlug) return;
+    let cancelled = false;
+    fetchContent(guideSlug).then((content) => {
+      if (!cancelled) setGuideContent(content);
+    }).catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [helpOpen, tab, guideSlug, guideContent?.slug]);
 
   useEffect(() => {
     if (!helpOpen || !closeHelp) return;
@@ -98,15 +111,16 @@ export function RaymondCompanion() {
             <div className="raymond-chat-slot" hidden={tab !== "chat"}>
               <RaymondChat active={helpOpen && tab === "chat"} />
             </div>
-            {tab === "page" && <>
+            <div hidden={tab !== "page"}>
               <p className="raymond-eyebrow">Lad os tage det trin for trin</p><h3>{topic.title}</h3><p>{topic.summary}</p>
               <ol className="raymond-steps">{topic.steps.map((step) => <li key={step}>{step}</li>)}</ol>
+              {guideContent?.slug === guideSlug && guideContent?.kind === "exercise" && <RaymondExerciseHints content={guideContent} />}
               <div className="raymond-reflection"><strong>Prøv at forklare</strong><p>{topic.question}</p></div>
               <details className="raymond-example"><summary>Se et lille eksempel</summary><pre><code>{topic.example}</code></pre><p>Et eksempel du kan undersøge — sammenlign altid med din opgave.</p></details>
               <a className="raymond-source" href={topic.reference} target="_blank" rel="noreferrer">Læs videre i PostgreSQLs dokumentation ↗</a>
               <div className="raymond-faq"><h3>Ofte stillede spørgsmål</h3>{faq.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}</div>
               <div className="raymond-inline-actions"><Link className="btn" to="/modules" onClick={state.closeHelp}>Find et modul</Link><button type="button" className="btn ghost" onClick={state.openOnboarding}>Vis rundvisning</button></div>
-            </>}
+            </div>
             {tab === "errors" && <>
               <h3>Hvad fortæller fejlen?</h3><p>Indsæt Postgres-fejlen fra din kørsel. Jeg forklarer kendte fejlkoder og foreslår, hvad du kan undersøge.</p>
               <form onSubmit={(event) => { event.preventDefault(); setSubmittedError(errorText.trim()); }}>

@@ -1,36 +1,25 @@
 import { useId, useMemo, useState } from "react";
 import type { ContentDto } from "../../api";
-import { getExerciseHints, getRaymondTopic } from "../../lib/raymond";
-import { RaymondNote } from "./Raymond";
-import { useRaymond } from "./RaymondContext";
+import { getExerciseHints } from "../../lib/raymond";
 import "./exercise.css";
 
-export function RaymondExercise({ content }: { content: ContentDto }) {
+export function RaymondExerciseHints({ content }: { content: ContentDto }) {
   return <RaymondExerciseContent key={content.slug} content={content} />;
 }
 
 function RaymondExerciseContent({ content }: { content: ContentDto }) {
-  const { openHelp } = useRaymond();
   const hintId = useId();
   const [revealedCount, setRevealedCount] = useState(0);
-  const topic = useMemo(() => getRaymondTopic(content.slug), [content.slug]);
   const hints = useMemo(
     () => (content.kind === "exercise" ? getExerciseHints(content).slice(0, 3) : []),
     [content],
   );
 
   return (
-    <RaymondNote
-      mood={revealedCount > 0 ? "help" : "neutral"}
-      title={`Raymond om ${topic.title}`}
-      compact
-      className="raymond-exercise"
-    >
-      <p>{topic.summary}</p>
+    <section className="raymond-exercise" aria-label="Hints til opgaven">
+      <h3>Hints til opgaven</h3>
+      <p>Åbn ét hint ad gangen, når du har brug for et lille skub.</p>
       <div className="raymond-exercise-actions">
-        <button type="button" className="btn ghost" onClick={openHelp}>
-          Forklar emnet
-        </button>
         {hints.length > 0 && (
           <div className="raymond-exercise-hint-buttons" role="group" aria-label="Gradvis hjælp til opgaven">
             {hints.map((_, index) => (
@@ -58,6 +47,6 @@ function RaymondExerciseContent({ content }: { content: ContentDto }) {
           ))}
         </div>
       )}
-    </RaymondNote>
+    </section>
   );
 }

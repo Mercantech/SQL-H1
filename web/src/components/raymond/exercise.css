@@ -1,5 +1,7 @@
 .raymond-exercise {
   margin: 1rem 0 1.4rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
 }
 
 .raymond-exercise-actions,

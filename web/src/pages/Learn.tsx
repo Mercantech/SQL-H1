@@ -17,7 +17,6 @@ import { LearningObjectives } from "../components/LearningObjectives";
 import { appendCodeToEditor, Markdown } from "../components/Markdown";
 import { LearnPager, ModuleNav } from "../components/ModuleNav";
 import { SqlEditor } from "../components/SqlEditor";
-import { RaymondExercise } from "../components/raymond/RaymondExercise";
 import { useLearnSplit } from "../hooks/useLearnSplit";
 import { useModuleNavOpen } from "../hooks/useModuleNavOpen";
 import { useSandboxOpen } from "../hooks/useSandboxOpen";
@@ -237,7 +236,6 @@ export function Learn() {
             {moduleIntro && (
               <LearningObjectives objectives={moduleIntro.objectives} />
             )}
-            <RaymondExercise content={item} />
             {item.kind === "exercise" && item.schema && <ExerciseSchema schema={item.schema} />}
             <div className="md">
               <Markdown
