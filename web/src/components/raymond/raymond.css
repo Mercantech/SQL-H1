@@ -68,7 +68,7 @@
   .raymond-launcher { right: .65rem; bottom: max(.6rem, env(safe-area-inset-bottom)); padding: .5rem .7rem; }
   .raymond-launcher-sub { display: none; }
   .raymond-launcher-symbol { display: none; }
-  .raymond-panel { right: .5rem; bottom: 4.3rem; width: calc(100vw - 1rem); max-height: calc(100dvh - 5rem); }
+  .raymond-panel { right: .5rem; bottom: 4.3rem; width: calc(100% - 1rem); max-height: calc(100dvh - 5rem); }
   .raymond-welcome { right: .65rem; bottom: 4.3rem; }
   .raymond-note { gap: .6rem; padding: .8rem; }
   .raymond-note > .raymond-avatar { width: 50px !important; height: 33px !important; }

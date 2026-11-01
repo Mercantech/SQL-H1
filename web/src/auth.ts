@@ -269,8 +269,7 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
 
 export function logout() {
   clearTokens();
-  const returnUrl = encodeURIComponent(window.location.origin + "/");
-  window.location.assign(`${authConfig.signoutUrl}?returnUrl=${returnUrl}`);
+  window.location.assign("/");
 }
 
 export async function publicFetch(path: string) {

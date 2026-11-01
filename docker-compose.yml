@@ -41,6 +41,10 @@ services:
       AUTH_AUDIENCE: ${AUTH_AUDIENCE:-mercantec-apps}
       JWKS_URI: ${JWKS_URI:-https://auth.mercantec.tech/.well-known/jwks.json}
       CORS_ORIGIN: ${CORS_ORIGIN:-https://sql.mercantec.tech}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-5.4-mini}
+      OPENAI_MAX_OUTPUT_TOKENS: ${OPENAI_MAX_OUTPUT_TOKENS:-1800}
+      RAYMOND_REQUESTS_PER_MINUTE: ${RAYMOND_REQUESTS_PER_MINUTE:-12}
     networks:
       - internal
     depends_on:

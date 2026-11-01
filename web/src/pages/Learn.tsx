@@ -21,6 +21,8 @@ import { RaymondExercise } from "../components/raymond/RaymondExercise";
 import { useLearnSplit } from "../hooks/useLearnSplit";
 import { useModuleNavOpen } from "../hooks/useModuleNavOpen";
 import { useSandboxOpen } from "../hooks/useSandboxOpen";
+import { useRaymondWork } from "../components/raymond/useRaymondWork";
+import { describeSqlResult } from "../lib/raymondWork";
 
 export function Learn() {
   const { slug } = useParams();
@@ -36,6 +38,14 @@ export function Learn() {
   const [sandboxOpen, setSandboxOpen] = useSandboxOpen();
   const operationRef = useRef(0);
   const split = useLearnSplit();
+  useRaymondWork({
+    contentSlug: item?.slug,
+    currentSql: sql,
+    lastError: error || result?.error || undefined,
+    resultSummary: describeSqlResult(result),
+    checkMessages: checkMessages ?? undefined,
+    checkPassed: checkPassed ?? undefined,
+  }, item?.slug === slug);
 
   useEffect(() => {
     fetchModules().then(setModules).catch(() => setModules([]));

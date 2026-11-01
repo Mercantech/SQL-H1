@@ -7,10 +7,22 @@ SQL-læringsplatform til H1: teori, praktiske opgaver og egen Postgres-database 
 **Raymond Stonebraker Codd** er den gennemgående elefantprofessor: "Jeg er Professor Codd, men I kan kalde mig Raymond."
 
 - En firetrins rundvisning åbnes fra forsiden, Raymonds hjælp eller elevprofilen. Velkomstinvitationen huskes i denne browser.
-- Raymond-knappen følger siderne med emneforklaringer, eksempler, refleksionsspørgsmål og links til PostgreSQLs dokumentation.
+- Raymond-knappen følger siderne med en AI-samtale samt emneforklaringer, eksempler, refleksionsspørgsmål og links til PostgreSQLs dokumentation.
 - Alle 28 opgaver har tre gradvise hints. Hjælpen ændrer eller kører ikke elevens SQL.
 - Editorens ansigtsudtryk følger den faktiske kørsel og opgavekontrol. En vellykket kørsel adskilles fra en bestået opgave.
-- Kendte Postgres-fejlkoder forklares med næste skridt. Ukendte fejl får en tydelig generel vejledning. Hjælpen bruger faste faglige forklaringer og kræver ingen AI-tjeneste.
+- Kendte Postgres-fejlkoder forklares med næste skridt. Den faste guide og SQL-hjælp er fortsat tilgængelige uden AI og uden login.
+
+### Raymond AI
+
+Log ind med Mercantec Auth og åbn **Spørg Raymond**. Samtalen bruger OpenAI fra .NET-API'et. Nøglen sættes kun som `OPENAI_API_KEY` i API'ets runtime-miljø, fx Dokploy. Model og svargrænse styres af `OPENAI_MODEL` og `OPENAI_MAX_OUTPUT_TOKENS` (standard: `gpt-5.4-mini`, 1800 outputtokens).
+
+Raymond læser den aktuelle lektion og kan slå op i platformens offentlige teori og opgavetekster. Når eleven vælger **Medtag mit aktuelle SQL-arbejde**, medtages også SQL fra editoren, resultatmetadata, seneste fejl, opgavetjek samt højst fem af elevens egne seneste kørsler og 12 fremgangsposter. Resultatcellernes værdier, elevprofil, andre elevers data og skjulte opgavechecks hentes ikke. Tidligere beskeder kan fortsat indeholde arbejde, som eleven allerede har delt; **Ny samtale** rydder samtalen i browseren.
+
+Samtalen ligger kun i den aktuelle browserfane, adskilt efter bruger. Serveren sender til OpenAI med `store: false` og bruger højst tre Responses-kald pr. spørgsmål til forklaring og skrivebeskyttede pensumopslag. Ingen værktøjer kan køre SQL, ændre data eller godkende opgaver. Eleven får vist, at spørgsmål og valgt kontekst sendes til OpenAI, og kan fravælge aktuelt SQL-arbejde. AI kan tage fejl; de faktiske databasekontroller bestemmer fortsat, om opgaven består.
+
+`POST /api/raymond/chat` kræver en gyldig bruger med GUID-`sub`. Input, kontekststørrelser, svartid og opslag er begrænset. `RAYMOND_REQUESTS_PER_MINUTE` styrer grænsen pr. bruger (standard 12). `GET /api/raymond/status` viser kun, om en servernøgle er konfigureret. Uden en nøgle fungerer resten af platformen fortsat.
+
+Backendregressioner med falsk OpenAI-transport køres med `dotnet run --project api.tests/SqlH1.Api.Tests.csproj`; ingen rigtig nøgle kræves. OpenAI-kontrakten følger [Responses API og function calling](https://developers.openai.com/api/docs/guides/function-calling).
 
 De oprindelige illustrationer og navnets historie findes i [maskotpakken](assets/mascot/professor-pack/README.md). Optimerede WebP-filer ligger i `web/public/raymond/` og indgår direkte i Docker-buildet. De kan genskabes med `python web/scripts/prepare-raymond-assets.py` (Pillow).
 

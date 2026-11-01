@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { getExerciseHints, getRaymondTopic, explainPostgresError } from "../src/lib/raymond.ts";
+import { describeSqlResult } from "../src/lib/raymondWork.ts";
 
 const content = new URL("../../content/", import.meta.url);
 
@@ -67,4 +68,23 @@ test("the runtime avatar files exist independently of the original authoring fil
     assert.equal(bytes.subarray(8, 12).toString(), "WEBP");
     assert.ok(bytes.length < 200_000, name);
   }
+});
+
+test("AI result context describes execution without sending any row cell values", () => {
+  assert.equal(describeSqlResult(null), undefined);
+  const summary = describeSqlResult({ ok: true, columns: ["name", "email"], rows: [["PRIVATE_NAME", "PRIVATE_EMAIL"]], truncated: true });
+  assert.match(summary, /lykkedes/);
+  assert.match(summary, /name, email/);
+  assert.match(summary, /1 viste rækker/);
+  assert.match(summary, /afkortet/);
+  assert.ok(!summary.includes("PRIVATE_"));
+  assert.ok(!summary.includes("bestået"));
+});
+
+test("AI result context preserves affected row counts and stays bounded", () => {
+  const summary = describeSqlResult({ ok: true, columns: [], rows: [], rowsAffected: 4 });
+  assert.match(summary, /4 berørte rækker/);
+  const longSummary = describeSqlResult({ ok: false, columns: Array(25).fill("x".repeat(200)), rows: [] });
+  assert.ok(longSummary.length <= 1200);
+  assert.match(longSummary, /fejlede/);
 });

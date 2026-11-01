@@ -15,6 +15,8 @@ import { SqlEditor } from "../components/SqlEditor";
 import { useLearnSplit } from "../hooks/useLearnSplit";
 import { buildFlatPath, type FlatStep } from "../lib/contentPath";
 import { isHeadingOnlySlide, splitMarkdownToSlides } from "../lib/splitSlides";
+import { useRaymondWork } from "../components/raymond/useRaymondWork";
+import { describeSqlResult } from "../lib/raymondWork";
 
 function neighborLabel(from: FlatStep, to: FlatStep, dir: "next" | "prev") {
   const crossModule = from.moduleSlug !== to.moduleSlug;
@@ -41,6 +43,7 @@ export function Present() {
   const [editorOpen, setEditorOpen] = useState(false);
   const [flash, setFlash] = useState<string | null>(null);
   const split = useLearnSplit();
+  useRaymondWork({ contentSlug: item?.slug, currentSql: sql, lastError: error || result?.error || undefined, resultSummary: describeSqlResult(result) }, item?.slug === slug);
 
   useEffect(() => {
     fetchModules().then(setModules).catch(() => setModules([]));

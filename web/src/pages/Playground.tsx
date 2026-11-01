@@ -8,6 +8,8 @@ import {
 } from "../api";
 import { beginLogin, isLoggedIn } from "../auth";
 import { SqlEditor } from "../components/SqlEditor";
+import { useRaymondWork } from "../components/raymond/useRaymondWork";
+import { describeSqlResult } from "../lib/raymondWork";
 import { RaymondNote } from "../components/raymond/Raymond";
 import { useRaymond } from "../components/raymond/RaymondContext";
 
@@ -18,6 +20,7 @@ export function Playground() {
   const [running, setRunning] = useState(false);
   const [dbName, setDbName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  useRaymondWork({ currentSql: sql, lastError: error || result?.error || undefined, resultSummary: describeSqlResult(result) });
 
   useEffect(() => {
     if (!isLoggedIn()) return;

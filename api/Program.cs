@@ -1,8 +1,11 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.Threading.RateLimiting;
 using SqlH1.Api.Data;
 using SqlH1.Api.Models;
 using SqlH1.Api.Options;
@@ -55,6 +58,29 @@ builder.Services.AddDbContext<AppDbContext>(opt => opt.UseNpgsql(platformCs));
 builder.Services.AddSingleton<ContentService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<SandboxService>();
+builder.Services.Configure<RaymondOptions>(options =>
+{
+    options.ApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY") ?? builder.Configuration["Raymond:ApiKey"] ?? "";
+    options.Model = Environment.GetEnvironmentVariable("OPENAI_MODEL") ?? builder.Configuration["Raymond:Model"] ?? "gpt-5.4-mini";
+    options.MaxOutputTokens = int.TryParse(Environment.GetEnvironmentVariable("OPENAI_MAX_OUTPUT_TOKENS"), out var tokenLimit)
+        ? Math.Clamp(tokenLimit, 256, 4096) : 1800;
+    options.TimeoutSeconds = 45;
+});
+builder.Services.AddHttpClient<RaymondService>(client => client.Timeout = TimeSpan.FromSeconds(50));
+var raymondRequestsPerMinute = int.TryParse(Environment.GetEnvironmentVariable("RAYMOND_REQUESTS_PER_MINUTE"), out var requestLimit)
+    ? Math.Clamp(requestLimit, 1, 60) : 12;
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = async (context, cancellationToken) =>
+    {
+        context.HttpContext.Response.Headers.RetryAfter = "60";
+        await context.HttpContext.Response.WriteAsJsonAsync(new { error = "Raymond har fået mange spørgsmål. Prøv igen om et minut." }, cancellationToken);
+    };
+    options.AddPolicy("raymond", context => RateLimitPartition.GetFixedWindowLimiter(
+        UserService.GetSub(context.User)?.ToString() ?? context.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
+        _ => new FixedWindowRateLimiterOptions { PermitLimit = raymondRequestsPerMinute, Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true }));
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -118,10 +144,36 @@ using (var scope = app.Services.CreateScope())
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
 
 var api = app.MapGroup("/api");
 
 api.MapGet("/health", () => Results.Json(new { ok = true, service = "sqlh1-api" }));
+
+api.MapGet("/raymond/status", (IOptions<RaymondOptions> options) =>
+    Results.Json(new { enabled = !string.IsNullOrWhiteSpace(options.Value.ApiKey) }));
+
+api.MapPost("/raymond/chat", async (HttpContext context, RaymondChatRequest request, RaymondService raymond, CancellationToken cancellationToken) =>
+{
+    var userSub = UserService.GetSub(context.User);
+    if (userSub is null) return Results.Unauthorized();
+    var validationError = RaymondRequestValidation.Validate(request);
+    if (validationError is not null) return Results.BadRequest(new { error = validationError });
+    try
+    {
+        var reply = await raymond.SendAsync(userSub.Value, request, cancellationToken);
+        return Results.Json(reply);
+    }
+    catch (RaymondUnavailableException exception)
+    {
+        return Results.Json(new { error = exception.Message }, statusCode: exception.StatusCode);
+    }
+    catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+    {
+        return Results.Json(new { error = "Raymond nåede ikke at svare. Prøv igen med et kortere spørgsmål." }, statusCode: StatusCodes.Status504GatewayTimeout);
+    }
+}).RequireAuthorization().RequireRateLimiting("raymond")
+    .WithMetadata(new Microsoft.AspNetCore.Mvc.RequestSizeLimitAttribute(128 * 1024));
 
 api.MapPost("/auth/token", async (HttpRequest request) =>
 {
