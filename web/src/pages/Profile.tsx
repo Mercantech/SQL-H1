@@ -11,6 +11,8 @@ import {
   type QueryHistoryItem,
 } from "../api";
 import { beginLogin, getUserProfile, isLoggedIn, logout } from "../auth";
+import { RaymondNote } from "../components/raymond/Raymond";
+import { useRaymond } from "../components/raymond/RaymondContext";
 
 function formatWhen(iso: string) {
   try {
@@ -39,6 +41,7 @@ function sandboxLabel(status: string) {
 }
 
 export function Profile() {
+  const { openHelp, openOnboarding } = useRaymond();
   const jwt = getUserProfile();
   const [me, setMe] = useState<MeDto | null>(null);
   const [progress, setProgress] = useState<ProgressRow[]>([]);
@@ -86,6 +89,15 @@ export function Profile() {
     return { completed, started, recent };
   }, [progress]);
 
+  const nextItem = useMemo(() => {
+    const completed = new Set(progress.filter((p) => p.status === "completed").map((p) => p.contentSlug));
+    for (const mod of [...modules].sort((a, b) => a.order - b.order)) {
+      const item = [...mod.items].sort((a, b) => a.order - b.order).find((i) => !completed.has(i.slug));
+      if (item) return item;
+    }
+    return null;
+  }, [modules, progress]);
+
   const displayName = me?.displayName || jwt?.name || "Elev";
   const email = me?.email || jwt?.email || null;
   const initials = displayName
@@ -119,9 +131,12 @@ export function Profile() {
           {email ? <p className="profile-email">{email}</p> : <p className="muted">Ingen e-mail i token</p>}
         </div>
         <div className="profile-hero-actions">
-          <Link to="/modules" className="btn primary">
+          <Link to={nextItem ? `/learn/${nextItem.slug}` : "/modules"} className="btn primary">
             Fortsæt læring
           </Link>
+          <button type="button" className="btn ghost" onClick={openOnboarding}>
+            Vis introduktionen igen
+          </button>
           <button type="button" className="btn ghost" onClick={() => logout()}>
             Log ud
           </button>
@@ -133,6 +148,14 @@ export function Profile() {
 
       {!loading && (
         <>
+          <RaymondNote compact mood="help" title="Find dit næste skridt">
+            <p>
+              {nextItem
+                ? <>Fortsæt med <Link to={`/learn/${nextItem.slug}`}>{nextItem.title}</Link>. Dine seneste fremskridt og SQL-kørsler nedenfor hjælper dig med at finde tilbage.</>
+                : "Brug modulerne til at genbesøge et emne, eller øv dig frit i Playground."}
+            </p>
+            <button type="button" className="btn ghost" onClick={openHelp}>Spørg Raymond</button>
+          </RaymondNote>
           <div className="profile-stats" aria-label="Overblik">
             <div className="profile-stat">
               <strong>{stats.completed}</strong>
@@ -151,7 +174,7 @@ export function Profile() {
               <span>Sandbox</span>
             </div>
           </div>
-          <p className="profile-footnote muted">* blandt de seneste {history.length} i historikken</p>
+          <p className="profile-footnote muted">* blandt de seneste {history.length} i historikken. OK betyder, at SQL kunne udføres, ikke at en opgave er bestået.</p>
 
           <div className="profile-grid">
             <section className="profile-card">

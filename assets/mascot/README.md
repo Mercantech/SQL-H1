@@ -1,6 +1,6 @@
 # Raymond Stonebraker Codd — elefantmaskot til SQL-H1
 
-Elefantmaskot til SQL-H1, lavet med den indbyggede ImageGen-funktion. Brugeren har valgt den oprindelige SQL-underviser fra første runde som grundfigur. Maskotten er endnu ikke koblet på brugerfladen.
+Elefantmaskot til SQL-H1, lavet med den indbyggede ImageGen-funktion. Brugeren har valgt den oprindelige SQL-underviser fra første runde som grundfigur. Raymond er integreret i forsiden, rundvisningen, emnehjælpen, opgaverne og editorens feedback.
 
 Hans navn er **Raymond Stonebraker Codd**. Han præsenterer sig sådan:
 

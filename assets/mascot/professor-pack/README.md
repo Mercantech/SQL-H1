@@ -43,6 +43,6 @@ Alle udtryk er lavet ud fra det samme fritsvævende hoved for at bevare briller,
 | Advarsel | [warning.png](feedback/warning.png) | Stop et øjeblik, og kontrollér dit WHERE-filter. |
 | Fejring | [celebration.png](feedback/celebration.png) | Flot! Opgaven er løst. |
 
-Teksterne er forslag til senere integration og er ikke indlejret i billederne. Ansigtet kan supplere en konkret tekst om fejlen eller næste skridt. Billederne er endnu ikke koblet på brugerfladen.
+Teksterne er ikke indlejret i billederne. Ansigtet supplerer en konkret tekst om fejlen eller næste skridt. Hovederne og professorportrættet er integreret i platformen via optimerede WebP-filer i `web/public/raymond/`. Sommerferie- og fancy-varianterne er også klargjort som webfiler til særlige anledninger.
 
 Se [manifest.json](manifest.json) for filnavne og tilstande og [prompts.md](prompts.md) for de præcise billedprompter.

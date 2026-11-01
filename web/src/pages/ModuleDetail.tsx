@@ -4,8 +4,12 @@ import { fetchModules, type ModuleDto } from "../api";
 import { LearningObjectives } from "../components/LearningObjectives";
 import { ModuleNav } from "../components/ModuleNav";
 import { useModuleNavOpen } from "../hooks/useModuleNavOpen";
+import { RaymondNote } from "../components/raymond/Raymond";
+import { useRaymond } from "../components/raymond/RaymondContext";
+import { getRaymondTopic } from "../lib/raymond";
 
 export function ModuleDetail() {
+  const { openHelp } = useRaymond();
   const { slug } = useParams();
   const [mod, setMod] = useState<ModuleDto | null>(null);
   const [navOpen, setNavOpen] = useModuleNavOpen();
@@ -17,6 +21,7 @@ export function ModuleDetail() {
   if (!mod) return <p className="muted learn-loading">Henter modul…</p>;
 
   const first = mod.items[0];
+  const topic = getRaymondTopic(mod.slug);
 
   return (
     <div className={`learn-shell ${navOpen ? "nav-open" : "nav-closed"}`}>
@@ -47,6 +52,10 @@ export function ModuleDetail() {
             <h1>{mod.title}</h1>
             <p>{mod.description}</p>
             <LearningObjectives objectives={mod.objectives ?? []} />
+            <RaymondNote compact mood="help" title={topic.title}>
+              <p>{topic.summary}</p>
+              <button type="button" className="btn ghost" onClick={openHelp}>Spørg Raymond om emnet</button>
+            </RaymondNote>
             {first && (
               <p className="cta-row">
                 <Link className="btn primary" to={`/learn/${first.slug}`}>

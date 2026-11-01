@@ -1,0 +1,506 @@
+.hero.home-raymond {
+  min-height: min(760px, calc(100svh - 8rem));
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(1.5rem, 5vw, 4.5rem);
+  padding: 1.5rem 0;
+}
+
+.home-raymond-eyebrow {
+  margin: 0 0 1rem;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero.home-raymond h1 {
+  max-width: 17ch;
+  font-size: clamp(2.1rem, 4.3vw, 3.65rem);
+  line-height: 1.13;
+  letter-spacing: -0.035em;
+  margin: 0 0 1.2rem;
+}
+
+.home-raymond .lede {
+  max-width: 44ch;
+  line-height: 1.7;
+}
+
+.home-raymond-intro {
+  max-width: 30rem;
+  border-top: 1px solid var(--line);
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+}
+
+.home-raymond-intro p {
+  margin: 0 0 0.65rem;
+  color: var(--muted);
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
+.home-raymond-intro strong {
+  color: var(--ink);
+}
+
+.home-raymond-tour {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 0;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  background: none;
+  color: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.home-raymond-tour:hover {
+  color: var(--ink);
+}
+
+.home-raymond-access {
+  margin: 1rem 0 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.home-raymond-visual {
+  min-width: 0;
+}
+
+.home-raymond-professor {
+  margin: 0;
+  text-align: center;
+}
+
+.home-raymond-professor img {
+  display: block;
+  width: min(100%, 430px);
+  height: auto;
+  margin: 0 auto;
+  mix-blend-mode: multiply;
+}
+
+.home-raymond-professor figcaption {
+  margin-top: 0.35rem;
+  color: var(--muted);
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+}
+
+.home-raymond-query {
+  width: min(100%, 380px);
+  margin: 1.1rem auto 0;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(247, 250, 245, 0.8);
+}
+
+.home-raymond-query-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.home-raymond-query pre {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.raymond-onboarding {
+  width: min(760px, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--panel);
+  color: var(--ink);
+  box-shadow: 0 24px 80px rgba(21, 32, 24, 0.22);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.raymond-onboarding::backdrop {
+  background: rgba(21, 32, 24, 0.46);
+  backdrop-filter: blur(3px);
+}
+
+.raymond-onboarding-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.raymond-onboarding-header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.raymond-onboarding-close {
+  display: grid;
+  place-items: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.raymond-onboarding-close:hover {
+  background: rgba(31, 107, 74, 0.07);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.raymond-onboarding-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
+  list-style: none;
+  margin: 0;
+  padding: 1.25rem 1.5rem 0;
+}
+
+.raymond-onboarding-steps li {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.3;
+}
+
+.raymond-onboarding-step-number {
+  display: grid;
+  place-items: center;
+  flex: 0 0 25px;
+  width: 25px;
+  height: 25px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.raymond-onboarding-steps li[aria-current="step"] {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.raymond-onboarding-steps li[aria-current="step"] .raymond-onboarding-step-number {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.raymond-onboarding-body {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  align-items: start;
+  gap: 1.25rem;
+  min-height: 342px;
+  padding: 1.75rem 1.75rem 1.5rem 1.25rem;
+}
+
+.raymond-onboarding-portrait {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  padding-top: 0.8rem;
+}
+
+.raymond-onboarding-portrait > img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  mix-blend-mode: multiply;
+}
+
+.raymond-onboarding-content {
+  min-width: 0;
+}
+
+.raymond-onboarding-counter {
+  margin: 0 0 0.5rem;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.raymond-onboarding-content h2 {
+  margin: 0 0 1rem;
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 3vw, 1.85rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.raymond-onboarding-content h2:focus {
+  outline: none;
+}
+
+.raymond-onboarding-content p:not(.raymond-onboarding-counter) {
+  margin: 0.75rem 0;
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.raymond-onboarding-welcome {
+  font-weight: 600;
+}
+
+.raymond-onboarding-aside {
+  border-left: 2px solid var(--line);
+  padding-left: 0.8rem;
+  color: var(--muted);
+}
+
+.raymond-onboarding-points {
+  margin: 0.75rem 0 1rem;
+  padding-left: 1.2rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.raymond-onboarding-points li + li {
+  margin-top: 0.35rem;
+}
+
+.raymond-onboarding-link {
+  display: inline-block;
+  padding: 0.25rem 0;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.raymond-onboarding-code {
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper);
+}
+
+.raymond-onboarding-code > span {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.raymond-onboarding-code pre {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.77rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.raymond-onboarding-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.raymond-onboarding-skip {
+  border: 0;
+  background: transparent;
+  padding: 0.45rem 0;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.83rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.raymond-onboarding-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.raymond-onboarding-actions .btn {
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.home-raymond-tour:focus-visible,
+.raymond-onboarding button:focus-visible,
+.raymond-onboarding a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+@media (max-width: 900px) {
+  .hero.home-raymond {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 1.25rem;
+  }
+
+  .home-raymond-professor img {
+    width: 100%;
+  }
+}
+
+@media (max-width: 680px) {
+  .raymond-platform .topbar {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.7rem 0.8rem;
+    padding: 0.8rem 1rem 0.7rem;
+  }
+
+  .raymond-platform .topbar nav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    min-width: 0;
+    gap: 0.9rem;
+    justify-content: space-between;
+  }
+
+  .raymond-platform .topbar nav a {
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .raymond-platform .auth-slot {
+    justify-self: end;
+    min-width: 0;
+    gap: 0.35rem;
+  }
+
+  .raymond-platform .auth-slot .btn {
+    flex-shrink: 0;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .raymond-platform .user-chip {
+    min-width: 0;
+    max-width: 8rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0.3rem 0.4rem;
+    font-size: 0.8rem;
+  }
+
+  .hero.home-raymond {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+    padding: 0.75rem 0 1.5rem;
+  }
+
+  .hero.home-raymond h1 {
+    font-size: clamp(2.15rem, 8vw, 2.8rem);
+    max-width: 17ch;
+  }
+
+  .home-raymond .cta-row {
+    gap: 0.5rem;
+  }
+
+  .home-raymond .cta-row .btn {
+    padding: 0.55rem 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .home-raymond-professor img {
+    width: min(100%, 300px);
+  }
+
+  .home-raymond-query {
+    margin-top: 1rem;
+  }
+
+  .raymond-onboarding {
+    width: calc(100vw - 1.25rem);
+    max-height: calc(100dvh - 1.25rem);
+    border-radius: 14px;
+  }
+
+  .raymond-onboarding-header {
+    padding: 0.65rem 0.9rem;
+  }
+
+  .raymond-onboarding-steps {
+    gap: 0.35rem;
+    padding: 1rem 1rem 0;
+  }
+
+  .raymond-onboarding-steps li {
+    flex-direction: column;
+    text-align: center;
+    font-size: 0.65rem;
+    gap: 0.35rem;
+  }
+
+  .raymond-onboarding-body {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    min-height: 0;
+    padding: 0.8rem 1.1rem 1.2rem;
+  }
+
+  .raymond-onboarding-portrait {
+    min-height: 0;
+    height: 108px;
+    padding-top: 0;
+  }
+
+  .raymond-onboarding-portrait > img {
+    width: 108px;
+    max-height: 108px;
+    object-fit: contain;
+  }
+
+  .raymond-onboarding-portrait > :not(img) {
+    max-width: 116px;
+    max-height: 108px;
+  }
+
+  .raymond-onboarding-footer {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    padding: 0.85rem 1rem;
+  }
+
+  .raymond-onboarding-skip {
+    margin-right: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero.home-raymond {
+    animation: none;
+  }
+}

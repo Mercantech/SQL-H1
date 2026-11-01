@@ -8,8 +8,11 @@ import {
 } from "../api";
 import { isLoggedIn } from "../auth";
 import { LearningObjectives } from "../components/LearningObjectives";
+import { RaymondNote } from "../components/raymond/Raymond";
+import { useRaymond } from "../components/raymond/RaymondContext";
 
 export function Modules() {
+  const { openHelp } = useRaymond();
   const [modules, setModules] = useState<ModuleDto[]>([]);
   const [progress, setProgress] = useState<ProgressRow[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -64,6 +67,17 @@ export function Modules() {
           </p>
         )}
       </header>
+      <RaymondNote compact mood={continueTarget ? "help" : "celebration"} title={continueTarget ? "Dit næste skridt" : "Godt arbejde"}>
+        <p>
+          {continueTarget ? (
+            <>Tag <strong>{continueTarget.item.title}</strong> i {continueTarget.module.title} som det næste.
+              {continueTarget.item.kind === "theory"
+                ? " Læs forklaringen og afprøv et eksempel, før du går videre."
+                : " Læs opgaven, afprøv din SQL, og brug opgavens tjek til at vurdere løsningen."}</>
+          ) : "Alle lektioner er registreret som fuldført. Genbesøg et emne, eller afprøv din egen idé i Playground."}
+        </p>
+        <button type="button" className="btn ghost" onClick={openHelp}>Spørg Raymond</button>
+      </RaymondNote>
       <ol className="module-list">
         {modules.map((m) => {
           const done = m.items.filter(

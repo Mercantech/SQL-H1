@@ -2,6 +2,20 @@
 
 SQL-læringsplatform til H1: teori, praktiske opgaver og egen Postgres-database pr. elev.
 
+## Raymond — platformens SQL-guide
+
+**Raymond Stonebraker Codd** er den gennemgående elefantprofessor: "Jeg er Professor Codd, men I kan kalde mig Raymond."
+
+- En firetrins rundvisning åbnes fra forsiden, Raymonds hjælp eller elevprofilen. Velkomstinvitationen huskes i denne browser.
+- Raymond-knappen følger siderne med emneforklaringer, eksempler, refleksionsspørgsmål og links til PostgreSQLs dokumentation.
+- Alle 28 opgaver har tre gradvise hints. Hjælpen ændrer eller kører ikke elevens SQL.
+- Editorens ansigtsudtryk følger den faktiske kørsel og opgavekontrol. En vellykket kørsel adskilles fra en bestået opgave.
+- Kendte Postgres-fejlkoder forklares med næste skridt. Ukendte fejl får en tydelig generel vejledning. Hjælpen bruger faste faglige forklaringer og kræver ingen AI-tjeneste.
+
+De oprindelige illustrationer og navnets historie findes i [maskotpakken](assets/mascot/professor-pack/README.md). Optimerede WebP-filer ligger i `web/public/raymond/` og indgår direkte i Docker-buildet. De kan genskabes med `python web/scripts/prepare-raymond-assets.py` (Pillow).
+
+Validering fra `web/`: `npm test`, `npm run build` og `npm run lint`. Testene kontrollerer emnedækning, hints til alle opgaver, fejlkoder og runtime-billeder.
+
 ## Stack
 
 - **web** — Vite + React (TypeScript), nginx
@@ -22,6 +36,8 @@ docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
 
 - Web: http://localhost:3000 (Docker) eller http://localhost:5173 (Vite)
 - API: http://localhost:3001/api/health
+
+Hvis en anden lokal tjeneste bruger API-porten, kan Vites udviklingsproxy peges mod en anden adresse med `SQLH1_DEV_API_TARGET` (fx `http://127.0.0.1:3301`). Det påvirker kun lokal udvikling.
 
 Kopiér [`.env.example`](.env.example) til `.env` ved behov.
 

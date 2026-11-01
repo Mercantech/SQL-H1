@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   checkExercise,
@@ -17,6 +17,7 @@ import { LearningObjectives } from "../components/LearningObjectives";
 import { appendCodeToEditor, Markdown } from "../components/Markdown";
 import { LearnPager, ModuleNav } from "../components/ModuleNav";
 import { SqlEditor } from "../components/SqlEditor";
+import { RaymondExercise } from "../components/raymond/RaymondExercise";
 import { useLearnSplit } from "../hooks/useLearnSplit";
 import { useModuleNavOpen } from "../hooks/useModuleNavOpen";
 import { useSandboxOpen } from "../hooks/useSandboxOpen";
@@ -33,6 +34,7 @@ export function Learn() {
   const [error, setError] = useState<string | null>(null);
   const [navOpen, setNavOpen] = useModuleNavOpen();
   const [sandboxOpen, setSandboxOpen] = useSandboxOpen();
+  const operationRef = useRef(0);
   const split = useLearnSplit();
 
   useEffect(() => {
@@ -41,8 +43,13 @@ export function Learn() {
 
   useEffect(() => {
     if (!slug) return;
+    let cancelled = false;
+    operationRef.current += 1;
     fetchContent(slug)
       .then((c) => {
+        if (cancelled) return;
+        setRunning(false);
+        setError(null);
         setItem(c);
         setSql(c.sandbox?.starterSql?.trim() || "SELECT 1;");
         setResult(null);
@@ -52,7 +59,16 @@ export function Learn() {
           putProgress(c.slug, "completed").catch(() => undefined);
         }
       })
-      .catch((e) => setError(e.message));
+      .catch((e) => {
+        if (!cancelled) {
+          setRunning(false);
+          setError(e.message);
+        }
+      });
+    return () => {
+      cancelled = true;
+      operationRef.current += 1;
+    };
   }, [slug]);
 
   const moduleIntro = useMemo(() => {
@@ -78,48 +94,62 @@ export function Learn() {
     if (!(await ensureReady()) || !item) return;
     const query = (sqlToRun ?? sql).trim();
     if (!query) return;
+    const operation = ++operationRef.current;
     setRunning(true);
     setError(null);
+    setCheckMessages(null);
+    setCheckPassed(null);
     try {
       const res = await executeSql(query, item.slug, item.sandbox?.allowWrite);
+      if (operation !== operationRef.current) return;
       setResult(res);
       await putProgress(item.slug, "started").catch(() => undefined);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Fejl");
+      if (operation === operationRef.current) setError(e instanceof Error ? e.message : "Fejl");
     } finally {
-      setRunning(false);
+      if (operation === operationRef.current) setRunning(false);
     }
   }
 
   async function onReset() {
     if (!(await ensureReady()) || !item) return;
+    if (!window.confirm("Nulstil data til lektionens udgangspunkt? Dine databaseændringer bliver fjernet. Din SQL bliver i editoren.")) return;
+    const operation = ++operationRef.current;
     setRunning(true);
+    setError(null);
+    setCheckMessages(null);
+    setCheckPassed(null);
     try {
       await resetSandbox(item.slug);
+      if (operation !== operationRef.current) return;
       setResult(null);
-      setCheckMessages(null);
-      setCheckPassed(null);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Fejl");
+      if (operation === operationRef.current) setError(e instanceof Error ? e.message : "Fejl");
     } finally {
-      setRunning(false);
+      if (operation === operationRef.current) setRunning(false);
     }
   }
 
   async function onCheck() {
     if (!(await ensureReady()) || !item) return;
+    const operation = ++operationRef.current;
     setRunning(true);
+    setError(null);
+    setCheckMessages(null);
+    setCheckPassed(null);
+    setResult((previous) => previous && !previous.ok ? null : previous);
     try {
       const res = await checkExercise(item.slug);
+      if (operation !== operationRef.current) return;
       setCheckMessages(res.messages);
       setCheckPassed(res.passed);
       if (res.passed) {
         await putProgress(item.slug, "completed").catch(() => undefined);
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Fejl");
+      if (operation === operationRef.current) setError(e instanceof Error ? e.message : "Fejl");
     } finally {
-      setRunning(false);
+      if (operation === operationRef.current) setRunning(false);
     }
   }
 
@@ -197,6 +227,7 @@ export function Learn() {
             {moduleIntro && (
               <LearningObjectives objectives={moduleIntro.objectives} />
             )}
+            <RaymondExercise content={item} />
             {item.kind === "exercise" && item.schema && <ExerciseSchema schema={item.schema} />}
             <div className="md">
               <Markdown
@@ -248,6 +279,7 @@ export function Learn() {
                   onCheck={item.kind === "exercise" ? onCheck : undefined}
                   onLogin={isLoggedIn() ? undefined : () => beginLogin()}
                   running={running}
+                  error={error}
                   result={result}
                   checkMessages={checkMessages}
                   checkPassed={checkPassed}

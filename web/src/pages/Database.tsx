@@ -9,6 +9,8 @@ import {
 import { beginLogin, isLoggedIn } from "../auth";
 import { ErDiagram } from "../components/ErDiagram";
 import { WhyPostgres } from "../components/WhyPostgres";
+import { RaymondNote } from "../components/raymond/Raymond";
+import { useRaymond } from "../components/raymond/RaymondContext";
 import postgresLogo from "../assets/postgresql.svg";
 
 function DiffBadge({ status }: { status: string }) {
@@ -99,6 +101,8 @@ function TableDetail({ table }: { table: InspectTable }) {
             <code>{c.name}</code>
             <span className="muted">
               {c.dataType}
+              {c.isPrimaryKey ? " · PK" : ""}
+              {c.isForeignKey ? " · FK" : ""}
               {c.nullable ? "" : " · NOT NULL"}
             </span>
           </li>
@@ -130,6 +134,7 @@ function TableDetail({ table }: { table: InspectTable }) {
 }
 
 export function Database() {
+  const { openHelp } = useRaymond();
   const [data, setData] = useState<InspectResult | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -168,6 +173,7 @@ export function Database() {
   }, [load]);
 
   async function onReset() {
+    if (!window.confirm("Nulstil elev-databasen til startdata? Dine egne tabeller og alle ændringer i data slettes. Dette kan ikke fortrydes.")) return;
     setBusy(true);
     setError(null);
     try {
@@ -224,6 +230,20 @@ export function Database() {
           </button>
         </div>
       </header>
+
+      <RaymondNote compact mood={data && !data.matchesBaseline ? "warning" : "help"} title="Sådan læser du din database">
+        <p>
+          En tabel samler data om én slags ting; hver række er fx én kunde. PK er rækkens entydige nøgle,
+          og FK henviser til en nøgle i en anden tabel. I startdata forbinder <code>orders.customer_id</code> en
+          ordre med <code>customers.id</code>. Vælg en tabel for at se kolonner og indhold.
+        </p>
+        <p>
+          Sammenligningen viser ændringer siden startdataene, ikke om en opgave er løst rigtigt.
+          En ændret række kan stå både som fjernet og tilføjet.
+          {" "}<strong>Nulstilling sletter dine egne tabeller og dataændringer.</strong>
+        </p>
+        <button type="button" className="btn ghost" onClick={openHelp}>Spørg Raymond</button>
+      </RaymondNote>
 
       {error && <p className="error-text">{error}</p>}
       {loading && !data && <p className="muted">Henter database…</p>}

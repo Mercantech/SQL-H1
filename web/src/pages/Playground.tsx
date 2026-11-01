@@ -8,8 +8,11 @@ import {
 } from "../api";
 import { beginLogin, isLoggedIn } from "../auth";
 import { SqlEditor } from "../components/SqlEditor";
+import { RaymondNote } from "../components/raymond/Raymond";
+import { useRaymond } from "../components/raymond/RaymondContext";
 
 export function Playground() {
+  const { openHelp } = useRaymond();
   const [sql, setSql] = useState("SELECT * FROM customers LIMIT 10;");
   const [result, setResult] = useState<ExecuteResult | null>(null);
   const [running, setRunning] = useState(false);
@@ -58,12 +61,20 @@ export function Playground() {
           . Du må bruge SELECT, DML, DDL, views, funktioner, triggers og GRANT — ikke cluster-admin (`CREATE ROLE`/`DATABASE`).
         </p>
       </header>
-      {error && <p className="error-text">{error}</p>}
+      <RaymondNote compact mood="help" title="Afprøv én idé ad gangen">
+        <p>
+          Her øver du frit i din egen database. Begynd fx med <code>SELECT * FROM customers LIMIT 10;</code> i
+          startdataene, og se hvilke kolonner og rækker du får. En OK-kørsel betyder, at SQL kunne udføres;
+          her bliver svaret ikke rettet som en opgave.
+        </p>
+        <button type="button" className="btn ghost" onClick={openHelp}>Spørg Raymond</button>
+      </RaymondNote>
       <SqlEditor
         value={sql}
         onChange={setSql}
         running={running}
         result={result}
+        error={error}
         onRun={async (sqlToRun) => {
           const query = (sqlToRun ?? sql).trim();
           if (!query) return;
@@ -78,7 +89,9 @@ export function Playground() {
           }
         }}
         onReset={async () => {
+          if (!window.confirm("Nulstil elev-databasen til startdata? Dine egne tabeller og ændringer i data slettes. Din SQL-tekst bevares.")) return;
           setRunning(true);
+          setError(null);
           try {
             await resetSandbox();
             setResult(null);

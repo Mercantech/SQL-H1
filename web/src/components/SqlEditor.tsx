@@ -12,6 +12,9 @@ import {
   type QueryHistoryItem,
   type ResultSet,
 } from "../api";
+import { explainPostgresError } from "../lib/raymond";
+import { RaymondNote } from "./raymond/Raymond";
+import { useRaymond } from "./raymond/RaymondContext";
 
 hljs.registerLanguage("sql", sqlLang);
 
@@ -25,6 +28,7 @@ type Props = {
   /** Når sat, vises "Log ind" i stedet for "Kør SQL". */
   onLogin?: () => void;
   running?: boolean;
+  error?: string | null;
   result?: ExecuteResult | null;
   checkMessages?: string[] | null;
   checkPassed?: boolean | null;
@@ -53,6 +57,78 @@ const ZOOM_MIN = 80;
 const ZOOM_MAX = 180;
 const ZOOM_STEP = 10;
 const ZOOM_DEFAULT = 100;
+const EDITOR_SETUP = { lineNumbers: true };
+
+function SqlRaymondFeedback({
+  running,
+  error,
+  result,
+  checkPassed,
+  canCheck,
+  needsLogin,
+}: Pick<Props, "running" | "error" | "result" | "checkPassed"> & {
+  canCheck: boolean;
+  needsLogin: boolean;
+}) {
+  const { openHelp } = useRaymond();
+
+  if (running) {
+    return (
+      <RaymondNote mood="thinking" title="Et øjeblik…" compact className="raymond-editor-note">
+        <p>Databasen arbejder. Din SQL bliver stående i editoren.</p>
+      </RaymondNote>
+    );
+  }
+
+  const sqlError = error || (result && !result.ok ? result.error || "SQL-kørslen kunne ikke gennemføres." : null);
+  if (sqlError) {
+    const guidance = explainPostgresError(sqlError);
+    return (
+      <RaymondNote mood="error" title={guidance.title} compact className="raymond-editor-note">
+        <p>{guidance.explanation}</p>
+        <details>
+          <summary>Sådan kommer du videre</summary>
+          <ol>{guidance.steps.map((step) => <li key={step}>{step}</li>)}</ol>
+        </details>
+      </RaymondNote>
+    );
+  }
+
+  if (checkPassed === true) {
+    return (
+      <RaymondNote mood="celebration" title="Flot arbejde!" compact className="raymond-editor-note">
+        <p>Opgavens kontroller er bestået. Prøv at forklare med egne ord, hvorfor din løsning virker.</p>
+      </RaymondNote>
+    );
+  }
+
+  if (checkPassed === false) {
+    return (
+      <RaymondNote mood="help" title="Prøv igen – ét krav ad gangen" compact className="raymond-editor-note">
+        <p>Se kontrollens punkter nedenfor, og sammenlign dem med din SQL. Opgavens hints kan hjælpe dig videre.</p>
+      </RaymondNote>
+    );
+  }
+
+  if (result?.ok) {
+    return (
+      <RaymondNote mood="success" title="Din SQL blev kørt" compact className="raymond-editor-note">
+        <p>
+          {canCheck
+            ? "Sammenlign resultatet med opgavens krav. Brug Tjek svar, når du er klar."
+            : "Undersøg resultatet, og prøv at ændre én ting i din SQL for at se forskellen."}
+        </p>
+      </RaymondNote>
+    );
+  }
+
+  return (
+    <RaymondNote mood="neutral" title="Raymond er klar" compact className="raymond-editor-note">
+      <p>{needsLogin ? "Log ind for at afprøve SQL i din egen database." : "Kør hele din SQL eller markér en del og brug Ctrl+Enter."}</p>
+      <button type="button" className="btn ghost" onClick={openHelp}>Spørg Raymond</button>
+    </RaymondNote>
+  );
+}
 
 function readZoom() {
   if (typeof window === "undefined") return ZOOM_DEFAULT;
@@ -138,6 +214,7 @@ export function SqlEditor({
   onCheck,
   onLogin,
   running,
+  error,
   result,
   checkMessages,
   checkPassed,
@@ -405,9 +482,17 @@ export function SqlEditor({
         height="100%"
         extensions={extensions}
         onChange={onChange}
-        basicSetup={{ lineNumbers: true }}
+        basicSetup={EDITOR_SETUP}
         className="sql-editor"
         style={{ ["--sql-font-size" as string]: `${fontPx}px` }}
+      />
+      <SqlRaymondFeedback
+        running={running}
+        error={error}
+        result={result}
+        checkPassed={checkPassed}
+        canCheck={Boolean(onCheck)}
+        needsLogin={Boolean(onLogin)}
       />
       {result && (
         <div className={`sql-result ${result.ok ? "ok" : "err"}`}>

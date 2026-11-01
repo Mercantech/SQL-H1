@@ -10,10 +10,12 @@ import { Playground } from "./pages/Playground";
 import { Present } from "./pages/Present";
 import { Profile } from "./pages/Profile";
 import { Progress } from "./pages/Progress";
+import { RaymondCompanion, RaymondProvider } from "./components/raymond/Raymond";
 
 export default function App() {
   return (
     <BrowserRouter>
+      <RaymondProvider>
       <Routes>
         <Route path="present/:slug" element={<Present />} />
         <Route element={<Layout />}>
@@ -29,6 +31,8 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
+        <RaymondCompanion />
+      </RaymondProvider>
     </BrowserRouter>
   );
 }

@@ -1,0 +1,33 @@
+.raymond-exercise {
+  margin: 1rem 0 1.4rem;
+}
+
+.raymond-exercise-actions,
+.raymond-exercise-hint-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.raymond-exercise-actions {
+  margin-top: 0.6rem;
+}
+
+.raymond-exercise-actions .btn {
+  min-height: 2rem;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.8rem;
+}
+
+.raymond-exercise-hint-buttons .active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.raymond-exercise-hints p {
+  margin: 0.65rem 0 0;
+  padding-left: 0.7rem;
+  border-left: 2px solid var(--line);
+  overflow-wrap: anywhere;
+}
