@@ -19,6 +19,9 @@ export function Home() {
           <Link className="btn primary" to="/modules">
             Se moduler
           </Link>
+          <Link className="btn" to="/murder">
+            Løs SQL-mysteriet
+          </Link>
           {!isLoggedIn() ? (
             <button type="button" className="btn" onClick={() => beginLogin()}>
               Log ind for at øve

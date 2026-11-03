@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { AuthCallback } from "./pages/AuthCallback";
@@ -12,6 +13,8 @@ import { Profile } from "./pages/Profile";
 import { Progress } from "./pages/Progress";
 import { RaymondCompanion, RaymondProvider } from "./components/raymond/Raymond";
 
+const Murder = lazy(() => import("./pages/Murder").then((module) => ({ default: module.Murder })));
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -24,6 +27,7 @@ export default function App() {
           <Route path="modules/:slug" element={<ModuleDetail />} />
           <Route path="learn/:slug" element={<Learn />} />
           <Route path="playground" element={<Playground />} />
+          <Route path="murder" element={<Suspense fallback={<p role="status">Åbner sagsmappen…</p>}><Murder /></Suspense>} />
           <Route path="database" element={<Database />} />
           <Route path="progress" element={<Progress />} />
           <Route path="profile" element={<Profile />} />

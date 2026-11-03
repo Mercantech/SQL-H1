@@ -1,0 +1,400 @@
+.murder-page {
+  --murder-paper: #f7f5ef;
+  --murder-white: #fffefb;
+  --murder-ink: #23372f;
+  --murder-muted: #647068;
+  --murder-rule: #d8dbd1;
+  --murder-red: #923f3b;
+  min-width: 0;
+  padding: clamp(1rem, 2.3vw, 1.8rem);
+  border: 1px solid #d9ded3;
+  border-radius: 7px;
+  background: var(--murder-paper);
+  color: var(--murder-ink);
+  box-shadow: 0 10px 35px #263a2d06;
+}
+
+.murder-page :where(button, input, textarea, summary, a):focus-visible {
+  outline: 3px solid #78917e;
+  outline-offset: 3px;
+}
+
+.murder-page :where(button, input, textarea) { font: inherit; }
+.murder-page button { cursor: pointer; }
+.murder-page button:disabled { cursor: wait; opacity: .55; }
+.murder-page :where(h1, h2, h3, p) { margin-top: 0; }
+.murder-page :where(section, aside, header, div) { min-width: 0; }
+.murder-page a { text-underline-offset: .2em; }
+.murder-page a:hover { text-decoration: underline; }
+.murder-page code { font-family: var(--font-mono); }
+.murder-page .murder-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.murder-masthead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .65rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--murder-ink);
+}
+
+.murder-eyebrow {
+  margin: 0;
+  color: var(--murder-muted);
+  font: 500 .66rem/1.5 var(--font-mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.murder-case-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .22rem .55rem;
+  border: 1px solid #b98279;
+  color: var(--murder-red);
+  background: #f5eae3;
+  font: 500 .64rem/1.6 var(--font-mono);
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.murder-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.6rem 0 1.3rem;
+}
+
+.murder-intro h1 {
+  max-width: 850px;
+  margin: .1rem 0 .75rem;
+  font: 700 clamp(2rem, 4vw, 3.25rem)/1.1 var(--font-serif);
+  letter-spacing: -.045em;
+  text-wrap: balance;
+}
+.murder-intro h1 em { color: #315640; font-weight: 500; }
+
+.murder-lede {
+  max-width: 680px;
+  margin: 0;
+  color: #59655c;
+  font-size: .92rem;
+  line-height: 1.7;
+}
+
+.murder-case-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .85rem 1.8rem;
+  margin: 1rem 0 0;
+  font: .69rem/1.6 var(--font-mono);
+}
+
+.murder-case-facts div { display: grid; gap: .15rem; }
+.murder-case-facts dt { color: var(--murder-muted); font-size: .61rem; text-transform: uppercase; letter-spacing: .09em; }
+.murder-case-facts dd { margin: 0; font-weight: 500; }
+
+.murder-start-link {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: .7rem;
+  min-height: 42px;
+  padding: .65rem 1rem;
+  border: 1px solid #254d3c;
+  border-radius: 3px;
+  background: #254d3c;
+  color: #fffef8;
+  font-size: .8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.murder-start-link:hover { background: #193e2f; text-decoration: none !important; }
+
+.murder-fiction-note {
+  margin: 0 0 1.4rem;
+  padding: .65rem .85rem;
+  border-left: 2px solid #b58d6b;
+  background: #eeeade;
+  color: #625e52;
+  font-size: .72rem;
+  line-height: 1.6;
+}
+
+.murder-workspace {
+  display: grid;
+  grid-template-columns: 285px minmax(0, 1fr);
+  align-items: start;
+  gap: 1.2rem;
+  scroll-margin-top: 1rem;
+}
+
+.murder-dossier {
+  overflow: hidden;
+  border: 1px solid var(--murder-rule);
+  border-radius: 4px;
+  background: #f0f0e8;
+}
+
+.murder-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: .75rem;
+}
+
+.murder-section-head h2 { margin: 0; font: 700 1.2rem/1.3 var(--font-serif); letter-spacing: -.025em; }
+.murder-section-head .murder-eyebrow { font-size: .61rem; }
+.murder-case-brief { padding: 1.1rem 1rem .9rem; }
+.murder-case-brief h2 { margin: 0 0 .75rem; font: 700 1.4rem/1.3 var(--font-serif); letter-spacing: -.035em; }
+.murder-case-brief > p { margin-bottom: .75rem; font-size: .8rem; line-height: 1.7; }
+.murder-case-brief strong { font-weight: 600; }
+.murder-objectives { margin: .8rem 0 0; padding-left: 1.1rem; font-size: .8rem; line-height: 1.7; }
+.murder-objectives li + li { margin-top: .25rem; }
+.murder-status { display: inline-block; color: var(--murder-red); font: .64rem/1.5 var(--font-mono); }
+
+.murder-side-nav {
+  display: flex;
+  gap: .2rem;
+  padding: .3rem;
+  border-top: 1px solid var(--murder-rule);
+  border-bottom: 1px solid var(--murder-rule);
+  background: #e7ebe1;
+}
+
+.murder-side-nav button {
+  flex: 1;
+  min-height: 35px;
+  padding: .45rem .35rem;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: transparent;
+  color: #59665b;
+  font-size: .73rem;
+  font-weight: 600;
+}
+
+.murder-side-nav button:is(.is-active, [aria-pressed="true"]) { border-color: #d0d7c8; background: #fffef8; color: #254d3c; box-shadow: 0 1px 2px #23372f0a; }
+.murder-side-content { padding: .65rem .8rem .9rem; }
+.murder-side-content > p { margin: .15rem 0 .7rem; font-size: .71rem; color: var(--murder-muted); line-height: 1.65; }
+.murder-side-content [hidden] { display: none; }
+.murder-side-intro { margin: .15rem 0 .7rem; font-size: .76rem; color: var(--murder-muted); line-height: 1.65; }
+.murder-guide h3 { margin: .7rem 0 .45rem; color: #3a5741; font: 700 1rem/1.4 var(--font-serif); }
+.murder-guide p { margin-bottom: .8rem; color: #5e6d58; font-size: .8rem; line-height: 1.75; }
+.murder-guide pre { max-width: 100%; margin: .65rem 0 .85rem; padding: .7rem .6rem; overflow-x: auto; border: 1px solid #d2dacb; border-radius: 3px; background: #fffef8; color: #3d6044; font: .69rem/1.75 var(--font-mono); }
+.murder-guide > a { display: block; margin-top: .75rem; color: #42674c; font-size: .73rem; text-decoration: underline; }
+
+.murder-schema-table { border-bottom: 1px solid #d9ded3; }
+.murder-schema-table:last-child { border-bottom: 0; }
+.murder-schema-table summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: .4rem;
+  padding: .55rem .1rem;
+  cursor: pointer;
+  font: 500 .72rem/1.5 var(--font-mono);
+  list-style: none;
+}
+.murder-schema-table summary::-webkit-details-marker { display: none; }
+.murder-schema-table summary::before { content: "+"; color: #748274; font-size: .85rem; }
+.murder-schema-table[open] > summary::before { content: "−"; }
+.murder-schema-table summary > :first-child { flex: 1; }
+.murder-schema-table summary > :last-child:not(:first-child) { color: var(--murder-muted); font-size: .62rem; }
+.murder-schema-table > p { margin: .1rem 0 .6rem; color: var(--murder-muted); font-size: .76rem; line-height: 1.6; }
+.murder-schema-table ul { margin: 0 0 .65rem; padding: .5rem .55rem; border: 1px solid #dce1d6; border-radius: 3px; background: #fffef98f; list-style: none; }
+.murder-schema-table li { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem .45rem; padding: .2rem 0; font: .65rem/1.6 var(--font-mono); overflow-wrap: anywhere; }
+.murder-schema-table li > :nth-child(2) { color: #606e5a; font-size: .59rem; }
+.murder-column-key { color: #966741; }
+.murder-column-ref { flex-basis: 100%; color: #657561; font-size: .59rem; }
+.murder-schema-table .murder-tool { width: 100%; margin-bottom: .7rem; }
+
+.murder-hint { border-bottom: 1px solid var(--murder-rule); }
+.murder-hint:last-child { border-bottom: 0; }
+.murder-hint summary { padding: .6rem .1rem; cursor: pointer; font-size: .76rem; font-weight: 600; }
+.murder-hint p, .murder-hint ol { margin: .35rem 0 .7rem; font-size: .8rem; line-height: 1.65; }
+.murder-hint ol { padding-left: 1.1rem; }
+.murder-hint li + li { margin-top: .5rem; }
+.murder-hint pre { max-width: 100%; overflow-x: auto; padding: .7rem; border: 1px solid var(--murder-rule); border-radius: 3px; background: #fffef9; font: .66rem/1.6 var(--font-mono); }
+.murder-hint .murder-tool { margin-bottom: .7rem; }
+
+.murder-editor-pane { overflow: hidden; border: 1px solid #bdc8bc; border-radius: 4px; background: var(--murder-white); }
+.murder-editor-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .55rem; padding: .85rem 1rem; border-bottom: 1px solid #35493f; background: #233a30; color: #f2f2e7; }
+.murder-editor-header h2 { margin: 0; font-size: .83rem; font-weight: 600; }
+.murder-editor-header .murder-eyebrow { color: #bdcabb; font-size: .59rem; }
+.murder-db-status { display: inline-flex; align-items: center; gap: .4rem; color: #c8d5c4; font: .61rem/1.4 var(--font-mono); }
+.murder-db-status::before { width: 5px; height: 5px; border-radius: 50%; background: #a5c29a; content: ""; }
+.murder-editor { min-height: 240px; background: #1c2c25; }
+.murder-editor .cm-editor { font-family: var(--font-mono); }
+.murder-editor .cm-content { padding: .75rem 0; }
+.murder-editor .cm-line { padding-left: .6rem; padding-right: .9rem; }
+.murder-editor .cm-scroller { min-height: 240px; }
+.murder-editor .cm-editor.cm-focused { outline: none; }
+
+.murder-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; padding: .7rem .85rem; border-top: 1px solid #d4dcd0; border-bottom: 1px solid #d4dcd0; background: #e9eee3; }
+.murder-run, .murder-tool { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; min-height: 34px; padding: .45rem .7rem; border: 1px solid #c6d0bf; border-radius: 3px; font-size: .72rem; font-weight: 600; line-height: 1.3; }
+.murder-run { border-color: #254d3c; background: #254d3c; color: #fffef8; }
+.murder-run:hover:not(:disabled) { background: #193e2f; }
+.murder-tool { background: #fffef9; color: #3d5545; }
+.murder-tool:hover:not(:disabled) { border-color: #83967f; background: #f5f7ef; }
+.murder-editor-shortcut { flex: 1 1 160px; color: #5c6b55; font-size: .62rem; white-space: nowrap; }
+.murder-toolbar kbd { color: #50664b; font: .62rem/1.5 var(--font-mono); }
+.murder-editor-foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .4rem 1rem; padding: .55rem .9rem; color: #606d59; background: #f3f5ed; font: .6rem/1.5 var(--font-mono); }
+
+.murder-result-panel { min-height: 215px; }
+.murder-result-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .45rem; padding: .85rem 1rem; border-bottom: 1px solid #e3e5db; }
+.murder-result-head h3 { margin: 0; font-size: .76rem; font-weight: 600; }
+.murder-result-head p, .murder-result-head span { margin: 0; color: var(--murder-muted); font: .62rem/1.5 var(--font-mono); }
+.murder-results-scroll { max-width: 100%; max-height: 430px; overflow: auto; }
+.murder-results-scroll table { width: 100%; border-collapse: collapse; text-align: left; font-size: .8rem; }
+.murder-results-scroll th { position: sticky; top: 0; padding: .7rem .8rem; border-bottom: 1px solid #d6ddd0; background: #f1f4eb; color: #4c634f; font: 500 .66rem/1.5 var(--font-mono); white-space: nowrap; }
+.murder-results-scroll td { min-width: 85px; max-width: 410px; padding: .8rem; border-bottom: 1px solid #e7e9df; vertical-align: top; overflow-wrap: anywhere; line-height: 1.7; }
+.murder-results-scroll tr:last-child td { border-bottom: 0; }
+.murder-results-scroll tr:nth-child(even) td { background: #f8f8f2; }
+.murder-results-scroll td:only-child { min-width: 250px; }
+.murder-result-tabs { display: flex; flex-wrap: wrap; gap: .3rem; padding: .55rem .8rem 0; }
+.murder-result-tabs button { padding: .35rem .6rem; border: 1px solid #d6ddd0; border-radius: 3px; background: #f2f5ed; color: #52654f; font: .65rem/1.5 var(--font-mono); }
+.murder-result-tabs button:is(.is-active, [aria-selected="true"], [aria-pressed="true"]) { border-color: #45674f; background: #e4eddf; color: #244932; }
+.murder-empty-state { display: grid; align-content: center; justify-items: center; gap: .45rem; min-height: 180px; padding: 1.5rem; color: #626f5c; text-align: center; }
+.murder-empty-state > span:first-child { max-width: 100%; margin-bottom: .35rem; color: #788a70; font: clamp(.64rem, 1.3vw, .88rem)/1.8 var(--font-mono); letter-spacing: .05em; white-space: nowrap; }
+.murder-empty-state h3 { margin: 0; color: #4c604b; font-size: .85rem; font-weight: 600; }
+.murder-empty-state p { max-width: 350px; margin: 0; font-size: .8rem; line-height: 1.7; }
+.murder-error { margin: .85rem; padding: .8rem; border: 1px solid #dab3a6; border-radius: 3px; background: #faf0e9; color: #8b4239; font-size: .76rem; line-height: 1.65; overflow-wrap: anywhere; }
+.murder-error p:last-child { margin-bottom: 0; }
+.murder-error p { margin: .4rem 0; }
+.murder-error small { font-size: .72rem; }
+.murder-no-rows, .murder-result-limit { margin: 0; padding: .85rem 1rem; color: #63715b; font-size: .76rem; line-height: 1.7; }
+.murder-result-limit { border-top: 1px solid #dedfd2; background: #f5f1e6; color: #796744; }
+.murder-null { color: #767c6a; font: .65rem/1.5 var(--font-mono); }
+
+.murder-bottom-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .85rem; margin-top: 1rem; padding: .95rem; border-top: 1px solid #d5dccd; background: #f0f2e9; }
+.murder-notebook, .murder-accusation { padding: 1.1rem; border: 1px solid var(--murder-rule); border-radius: 4px; background: var(--murder-white); }
+.murder-notebook h2, .murder-accusation h2 { margin: 0 0 .4rem; font: 700 1.2rem/1.3 var(--font-serif); letter-spacing: -.025em; }
+.murder-notebook h3, .murder-accusation > h3 { margin: 0 0 .4rem; font: 700 1.2rem/1.3 var(--font-serif); letter-spacing: -.025em; }
+.murder-accusation > .murder-eyebrow { display: block; margin-bottom: .45rem; font-size: .56rem; }
+.murder-notebook .murder-section-head { align-items: start; gap: .25rem; }
+.murder-notebook .murder-section-head > span { color: var(--murder-muted); font-size: .58rem; }
+.murder-notebook > label { display: block; margin: 0 0 .6rem; color: #63715b; font-size: .7rem; }
+.murder-notebook > p, .murder-accusation > p { margin-bottom: .8rem; color: var(--murder-muted); font-size: .8rem; line-height: 1.7; }
+.murder-notebook textarea { display: block; width: 100%; min-height: 128px; padding: .65rem .75rem; resize: vertical; border: 1px solid #d6d9ce; border-radius: 3px; background: repeating-linear-gradient(#faf9f2, #faf9f2 25px, #e7e7da 25px, #e7e7da 26px); color: #3b5141; font: .72rem/26px var(--font-mono); }
+.murder-notebook textarea::placeholder { color: #89917e; }
+.murder-notebook > small { display: block; margin-top: .5rem; color: var(--murder-muted); font-size: .64rem; }
+.murder-accusation label { display: block; margin-bottom: .4rem; font-size: .72rem; font-weight: 600; }
+.murder-accusation form { display: flex; align-items: stretch; flex-wrap: wrap; gap: .5rem; }
+.murder-accusation input { flex: 1 1 130px; min-width: 0; min-height: 38px; padding: .55rem .65rem; border: 1px solid #c9d2c2; border-radius: 3px; background: #fafbf5; color: var(--murder-ink); font-size: .77rem; }
+.murder-accusation .murder-run { flex: 0 0 auto; }
+.murder-feedback { margin: .8rem 0 0; padding: .7rem .8rem; border-left: 2px solid #b4baab; background: #f1f3eb; font-size: .8rem; line-height: 1.7; }
+.murder-feedback.is-correct, .murder-feedback .is-correct { border-color: #5d855d; background: #edf4e6; color: #355c36; }
+.murder-feedback.is-wrong, .murder-feedback .is-wrong { border-color: #b47b65; background: #fbf0e7; color: #86503c; }
+.murder-progress { display: flex; flex-wrap: wrap; gap: .45rem 1rem; margin: .7rem 0 .85rem; padding: 0; list-style: none; color: #69765f; font: .64rem/1.5 var(--font-mono); }
+.murder-progress li.is-done { color: #3b6e3f; }
+
+.murder-history { margin-top: .9rem; border: 1px solid var(--murder-rule); border-radius: 4px; background: #fffef97a; }
+.murder-editor-pane > .murder-history { margin: .85rem .85rem 0; }
+.murder-history > summary { padding: .7rem .9rem; color: #53684f; cursor: pointer; font-size: .73rem; font-weight: 600; }
+.murder-history > summary > span { margin-left: .4rem; color: #7b8371; font: .63rem/1.5 var(--font-mono); }
+.murder-history-list { max-height: 265px; margin: 0; padding: 0 .85rem .45rem; overflow: auto; list-style: none; }
+.murder-history-list li { display: flex; align-items: start; gap: .6rem; padding: .7rem 0; border-top: 1px solid #e1e4d8; }
+.murder-history-list code { display: block; flex: 1; max-height: 85px; overflow: auto; color: #566a50; font: .65rem/1.6 var(--font-mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+.murder-history-list li > span { flex-shrink: 0; padding-top: .4rem; color: var(--murder-muted); font: .58rem/1.5 var(--font-mono); white-space: nowrap; }
+.murder-history-list .murder-tool { flex: 0 0 auto; min-height: 30px; font-size: .63rem; }
+.murder-history > p { padding: 0 .9rem; color: var(--murder-muted); font-size: .72rem; }
+.murder-reset-confirm { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: .5rem; margin-top: .8rem; color: #806658; font-size: .7rem; }
+.murder-reset-confirm .murder-tool { font-size: .65rem; }
+
+.murder-profiles { margin-top: 1.8rem; padding-top: 1rem; border-top: 1px solid #bac4b4; }
+.murder-profiles > summary { display: flex; align-items: center; justify-content: space-between; gap: .75rem; cursor: pointer; color: #364c3b; font: 700 1.2rem/1.5 var(--font-serif); letter-spacing: -.02em; list-style: none; }
+.murder-profiles > summary::-webkit-details-marker { display: none; }
+.murder-profiles > summary .murder-eyebrow { display: block; margin-bottom: .25rem; }
+.murder-profiles > summary h2 { margin: 0; font: 700 1.5rem/1.3 var(--font-serif); letter-spacing: -.035em; }
+.murder-profiles > summary > span { flex-shrink: 0; color: #526a4f; font: .67rem/1.6 var(--font-mono); letter-spacing: 0; }
+.murder-profiles > p { max-width: 750px; margin: .65rem 0 1rem; color: var(--murder-muted); font-size: .8rem; line-height: 1.7; }
+.murder-profile-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; margin-top: 1rem; }
+.murder-profile-card { padding: .95rem; border: 1px solid #d9ded1; border-radius: 3px; background: #fffef9; }
+.murder-profile-card header { display: flex; align-items: center; gap: .65rem; margin-bottom: .7rem; }
+.murder-profile-initials { display: inline-grid; flex-shrink: 0; place-items: center; width: 36px; height: 40px; border: 1px solid #becbbb; border-radius: 2px; background: #edf0e6; color: #61765b; font: 500 .8rem/1 var(--font-mono); }
+.murder-profile-card h3 { margin: 0; font-size: .78rem; font-weight: 600; letter-spacing: -.015em; }
+.murder-profile-field { display: block; margin-top: .18rem; color: #7e6c54; font: .59rem/1.5 var(--font-mono); }
+.murder-profile-card p { margin-bottom: .65rem; color: #64715e; font-size: .8rem; line-height: 1.7; }
+.murder-profile-card a { color: #3e6650; font-size: .65rem; text-decoration: underline; }
+
+.murder-footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .65rem 1rem; margin-top: 1.4rem; padding-top: .85rem; border-top: 1px solid var(--murder-rule); color: #626c5c; font-size: .65rem; line-height: 1.7; }
+.murder-footer p { margin: 0; }
+.murder-footer a { color: #4c6c53; text-decoration: underline; }
+.murder-footer > div { display: flex; align-items: start; justify-content: flex-end; flex-wrap: wrap; gap: .5rem .75rem; max-width: 440px; }
+.murder-footer > div > span { flex-basis: 100%; text-align: right; }
+.murder-footer > div > .murder-tool { min-height: 29px; padding: .35rem .5rem; font-size: .63rem; }
+.murder-reset-confirm p { flex-basis: 100%; text-align: right; }
+
+@media (max-width: 1000px) {
+  .murder-workspace { grid-template-columns: 240px minmax(0, 1fr); gap: .85rem; }
+  .murder-intro { gap: .8rem; }
+  .murder-intro h1 { font-size: 2.6rem; }
+  .murder-start-link { padding-inline: .75rem; font-size: .73rem; }
+  .murder-profile-grid { gap: .6rem; }
+  .murder-profile-card { padding: .75rem; }
+  .murder-bottom-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 700px) {
+  .murder-page { padding: 1rem; }
+  .murder-intro { grid-template-columns: minmax(0, 1fr); padding-top: 1.2rem; }
+  .murder-intro h1 { max-width: 480px; font-size: clamp(2rem, 7vw, 2.8rem); }
+  .murder-intro > .murder-start-link { justify-self: start; }
+  .murder-lede { font-size: .84rem; }
+  .murder-case-facts { column-gap: 1.3rem; }
+  .murder-workspace { grid-template-columns: minmax(0, 1fr); gap: .9rem; }
+  .murder-case-brief { padding: .95rem; }
+  .murder-side-content { max-height: 315px; overflow-y: auto; }
+  .murder-bottom-grid { grid-template-columns: minmax(0, 1fr); gap: .9rem; }
+  .murder-profile-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .murder-editor-header { padding-inline: .8rem; }
+  .murder-toolbar { gap: .4rem; padding-inline: .65rem; }
+  .murder-editor-shortcut { flex-basis: 165px; font-size: .59rem; }
+  .murder-toolbar kbd { font-size: .59rem; }
+  .murder-editor-foot { font-size: .56rem; }
+  .murder-notebook, .murder-accusation { padding: .95rem; }
+}
+
+@media (max-width: 430px) {
+  .murder-page { padding: .8rem; }
+  .murder-masthead { align-items: start; }
+  .murder-masthead .murder-eyebrow { max-width: 145px; font-size: .57rem; }
+  .murder-case-tag { font-size: .55rem; }
+  .murder-case-facts { gap: .65rem .9rem; font-size: .64rem; }
+  .murder-intro h1 { font-size: 2.05rem; }
+  .murder-profile-grid { grid-template-columns: minmax(0, 1fr); }
+  .murder-toolbar { align-items: center; }
+  .murder-editor-shortcut { flex: 1 1 130px; white-space: normal; font-size: .58rem; }
+  .murder-toolbar > .murder-tool { width: 100%; }
+  .murder-editor-header { align-items: start; }
+  .murder-db-status { font-size: .56rem; }
+  .murder-run, .murder-tool { padding-inline: .55rem; font-size: .68rem; }
+  .murder-footer { flex-direction: column; }
+  .murder-footer > div { justify-content: flex-start; max-width: 100%; }
+  .murder-footer > div > span, .murder-reset-confirm p { text-align: left; }
+  .murder-profiles > summary { align-items: start; flex-direction: column; gap: .4rem; }
+  .murder-profiles > summary h2 { font-size: 1.35rem; }
+  .murder-bottom-grid { padding: .65rem; }
+  .murder-notebook, .murder-accusation { padding: .8rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .murder-page *, .murder-page *::before, .murder-page *::after { scroll-behavior: auto !important; }
+}

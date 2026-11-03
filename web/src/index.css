@@ -91,6 +91,12 @@ input {
   color: var(--accent);
 }
 
+@media (max-width: 700px) {
+  .topbar { gap: .7rem; padding: .8rem 1rem; }
+  .topbar nav { order: 3; flex-basis: 100%; flex-wrap: wrap; gap: .55rem 1rem; }
+  .topbar .auth-slot { margin-left: auto; }
+}
+
 .auth-slot {
   display: flex;
   align-items: center;

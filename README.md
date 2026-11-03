@@ -2,6 +2,16 @@
 
 SQL-læringsplatform til H1: teori, praktiske opgaver og egen Postgres-database pr. elev.
 
+## SQL Murder Mystery — `/murder`
+
+**Mordet på Datatopmødet** er en selvstændig dansk kriminalgåde inspireret af [Knight Labs SQL Murder Mystery](https://mystery.knightlab.com/), med egen historie og egne data. Elever følger sagsrapporter, vidneudsagn, adgangslogs, workshoptilmeldinger, betalinger og beskeder gennem ni relaterede tabeller for at finde både gerningspersonen og bagmanden.
+
+Spillet kører ægte SQLite med `sql.js` i en separat browser-worker og kræver hverken login, en API-forbindelse eller en elevdatabase. WASM-filen leveres med Vite-/Docker-buildet. Data er skrivebeskyttede; SQL-kørsler stoppes efter tre sekunder og store resultater begrænses. SQL, notesbog, de seneste 15 vellykkede forespørgsler og løste trin gemmes lokalt i browseren. Nulstilling gælder kun mysteriet.
+
+De kendte danske IT-profiler optræder i tydeligt fiktive konferenceroller; alle forbrydelser involverer opdigtede personer. Faktakort linker til primære kilder om profilernes virkelige bidrag. Tabeloversigten viser kolonner og relationer, SQL-guiden forklarer SQLite/PostgreSQL-forskellen, og hints afsløres gradvist. Indgangen findes også i navigationen og på forsiden.
+
+Kør `npm test` fra `web/` for at kontrollere den entydige beviskæde mod rigtig SQLite, SQL-funktioner, skrivebeskyttelse og workerens genstart efter timeout.
+
 ## Raymond — platformens SQL-guide
 
 **Raymond Stonebraker Codd** er den gennemgående elefantprofessor: "Jeg er Professor Codd, men I kan kalde mig Raymond."
