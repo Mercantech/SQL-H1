@@ -132,6 +132,46 @@ a.user-chip:hover {
   flex-direction: column;
 }
 
+.playground-page {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  width: min(1280px, 100%);
+  margin: 0 auto;
+  padding: 0.85rem 1.25rem 1rem;
+}
+
+.playground-head {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 1rem;
+}
+
+.playground-head h1 {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+
+.playground-head p {
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+.playground-page .sql-panel {
+  flex: 1;
+  min-height: 0;
+}
+
+.playground-page .sql-editor {
+  flex: 1 1 55%;
+  min-height: 220px;
+}
+
 .learn-loading {
   padding: 1.5rem;
 }

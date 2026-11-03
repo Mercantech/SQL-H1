@@ -7,6 +7,7 @@ export function Layout() {
   const { pathname } = useLocation();
   const flushLearn =
     pathname.startsWith("/learn/") ||
+    pathname === "/playground" ||
     /^\/modules\/[^/]+$/.test(pathname);
 
   return (

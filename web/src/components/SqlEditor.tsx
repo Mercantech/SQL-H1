@@ -32,6 +32,8 @@ type Props = {
   result?: ExecuteResult | null;
   checkMessages?: string[] | null;
   checkPassed?: boolean | null;
+  /** `full` = Raymond-tips (standard). `errors` = kun fejl/opgave-feedback. */
+  coach?: "full" | "errors";
 };
 
 function normalizeSets(result: ExecuteResult): ResultSet[] {
@@ -66,13 +68,16 @@ function SqlRaymondFeedback({
   checkPassed,
   canCheck,
   needsLogin,
-}: Pick<Props, "running" | "error" | "result" | "checkPassed"> & {
+  coach = "full",
+}: Pick<Props, "running" | "error" | "result" | "checkPassed" | "coach"> & {
   canCheck: boolean;
   needsLogin: boolean;
 }) {
   const { openHelp } = useRaymond();
+  const quiet = coach === "errors";
 
   if (running) {
+    if (quiet) return null;
     return (
       <RaymondNote mood="thinking" title="Et øjeblik…" compact className="raymond-editor-note">
         <p>Databasen arbejder. Din SQL bliver stående i editoren.</p>
@@ -109,6 +114,8 @@ function SqlRaymondFeedback({
       </RaymondNote>
     );
   }
+
+  if (quiet) return null;
 
   if (result?.ok) {
     return (
@@ -218,6 +225,7 @@ export function SqlEditor({
   result,
   checkMessages,
   checkPassed,
+  coach = "full",
 }: Props) {
   const [tab, setTab] = useState(0);
   const [zoom, setZoom] = useState(readZoom);
@@ -493,6 +501,7 @@ export function SqlEditor({
         checkPassed={checkPassed}
         canCheck={Boolean(onCheck)}
         needsLogin={Boolean(onLogin)}
+        coach={coach}
       />
       {result && (
         <div className={`sql-result ${result.ok ? "ok" : "err"}`}>

@@ -10,11 +10,8 @@ import { beginLogin, isLoggedIn } from "../auth";
 import { SqlEditor } from "../components/SqlEditor";
 import { useRaymondWork } from "../components/raymond/useRaymondWork";
 import { describeSqlResult } from "../lib/raymondWork";
-import { RaymondNote } from "../components/raymond/Raymond";
-import { useRaymond } from "../components/raymond/RaymondContext";
 
 export function Playground() {
-  const { openHelp } = useRaymond();
   const [sql, setSql] = useState("SELECT * FROM customers LIMIT 10;");
   const [result, setResult] = useState<ExecuteResult | null>(null);
   const [running, setRunning] = useState(false);
@@ -38,9 +35,11 @@ export function Playground() {
 
   if (!isLoggedIn()) {
     return (
-      <section className="page">
-        <h1>Playground</h1>
-        <p>Log ind for at få din egen Postgres-database.</p>
+      <section className="page playground-page">
+        <header className="playground-head">
+          <h1>Playground</h1>
+          <p>Log ind for at få din egen Postgres-database.</p>
+        </header>
         <button type="button" className="btn primary" onClick={() => beginLogin()}>
           Log ind
         </button>
@@ -49,32 +48,19 @@ export function Playground() {
   }
 
   return (
-    <section className="page">
-      <header className="page-head">
+    <section className="page playground-page">
+      <header className="playground-head">
         <h1>Playground</h1>
-        <p>
-          Fri SQL-editor mod din elev-database
-          {dbName ? (
-            <>
-              : <code>{dbName}</code>
-            </>
-          ) : (
-            "…"
-          )}
-          . Du må bruge SELECT, DML, DDL, views, funktioner, triggers og GRANT — ikke cluster-admin (`CREATE ROLE`/`DATABASE`).
+        <p className="muted">
+          {dbName ? <code>{dbName}</code> : "…"}
+          <span aria-hidden="true"> · </span>
+          SELECT, DML, DDL — ikke cluster-admin
         </p>
       </header>
-      <RaymondNote compact mood="help" title="Afprøv én idé ad gangen">
-        <p>
-          Her øver du frit i din egen database. Begynd fx med <code>SELECT * FROM customers LIMIT 10;</code> i
-          startdataene, og se hvilke kolonner og rækker du får. En OK-kørsel betyder, at SQL kunne udføres;
-          her bliver svaret ikke rettet som en opgave.
-        </p>
-        <button type="button" className="btn ghost" onClick={openHelp}>Spørg Raymond</button>
-      </RaymondNote>
       <SqlEditor
         value={sql}
         onChange={setSql}
+        coach="errors"
         running={running}
         result={result}
         error={error}
