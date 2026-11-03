@@ -60,6 +60,7 @@ export function Playground() {
       <SqlEditor
         value={sql}
         onChange={setSql}
+        workspace
         coach="errors"
         running={running}
         result={result}

@@ -172,6 +172,156 @@ a.user-chip:hover {
   min-height: 220px;
 }
 
+.sql-panel--workspace {
+  gap: 0.55rem;
+}
+
+.sql-layout-controls {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+.sql-layout-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(31, 107, 74, 0.08);
+}
+
+.sql-workspace {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.sql-workspace--split {
+  display: grid;
+  gap: 0;
+  --pg-editor: 55;
+  --pg-result: 45;
+}
+
+.sql-workspace--split.sql-workspace--stack {
+  grid-template-columns: 1fr;
+  grid-template-rows:
+    minmax(0, calc(var(--pg-editor) * 1fr))
+    10px
+    minmax(0, calc(var(--pg-result) * 1fr));
+}
+
+.sql-workspace--split.sql-workspace--side {
+  grid-template-rows: 1fr;
+  grid-template-columns:
+    minmax(0, calc(var(--pg-editor) * 1fr))
+    10px
+    minmax(0, calc(var(--pg-result) * 1fr));
+}
+
+.sql-workspace .sql-editor,
+.sql-workspace .sql-result {
+  min-height: 0;
+  min-width: 0;
+}
+
+.sql-workspace--split .sql-editor {
+  flex: unset;
+}
+
+.sql-workspace--split .sql-result {
+  flex: unset;
+}
+
+.sql-split {
+  position: relative;
+  z-index: 5;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  outline: none;
+  touch-action: none;
+}
+
+.sql-split--side {
+  width: 10px;
+  margin: 0 -1px;
+  cursor: col-resize;
+}
+
+.sql-split--stack {
+  height: 10px;
+  margin: -1px 0;
+  cursor: row-resize;
+}
+
+.sql-split::before {
+  content: "";
+  position: absolute;
+  background: var(--line);
+  border-radius: 2px;
+  transition: background 0.15s ease, inset 0.15s ease;
+}
+
+.sql-split--side::before {
+  inset: 0 3px;
+}
+
+.sql-split--stack::before {
+  inset: 3px 0;
+}
+
+.sql-split:hover::before,
+.sql-split:focus-visible::before {
+  background: var(--accent);
+}
+
+.sql-split--side:hover::before,
+.sql-split--side:focus-visible::before {
+  inset: 0 2px;
+}
+
+.sql-split--stack:hover::before,
+.sql-split--stack:focus-visible::before {
+  inset: 2px 0;
+}
+
+.sql-split:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+@media (max-width: 900px) {
+  .sql-layout-controls .sql-layout-btn:nth-child(2) {
+    display: none;
+  }
+
+  .sql-workspace--split.sql-workspace--side {
+    grid-template-columns: 1fr !important;
+    grid-template-rows:
+      minmax(0, calc(var(--pg-editor) * 1fr))
+      10px
+      minmax(0, calc(var(--pg-result) * 1fr)) !important;
+  }
+
+  .sql-panel--side .sql-split--side {
+    height: 10px;
+    width: auto;
+    margin: -1px 0;
+    cursor: row-resize;
+  }
+
+  .sql-panel--side .sql-split--side::before {
+    inset: 3px 0;
+  }
+
+  .sql-panel--side .sql-split--side:hover::before,
+  .sql-panel--side .sql-split--side:focus-visible::before {
+    inset: 2px 0;
+  }
+}
+
 .learn-loading {
   padding: 1.5rem;
 }
@@ -587,8 +737,13 @@ body.is-resizing-split {
   user-select: none;
 }
 
+body.is-resizing-split.is-resizing-split-y {
+  cursor: row-resize;
+}
+
 body.is-resizing-split .sql-editor,
-body.is-resizing-split .lesson {
+body.is-resizing-split .lesson,
+body.is-resizing-split .sql-result {
   pointer-events: none;
 }
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { sql } from "@codemirror/lang-sql";
 import { Prec } from "@codemirror/state";
@@ -12,6 +12,7 @@ import {
   type QueryHistoryItem,
   type ResultSet,
 } from "../api";
+import { usePlaygroundLayout } from "../hooks/usePlaygroundLayout";
 import { explainPostgresError } from "../lib/raymond";
 import { RaymondNote } from "./raymond/Raymond";
 import { useRaymond } from "./raymond/RaymondContext";
@@ -34,6 +35,8 @@ type Props = {
   checkPassed?: boolean | null;
   /** `full` = Raymond-tips (standard). `errors` = kun fejl/opgave-feedback. */
   coach?: "full" | "errors";
+  /** Playground: trækbar editor/resultat + layout-skift. */
+  workspace?: boolean;
 };
 
 function normalizeSets(result: ExecuteResult): ResultSet[] {
@@ -226,6 +229,7 @@ export function SqlEditor({
   checkMessages,
   checkPassed,
   coach = "full",
+  workspace = false,
 }: Props) {
   const [tab, setTab] = useState(0);
   const [zoom, setZoom] = useState(readZoom);
@@ -236,6 +240,8 @@ export function SqlEditor({
   const sets = result && !result.error ? normalizeSets(result) : [];
   const onRunRef = useRef(onRun);
   const runningRef = useRef(running);
+  const pg = usePlaygroundLayout();
+  const splitActive = workspace && Boolean(result);
 
   const loadHistory = useCallback(async () => {
     if (onLogin) {
@@ -359,8 +365,59 @@ export function SqlEditor({
   const active = sets[Math.min(tab, Math.max(sets.length - 1, 0))];
   const fontPx = (14 * zoom) / 100;
 
+  const editor = (
+    <CodeMirror
+      value={value}
+      height="100%"
+      extensions={extensions}
+      onChange={onChange}
+      basicSetup={EDITOR_SETUP}
+      className="sql-editor"
+      style={{ ["--sql-font-size" as string]: `${fontPx}px` }}
+    />
+  );
+
+  const resultPanel = result ? (
+    <div className={`sql-result ${result.ok ? "ok" : "err"}`}>
+      {result.error ? (
+        <p className="error-text">{result.error}</p>
+      ) : (
+        <>
+          {sets.length > 1 && (
+            <div className="result-tabs" role="tablist" aria-label="Resultatsæt">
+              {sets.map((s, i) => (
+                <button
+                  key={`${s.label}-${i}`}
+                  type="button"
+                  role="tab"
+                  aria-selected={i === tab}
+                  className={`result-tab ${i === tab ? "active" : ""}`}
+                  onClick={() => setTab(i)}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          )}
+          {active && <ResultTable set={active} />}
+        </>
+      )}
+    </div>
+  ) : null;
+
+  const workspaceStyle: CSSProperties | undefined = splitActive
+    ? {
+        ["--pg-editor" as string]: String(pg.percent),
+        ["--pg-result" as string]: String(100 - pg.percent),
+      }
+    : undefined;
+
   return (
-    <div className="sql-panel">
+    <div
+      className={`sql-panel${workspace ? " sql-panel--workspace" : ""}${
+        workspace ? ` sql-panel--${pg.effectiveLayout}` : ""
+      }`}
+    >
       <div className="sql-toolbar">
         {onLogin ? (
           <button type="button" className="btn primary" onClick={onLogin}>
@@ -393,6 +450,29 @@ export function SqlEditor({
           >
             Historik{history.length > 0 ? ` (${history.length})` : ""}
           </button>
+        )}
+        {workspace && (
+          <div className="sql-layout-controls" role="group" aria-label="Playground-layout">
+            <button
+              type="button"
+              className={`btn ghost sql-layout-btn ${pg.layout === "stack" ? "active" : ""}`}
+              onClick={() => pg.setLayout("stack")}
+              title="Editor over resultat"
+            >
+              Stablet
+            </button>
+            <button
+              type="button"
+              className={`btn ghost sql-layout-btn ${pg.layout === "side" ? "active" : ""}`}
+              onClick={() => pg.setLayout("side")}
+              title="Editor og resultat side om side"
+            >
+              Side om side
+            </button>
+            <button type="button" className="btn ghost sql-layout-btn" onClick={pg.reset} title="Nulstil layout">
+              Nulstil
+            </button>
+          </div>
         )}
         <div className="sql-zoom" title="Zoom i editor (Ctrl+= / Ctrl+- / Ctrl+0)">
           <span className="sql-zoom-label" aria-hidden="true">
@@ -485,15 +565,36 @@ export function SqlEditor({
         </div>
       )}
 
-      <CodeMirror
-        value={value}
-        height="100%"
-        extensions={extensions}
-        onChange={onChange}
-        basicSetup={EDITOR_SETUP}
-        className="sql-editor"
-        style={{ ["--sql-font-size" as string]: `${fontPx}px` }}
-      />
+      {workspace ? (
+        <div
+          ref={pg.containerRef}
+          className={`sql-workspace${splitActive ? " sql-workspace--split" : ""} sql-workspace--${pg.effectiveLayout}`}
+          style={workspaceStyle}
+        >
+          {editor}
+          {splitActive && (
+            <div
+              className={`sql-split sql-split--${pg.effectiveLayout}`}
+              role="separator"
+              aria-orientation={pg.effectiveLayout === "side" ? "vertical" : "horizontal"}
+              aria-label="Træk for at justere editor og resultat"
+              aria-valuenow={Math.round(pg.percent)}
+              aria-valuemin={25}
+              aria-valuemax={75}
+              tabIndex={0}
+              onPointerDown={pg.onPointerDown}
+              onKeyDown={pg.onKeyDown}
+            />
+          )}
+          {resultPanel}
+        </div>
+      ) : (
+        <>
+          {editor}
+          {resultPanel}
+        </>
+      )}
+
       <SqlRaymondFeedback
         running={running}
         error={error}
@@ -503,33 +604,6 @@ export function SqlEditor({
         needsLogin={Boolean(onLogin)}
         coach={coach}
       />
-      {result && (
-        <div className={`sql-result ${result.ok ? "ok" : "err"}`}>
-          {result.error ? (
-            <p className="error-text">{result.error}</p>
-          ) : (
-            <>
-              {sets.length > 1 && (
-                <div className="result-tabs" role="tablist" aria-label="Resultatsæt">
-                  {sets.map((s, i) => (
-                    <button
-                      key={`${s.label}-${i}`}
-                      type="button"
-                      role="tab"
-                      aria-selected={i === tab}
-                      className={`result-tab ${i === tab ? "active" : ""}`}
-                      onClick={() => setTab(i)}
-                    >
-                      {s.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-              {active && <ResultTable set={active} />}
-            </>
-          )}
-        </div>
-      )}
       {checkMessages && (
         <div className={`check-box ${checkPassed ? "pass" : "fail"}`}>
           <strong>{checkPassed ? "Bestået" : "Ikke bestået endnu"}</strong>
