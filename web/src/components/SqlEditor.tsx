@@ -241,7 +241,7 @@ export function SqlEditor({
   const onRunRef = useRef(onRun);
   const runningRef = useRef(running);
   const pg = usePlaygroundLayout();
-  const splitActive = workspace && Boolean(result);
+  const splitActive = workspace;
 
   const loadHistory = useCallback(async () => {
     if (onLogin) {
@@ -403,13 +403,22 @@ export function SqlEditor({
         </>
       )}
     </div>
+  ) : workspace ? (
+    <div className="sql-result sql-result--empty">
+      <p className="muted">Kør SQL for at se resultatet her.</p>
+    </div>
   ) : null;
 
-  const workspaceStyle: CSSProperties | undefined = splitActive
-    ? {
-        ["--pg-editor" as string]: String(pg.percent),
-        ["--pg-result" as string]: String(100 - pg.percent),
-      }
+  const workspaceStyle: CSSProperties | undefined = workspace
+    ? pg.effectiveLayout === "side"
+      ? {
+          gridTemplateColumns: `minmax(0, ${pg.percent}fr) 10px minmax(0, ${100 - pg.percent}fr)`,
+          gridTemplateRows: "minmax(0, 1fr)",
+        }
+      : {
+          gridTemplateColumns: "minmax(0, 1fr)",
+          gridTemplateRows: `minmax(0, ${pg.percent}fr) 10px minmax(0, ${100 - pg.percent}fr)`,
+        }
     : undefined;
 
   return (

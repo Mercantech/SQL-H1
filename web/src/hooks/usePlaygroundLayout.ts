@@ -33,7 +33,7 @@ export function usePlaygroundLayout() {
   const [layout, setLayoutState] = useState<PlaygroundLayoutMode>(readLayout);
   const [percent, setPercent] = useState(readPercent);
   const [narrow, setNarrow] = useState(() =>
-    typeof window !== "undefined" ? window.matchMedia("(max-width: 900px)").matches : false,
+    typeof window !== "undefined" ? window.matchMedia("(max-width: 700px)").matches : false,
   );
   const dragging = useRef(false);
   const effectiveLayout: PlaygroundLayoutMode = narrow ? "stack" : layout;
@@ -41,7 +41,7 @@ export function usePlaygroundLayout() {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 900px)");
+    const mq = window.matchMedia("(max-width: 700px)");
     const sync = () => setNarrow(mq.matches);
     sync();
     mq.addEventListener("change", sync);
