@@ -21,7 +21,7 @@ export const MURDER_TABLES: MurderTable[] = [
     { name: "id", type: "INTEGER", key: "PK" }, { name: "titel", type: "TEXT" }, { name: "spor", type: "TEXT" }, { name: "lokale", type: "TEXT" },
   ] },
   { name: "tilmeldinger", label: "Tilmeldinger", description: "Forbindelsen mellem personer og sessioner. En person kan deltage flere gange.", columns: [
-    { name: "person_id", type: "INTEGER", key: "FK", references: "personer.id" }, { name: "session_id", type: "INTEGER", key: "FK", references: "sessioner.id" },
+    { name: "person_id", type: "INTEGER", key: "PK", references: "personer.id" }, { name: "session_id", type: "INTEGER", key: "PK", references: "sessioner.id" },
   ] },
   { name: "transaktioner", label: "Transaktioner", description: "Fiktive betalinger med afsender, modtager og betalingsreference.", columns: [
     { name: "id", type: "INTEGER", key: "PK" }, { name: "afsender_id", type: "INTEGER", key: "FK", references: "personer.id" }, { name: "modtager_id", type: "INTEGER", key: "FK", references: "personer.id" }, { name: "beloeb", type: "INTEGER" }, { name: "dato", type: "TEXT" }, { name: "reference", type: "TEXT" },

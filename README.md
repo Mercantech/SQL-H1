@@ -12,6 +12,8 @@ De kendte danske IT-profiler optræder i tydeligt fiktive konferenceroller; alle
 
 En centreret introduktion i tre trin præsenterer sagen, arbejdsformen og det første spor ved første besøg. Derefter fylder SQL-arbejdsbordet fra sidens top. Introduktionen kan åbnes igen fra **Introduktion**, huskes separat fra sagens fremskridt og vises igen efter **Start sagen forfra**. Dialogen holder tastaturfokus, understøtter Escape og bevarer editor, noter og resultater under genåbning.
 
+**Vis databaseskema** åbner et interaktivt ER-diagram med ni tabeller og ni relationer. Valgte tabeller fremhæver forbindelserne og viser kolonner, PK/FK, kardinalitet og den oprindelige, formaterede `CREATE TABLE`. Zoom, tilpasning og en separat tabeloversigt understøtter store og små skærme. `tilmeldinger` viser sin sammensatte primærnøgle, `afhoeringer` vises som 1:1, og `sagsrapporter` står selvstændigt. Skemaet bruger samme metadata og DDL som spillets database; tests sammenligner dem med SQLite. SQL-editoren ændres kun ved et eksplicit valg af **Indsæt SELECT**.
+
 Kør `npm test` fra `web/` for at kontrollere den entydige beviskæde mod rigtig SQLite, SQL-funktioner, skrivebeskyttelse og workerens genstart efter timeout.
 
 ## Raymond — platformens SQL-guide

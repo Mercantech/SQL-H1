@@ -6,6 +6,7 @@ import { Prec } from "@codemirror/state";
 import { EditorView, keymap } from "@codemirror/view";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { MurderOnboarding } from "../components/MurderOnboarding";
+import { MurderSchema } from "../components/MurderSchema";
 import { createMurderEngine, type MurderQueryResult } from "../lib/murder/engine";
 import { checkAccusation, HINTS, MURDER_TABLES, STARTER_SQL } from "../lib/murder/seed";
 import "./murder.css";
@@ -54,6 +55,7 @@ const profiles = [
 export function Murder() {
   const [caseState, setCaseState] = useState(readCase);
   const [introOpen, setIntroOpen] = useState(needsIntroduction);
+  const [schemaOpen, setSchemaOpen] = useState(false);
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<MurderQueryResult | null>(null);
   const [error, setError] = useState("");
@@ -166,6 +168,7 @@ export function Murder() {
   return (
     <article className="murder-page">
       <MurderOnboarding open={introOpen} onClose={closeIntroduction} hasProgress={caseState.history.length > 0 || caseState.notes.length > 0 || caseState.sql !== STARTER_SQL || caseState.killerSolved} />
+      <MurderSchema open={schemaOpen} onClose={() => setSchemaOpen(false)} onInsertSql={insertSql} />
       <header className="murder-compact-header">
         <div>
           <p className="murder-eyebrow">Et dansk SQL Murder Mystery</p>
@@ -192,7 +195,7 @@ export function Murder() {
               {MURDER_TABLES.map((table) => <details className="murder-schema-table" key={table.name}>
                 <summary><code>{table.name}</code><span>{table.columns.length}</span></summary>
                 <p>{table.description}</p>
-                <ul>{table.columns.map((column) => <li key={column.name}><code className={column.key === "PK" ? "murder-column-key" : ""}>{column.name}{column.key ? ` · ${column.key}` : ""}</code><small>{column.type}</small>{column.references && <span className="murder-column-ref">↳ {column.references}</span>}</li>)}</ul>
+                <ul>{table.columns.map((column) => <li key={column.name}><code className={column.key === "PK" ? "murder-column-key" : ""}>{column.name}{column.key ? ` · ${column.key === "PK" && column.references ? "PK/FK" : column.key}` : ""}</code><small>{column.type}</small>{column.references && <span className="murder-column-ref">↳ {column.references}</span>}</li>)}</ul>
                 <button className="murder-tool" type="button" onClick={() => insertSql(`SELECT * FROM ${table.name}\nLIMIT 10;`)}>Indsæt SELECT</button>
               </details>)}
             </div>
@@ -228,7 +231,7 @@ export function Murder() {
           <div className="murder-toolbar">
             <button className="murder-run" type="button" disabled={running || !caseState.sql.trim()} onClick={() => { void runQuery(); }}>{running ? "Undersøger…" : "Kør SQL"}<span aria-hidden="true">{running ? "…" : "↗"}</span></button>
             <span className="murder-editor-shortcut"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> · markering eller alt</span>
-            <button className="murder-tool" type="button" onClick={() => insertSql("SELECT name, sql\nFROM sqlite_master\nWHERE type = 'table'\nORDER BY name;")}>Vis databaseskema</button>
+            <button className="murder-tool" type="button" aria-haspopup="dialog" onClick={() => setSchemaOpen(true)}>Vis databaseskema</button>
           </div>
 
           <section className="murder-result-panel" aria-label="Forespørgselsresultat" aria-busy={running}>
