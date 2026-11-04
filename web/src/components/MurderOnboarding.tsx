@@ -16,6 +16,7 @@ function Introduction({ onClose, hasProgress }: Omit<Props, "open">) {
   const focusEditorOnClose = useRef(false);
   const titleId = useId();
   const descriptionId = useId();
+  const contentId = useId();
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -49,9 +50,9 @@ function Introduction({ onClose, hasProgress }: Omit<Props, "open">) {
         <button className="murder-onboarding-close" type="button" aria-label="Luk introduktionen" onClick={onClose}><span aria-hidden="true">×</span></button>
       </header>
       <ol className="murder-onboarding-progress" aria-label="Introduktionens trin">
-        {steps.map((label, index) => <li key={label} className={index === step ? "is-active" : index < step ? "is-done" : ""} aria-current={index === step ? "step" : undefined}><span aria-hidden="true">{index < step ? "✓" : `0${index + 1}`}</span>{label}</li>)}
+        {steps.map((label, index) => <li key={label} className={index === step ? "is-active" : index < step ? "is-done" : ""}><button type="button" aria-current={index === step ? "step" : undefined} aria-controls={contentId} onClick={() => setStep(index)}><span aria-hidden="true">{index < step ? "✓" : `0${index + 1}`}</span>{label}</button></li>)}
       </ol>
-      <div ref={contentRef} className="murder-onboarding-content">
+      <div ref={contentRef} id={contentId} className="murder-onboarding-content">
         <h2 ref={headingRef} tabIndex={-1} id={titleId}>{step === 0 ? "Mordet på Datatopmødet." : step === 1 ? "Du stiller spørgsmålene." : "Begynd med rapporten."}</h2>
         {step === 0 && <>
           <p id={descriptionId}>Danmarks IT-pionerer er samlet i Viborg. Midt under konferencen bliver databasearkitekten <strong>Viktor Vang</strong> fundet død i Arkivet.</p>
