@@ -10,6 +10,8 @@ Spillet kører ægte SQLite med `sql.js` i en separat browser-worker og kræver 
 
 De kendte danske IT-profiler optræder i tydeligt fiktive konferenceroller; alle forbrydelser involverer opdigtede personer. Faktakort linker til primære kilder om profilernes virkelige bidrag. Tabeloversigten viser kolonner og relationer, SQL-guiden forklarer SQLite/PostgreSQL-forskellen, og hints afsløres gradvist. Indgangen findes også i navigationen og på forsiden.
 
+En centreret introduktion i tre trin præsenterer sagen, arbejdsformen og det første spor ved første besøg. Derefter fylder SQL-arbejdsbordet fra sidens top. Introduktionen kan åbnes igen fra **Introduktion**, huskes separat fra sagens fremskridt og vises igen efter **Start sagen forfra**. Dialogen holder tastaturfokus, understøtter Escape og bevarer editor, noter og resultater under genåbning.
+
 Kør `npm test` fra `web/` for at kontrollere den entydige beviskæde mod rigtig SQLite, SQL-funktioner, skrivebeskyttelse og workerens genstart efter timeout.
 
 ## Raymond — platformens SQL-guide

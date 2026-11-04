@@ -5,17 +5,24 @@ import { sql as sqlLanguage, SQLite } from "@codemirror/lang-sql";
 import { Prec } from "@codemirror/state";
 import { EditorView, keymap } from "@codemirror/view";
 import { oneDark } from "@codemirror/theme-one-dark";
+import { MurderOnboarding } from "../components/MurderOnboarding";
 import { createMurderEngine, type MurderQueryResult } from "../lib/murder/engine";
 import { checkAccusation, HINTS, MURDER_TABLES, STARTER_SQL } from "../lib/murder/seed";
 import "./murder.css";
 
 const STORAGE_KEY = "sqlh1_murder_case_v1";
+const INTRO_KEY = "sqlh1_murder_intro_v1";
 const EDITOR_SETUP = { lineNumbers: true, foldGutter: false };
 type HistoryEntry = { id: number; sql: string; rows: number };
 type CaseState = { sql: string; notes: string; killerSolved: boolean; mastermindSolved: boolean; history: HistoryEntry[] };
 
 function freshCase(): CaseState {
   return { sql: STARTER_SQL, notes: "", killerSolved: false, mastermindSolved: false, history: [] };
+}
+
+function needsIntroduction() {
+  try { return localStorage.getItem(INTRO_KEY) !== "seen"; }
+  catch { return true; }
 }
 
 function readCase(): CaseState {
@@ -46,6 +53,7 @@ const profiles = [
 
 export function Murder() {
   const [caseState, setCaseState] = useState(readCase);
+  const [introOpen, setIntroOpen] = useState(needsIntroduction);
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<MurderQueryResult | null>(null);
   const [error, setError] = useState("");
@@ -145,39 +153,35 @@ export function Murder() {
     setAccused("");
     setHintSteps({});
     setResetPending(false);
+    try { localStorage.removeItem(INTRO_KEY); } catch { /* The introduction works without storage. */ }
+    setIntroOpen(true);
+  }
+
+  function closeIntroduction() {
+    try { localStorage.setItem(INTRO_KEY, "seen"); } catch { /* The current visit can still continue. */ }
+    setIntroOpen(false);
   }
 
   const activeSet = result?.sets[resultTab];
   return (
     <article className="murder-page">
-      <div className="murder-masthead">
-        <span className="murder-eyebrow">SQL-H1 / Efterforskningsarkivet</span>
-        <span className="murder-case-tag">SAG 014 / {caseState.mastermindSolved ? "OPKLARET" : "ÅBEN"}</span>
-      </div>
-
-      <header className="murder-intro">
+      <MurderOnboarding open={introOpen} onClose={closeIntroduction} hasProgress={caseState.history.length > 0 || caseState.notes.length > 0 || caseState.sql !== STARTER_SQL || caseState.killerSolved} />
+      <header className="murder-compact-header">
         <div>
           <p className="murder-eyebrow">Et dansk SQL Murder Mystery</p>
-          <h1>Mordet på<br /><em>Datatopmødet.</em></h1>
-          <p className="murder-lede">Danmarks IT-pionerer er samlet i Viborg. En databasearkitekt er fundet død. Svaret ligger i data — du skriver forespørgslerne.</p>
-          <dl className="murder-case-facts">
-            <div><dt>Tidspunkt</dt><dd>14. oktober 2026</dd></div>
-            <div><dt>Sted</dt><dd>Viborg</dd></div>
-            <div><dt>Dit værktøj</dt><dd>SQL</dd></div>
-          </dl>
+          <h1>Mordet på Datatopmødet.</h1>
         </div>
-        <a className="murder-start-link" href="#murder-workbench" onClick={() => editorView.current?.focus()}>Åbn efterforskningen <span aria-hidden="true">↗</span></a>
+        <div className="murder-header-actions">
+          <span className="murder-case-tag">SAG 014 / {caseState.mastermindSolved ? "OPKLARET" : "ÅBEN"}</span>
+          <button className="murder-tool" type="button" onClick={() => setIntroOpen(true)}>Introduktion</button>
+        </div>
       </header>
-      <p className="murder-fiction-note"><strong>En fiktiv kriminalgåde.</strong> De kendte IT-profiler optræder som opdigtede konferencegæster og vidner. Offer, gerningsperson og bagmand er fiktive. Profilernes faglige bidrag er virkelige.</p>
 
       <div className="murder-workspace" id="murder-workbench">
         <aside className="murder-dossier" aria-label="Sagsmappe og hjælp">
-          <section className="murder-case-brief">
-            <div className="murder-section-head"><span className="murder-eyebrow">01 / Sagsmappen</span><span className="murder-status">{caseState.mastermindSolved ? "Afsluttet" : "Under efterforskning"}</span></div>
-            <h2>Begynd med rapporten.</h2>
-            <p>Under Datatopmødet er databasearkitekten <strong>Viktor Vang</strong> fundet død. Du husker kun tre ting: <strong>mord</strong>, <strong>Viborg</strong> og <strong>2026-10-14</strong>.</p>
-            <p>Find den rigtige række i <code>sagsrapporter</code>. Følg derefter vidnernes spor gennem databasen.</p>
-            <ol className="murder-objectives"><li>Find rapporten og vidnerne.</li><li>Forbind sporene og afslør morderen.</li><li>Undersøg, hvem der stod bag.</li></ol>
+          <section className="murder-case-reminder">
+            <span className="murder-eyebrow">Mord · Viborg · 2026-10-14</span>
+            <p>Find mordrapporten i <code>sagsrapporter</code>.</p>
           </section>
           <div className="murder-side-nav" role="group" aria-label="Efterforskningshjælp">
             {([["schema", "Tabeller"], ["hints", "Hints"], ["guide", "SQL-guide"]] as const).map(([id, label]) => <button key={id} type="button" className={sideTab === id ? "is-active" : ""} aria-pressed={sideTab === id} onClick={() => setSideTab(id)}>{label}</button>)}
@@ -226,7 +230,6 @@ export function Murder() {
             <span className="murder-editor-shortcut"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> · markering eller alt</span>
             <button className="murder-tool" type="button" onClick={() => insertSql("SELECT name, sql\nFROM sqlite_master\nWHERE type = 'table'\nORDER BY name;")}>Vis databaseskema</button>
           </div>
-          <div className="murder-editor-foot"><span>Ægte SQL i din browser · intet login</span><span>Data er skrivebeskyttede</span></div>
 
           <section className="murder-result-panel" aria-label="Forespørgselsresultat" aria-busy={running}>
             <div className="murder-result-head"><h3>Resultat</h3><span role="status" aria-live="polite">{running ? "Kører forespørgsel…" : error ? "Forespørgslen fejlede" : activeSet ? `${activeSet.rows.length} række${activeSet.rows.length === 1 ? "" : "r"} · ${Math.round(result?.elapsedMs || 0)} ms` : "Afventer din første forespørgsel"}</span></div>
@@ -234,7 +237,7 @@ export function Murder() {
               {result.sets.length > 1 && <div className="murder-result-tabs" role="group" aria-label="Vælg resultatsæt">{result.sets.map((_, index) => <button key={index} type="button" aria-pressed={index === resultTab} onClick={() => setResultTab(index)}>Resultat {index + 1}</button>)}</div>}
               {activeSet ? <div className="murder-results-scroll" tabIndex={0} role="region" aria-label="SQL-resultattabel"><table><thead><tr>{activeSet.columns.map((column, index) => <th key={`${column}-${index}`} scope="col">{column}</th>)}</tr></thead><tbody>{activeSet.rows.map((row, index) => <tr key={index}>{row.map((cell, cellIndex) => <td key={cellIndex}>{cell === null ? <span className="murder-null">NULL</span> : String(cell)}</td>)}</tr>)}</tbody></table>{activeSet.rows.length === 0 && <p className="murder-no-rows">Ingen rækker matcher. Prøv at løsne dit filter.</p>}</div> : <p className="murder-no-rows">Ingen resultatsæt. Prøv en SELECT-forespørgsel.</p>}
               {result.truncated && <p className="murder-result-limit">Resultatet er begrænset. Brug WHERE eller LIMIT for at indsnævre søgningen.</p>}
-            </> : <div className="murder-empty-state"><span aria-hidden="true">SELECT → WHERE → JOIN</span><h3>Det første spor venter.</h3><p>Kør startforespørgslen, og find rapporten fra Viborg.<br />Læs beskrivelsen — den fortæller dig, hvor du skal lede.</p></div>}
+            </> : <div className="murder-empty-state"><h3>Kør din første forespørgsel.</h3><p>Resultaterne vises her.</p></div>}
           </section>
 
           {caseState.history.length > 0 && <details className="murder-history"><summary>Tidligere forespørgsler <span>{caseState.history.length}</span></summary><ol className="murder-history-list">{caseState.history.map((entry) => <li key={entry.id}><code>{entry.sql}</code><span>{entry.rows} rækker</span><button className="murder-tool" type="button" onClick={() => insertSql(entry.sql)}>Indsæt</button></li>)}</ol></details>}
