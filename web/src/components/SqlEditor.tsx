@@ -57,6 +57,47 @@ function normalizeSets(result: ExecuteResult): ResultSet[] {
   return [];
 }
 
+function LayoutIcon() {
+  return (
+    <svg className="sql-layout-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3.5" y="4" width="7" height="16" rx="1.6" />
+      <rect x="13" y="4" width="7.5" height="7" rx="1.6" />
+      <rect x="13" y="13" width="7.5" height="7" rx="1.6" />
+    </svg>
+  );
+}
+
+function EditorZoom({
+  zoom,
+  onZoom,
+}: {
+  zoom: number;
+  onZoom: (next: number) => void;
+}) {
+  return (
+    <div className="sql-zoom" title="Zoom i editor (Ctrl+= / Ctrl+- / Ctrl+0)">
+      <span className="sql-zoom-label" aria-hidden="true">
+        A
+      </span>
+      <input
+        type="range"
+        className="sql-zoom-slider"
+        min={ZOOM_MIN}
+        max={ZOOM_MAX}
+        step={ZOOM_STEP}
+        value={zoom}
+        onChange={(e) => onZoom(Number(e.target.value))}
+        onDoubleClick={() => onZoom(ZOOM_DEFAULT)}
+        aria-label={`Editor-zoom ${zoom} procent`}
+      />
+      <span className="sql-zoom-label sql-zoom-label-lg" aria-hidden="true">
+        A
+      </span>
+      <span className="sql-zoom-value">{zoom}%</span>
+    </div>
+  );
+}
+
 const ZOOM_KEY = "sqlh1_editor_zoom";
 const ZOOM_MIN = 80;
 const ZOOM_MAX = 180;
@@ -234,6 +275,8 @@ export function SqlEditor({
   const [tab, setTab] = useState(0);
   const [zoom, setZoom] = useState(readZoom);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [layoutMenuOpen, setLayoutMenuOpen] = useState(false);
+  const layoutMenuRef = useRef<HTMLDivElement>(null);
   const [history, setHistory] = useState<QueryHistoryItem[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<number | null>(null);
@@ -273,6 +316,22 @@ export function SqlEditor({
   useEffect(() => {
     setTab(0);
   }, [result]);
+
+  useEffect(() => {
+    if (!layoutMenuOpen) return;
+    function onPointer(e: PointerEvent) {
+      if (!layoutMenuRef.current?.contains(e.target as Node)) setLayoutMenuOpen(false);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setLayoutMenuOpen(false);
+    }
+    document.addEventListener("pointerdown", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [layoutMenuOpen]);
 
   useEffect(() => {
     loadHistory();
@@ -460,49 +519,48 @@ export function SqlEditor({
             Historik{history.length > 0 ? ` (${history.length})` : ""}
           </button>
         )}
-        {workspace && (
-          <div className="sql-layout-controls" role="group" aria-label="Playground-layout">
+        {workspace ? (
+          <div className="sql-layout-menu" ref={layoutMenuRef}>
             <button
               type="button"
-              className={`btn ghost sql-layout-btn ${pg.layout === "stack" ? "active" : ""}`}
-              onClick={() => pg.setLayout("stack")}
-              title="Editor over resultat"
+              className={`btn ghost sql-layout-trigger ${layoutMenuOpen ? "active" : ""}`}
+              aria-expanded={layoutMenuOpen}
+              aria-haspopup="dialog"
+              onClick={() => setLayoutMenuOpen((v) => !v)}
             >
-              Stablet
+              <LayoutIcon />
+              Layout
             </button>
-            <button
-              type="button"
-              className={`btn ghost sql-layout-btn ${pg.layout === "side" ? "active" : ""}`}
-              onClick={() => pg.setLayout("side")}
-              title="Editor og resultat side om side"
-            >
-              Side om side
-            </button>
-            <button type="button" className="btn ghost sql-layout-btn" onClick={pg.reset} title="Nulstil layout">
-              Nulstil
-            </button>
+            {layoutMenuOpen && (
+              <div className="sql-layout-popover" role="dialog" aria-label="Layout">
+                <p className="sql-layout-label">Opdeling</p>
+                <div className="sql-layout-controls" role="group" aria-label="Opdeling">
+                  <button
+                    type="button"
+                    className={`btn ghost sql-layout-btn ${pg.layout === "stack" ? "active" : ""}`}
+                    onClick={() => pg.setLayout("stack")}
+                  >
+                    Stablet
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn ghost sql-layout-btn ${pg.layout === "side" ? "active" : ""}`}
+                    onClick={() => pg.setLayout("side")}
+                  >
+                    Side om side
+                  </button>
+                </div>
+                <p className="sql-layout-label">Zoom</p>
+                <EditorZoom zoom={zoom} onZoom={setZoom} />
+                <button type="button" className="btn ghost sql-layout-reset" onClick={pg.reset}>
+                  Nulstil layout
+                </button>
+              </div>
+            )}
           </div>
+        ) : (
+          <EditorZoom zoom={zoom} onZoom={setZoom} />
         )}
-        <div className="sql-zoom" title="Zoom i editor (Ctrl+= / Ctrl+- / Ctrl+0)">
-          <span className="sql-zoom-label" aria-hidden="true">
-            A
-          </span>
-          <input
-            type="range"
-            className="sql-zoom-slider"
-            min={ZOOM_MIN}
-            max={ZOOM_MAX}
-            step={ZOOM_STEP}
-            value={zoom}
-            onChange={(e) => setZoom(Number(e.target.value))}
-            onDoubleClick={() => setZoom(ZOOM_DEFAULT)}
-            aria-label={`Editor-zoom ${zoom} procent`}
-          />
-          <span className="sql-zoom-label sql-zoom-label-lg" aria-hidden="true">
-            A
-          </span>
-          <span className="sql-zoom-value">{zoom}%</span>
-        </div>
       </div>
 
       {historyOpen && !onLogin && (

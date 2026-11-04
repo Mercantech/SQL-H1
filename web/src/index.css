@@ -182,10 +182,78 @@ a.user-chip:hover {
   gap: 0.55rem;
 }
 
-.sql-layout-controls {
+.sql-layout-menu {
+  position: relative;
+  margin-left: auto;
+}
+
+.sql-layout-trigger {
   display: inline-flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.sql-layout-trigger.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(31, 107, 74, 0.08);
+}
+
+.sql-layout-icon {
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+}
+
+.sql-layout-popover {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 30;
+  width: 16.5rem;
+  padding: 0.75rem 0.8rem 0.7rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+.sql-layout-label {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.sql-layout-label + .sql-layout-label,
+.sql-layout-controls + .sql-layout-label {
+  margin-top: 0.85rem;
+}
+
+.sql-layout-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem;
+}
+
+.sql-layout-reset {
+  width: 100%;
+  margin-top: 0.75rem;
+}
+
+.sql-layout-popover .sql-zoom {
+  margin-left: 0;
+  width: 100%;
+}
+
+.sql-layout-popover .sql-zoom-slider {
+  flex: 1;
+  width: auto;
+  max-width: none;
 }
 
 .sql-layout-btn.active {
