@@ -20,9 +20,11 @@ sandbox:
 
 # UPDATE — Update i dybden
 
-**UPDATE** er CRUD-**Update**: du ændrer *eksisterende* rækker. Ingen nye rækker skabes; ingen slettes — værdier i kolonner erstattes.
+Raymond skal ændre priserne på caféens drikkevarer. Produkterne findes allerede, så **UPDATE** skal rette deres værdier. I den enkle model ændrer du eksisterende rækker; du opretter ikke et nyt produkt for hver prisrettelse.
 
-Mentalt: “Ret denne kendsgerning.”
+> [!RAYMOND:question] Hvilke produkter mener du?
+>
+> Bestillingen siger »læg to kroner på madvarerne«. Peg på den del af SQL, der vælger madvarerne, og den del, der beregner den nye pris. Hvad ville ske, hvis filteret blev glemt?
 
 ## Anatomi
 
@@ -66,7 +68,7 @@ WHERE category = 'Drikke';
 
 ## Update én række (via PK)
 
-Mest sikkert — matcher typisk `PATCH /products/1`:
+En primærnøgle giver Raymond et entydigt mål og kan eksempelvis bruges af `PATCH /products/1`:
 
 ```sql
 UPDATE products
@@ -115,6 +117,10 @@ WHERE category = 'Mad';
 
 Højre side af `=` læser **den nuværende** værdi på rækken, før opdateringen gemmes.
 
+> [!RAYMOND:skeptical] Er anden kørsel den samme ændring?
+>
+> `SET price = 30` og `SET price = price + 2` kan ligne små rettelser, men reagerer forskelligt på et ekstra klik. Forudsig resultatet af to kørsler, før du afprøver dem. Gentagelse er en del af ændringens design.
+
 ## Update med subquery
 
 Når filteret afhænger af andre data:
@@ -128,7 +134,7 @@ WHERE category = (
 );
 ```
 
-Subqueryen er stadig **Read**; `UPDATE` er **Update**. Kombineret giver det kraftige, men læsbare mønstre.
+Underforespørgslen finder en kategori; den ydre `UPDATE` ændrer rækkerne i den kategori. Raymond beder dig kontrollere, at underforespørgslen giver præcis én række her: produktnavnet er ikke en unik nøgle i café-seedet, så egne dubletter kan gøre eksemplet ugyldigt.
 
 Mere avanceret (kendskab): `UPDATE … FROM …` / join-lignende updates i Postgres. Du klarer dig langt med `WHERE` + subquery.
 
@@ -138,7 +144,7 @@ Mere avanceret (kendskab): `UPDATE … FROM …` / join-lignende updates i Postg
 |----------|----------------|
 | Tilføje ny række | `INSERT` (Create) |
 | Fjerne række | `DELETE` (Delete) |
-| Ændre tabelstruktur | DDL (`ALTER`) — ikke i MVP |
+| Ændre tabelstruktur | DDL (`ALTER`) — se Tabeller og E/R |
 | “Upsert” (insert eller update) | `INSERT … ON CONFLICT` (senere / avanceret) |
 
 ## Constraints under Update
@@ -187,3 +193,7 @@ Næste lektion: **DELETE** — CRUD Delete og fremmednøgler.
 1. Preview alle produkter i **`Mad`**.
 2. Giv dem **+2.00** i pris med `UPDATE`.
 3. Verificér med `SELECT`, og brug gerne `RETURNING`.
+
+> [!RAYMOND:idea-notes] Gør din ændring forklarlig
+>
+> Vis din makker filteret, den gamle værdi og den nye værdi. Forklar også, hvad endnu en kørsel ville gøre. Når du kan svare på alle tre ting, har du mere end en forespørgsel, der bare kører.

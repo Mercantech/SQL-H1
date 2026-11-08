@@ -21,8 +21,11 @@ sandbox:
 
 # 1:1, 1:n og n:n
 
-**Kardinalitet** svarer på: *hvor mange* af den ene side hører til *hvor mange* af den anden?  
-**Optionalitet** svarer på: *skal* der være et match, eller må det mangle (`NULL` / “0”)?
+Raymond vil vide, om en ny tabel skal gemme én henvisning eller flere tilknyttede rækker. **Kardinalitet** beskriver, hvor mange rækker der kan høre sammen. **Optionalitet** beskriver, om et match skal findes eller gerne må mangle; en kunde uden ordrer og en ordre med NULL-kunde er to forskellige former for fravær.
+
+> [!RAYMOND:foreign-key] Læs reglen som en sætning
+>
+> Én kunde kan have mange ordrer. Hvor i skemaet skal vi så gemme den enkelte ordres kunde-id? Forklar først, hvorfor en ordre kun behøver én sådan henvisning.
 
 ## Notation (læs et E/R-kort)
 
@@ -30,7 +33,7 @@ sandbox:
 customers (1) ────< (n) orders
 ```
 
-Læs: én kunde har mange ordrer; hver ordre (med kunde) pejer på én kunde.
+Læs: én kunde har mange ordrer; hver ordre (med kunde) peger på én kunde.
 
 ```text
 products (1) ────< (n) orders
@@ -57,7 +60,7 @@ Samme mønster: ét produkt → mange ordrelinjer (`orders.product_id`).
 
 ### Hvorfor ikke omvendt?
 
-Hvis du lagde `customer_id`-listen ind i `customers` (array/tekst), bryder du 1NF og mister FK-beskyttelse. 1:n *er* “FK på barnet”.
+Hvis du gemmer en liste af ordre-id’er som tekst eller array i kunderækken, bliver det vanskeligere at håndhæve relationen til hver ordre. En almindelig FK kontrollerer ikke hvert element i en sådan liste. Raymond modellerer derfor denne 1:n-forbindelse med én FK på hver ordrerække; PostgreSQL-arrays har andre anvendelser, men erstatter ikke denne relation automatisk.
 
 ## n:n (mange-til-mange)
 
@@ -102,6 +105,10 @@ Implementeres ofte med **delt PK** eller UNIQUE FK.
 
 Café-seed’en har ikke 1:1 — men du skal kunne *genkende* det i andres skemaer.
 
+> [!RAYMOND:skeptical] Højst én er ikke det samme som præcis én
+>
+> En UNIQUE FK kan forhindre to profiler til samme kunde. Den sikrer ikke alene, at alle kunder faktisk har en profil. Hvilken ekstra regel eller arbejdsgang ville være nødvendig, hvis profilen er obligatorisk?
+
 ## Optionalitet (0..1 vs 1..1)
 
 | Situation | Modellering |
@@ -125,7 +132,11 @@ FROM orders;
 | Alle kunder, også uden ordrer | `LEFT JOIN` fra customers |
 | Alle ordrer, også walk-in | `LEFT JOIN` fra orders til customers |
 
-Kardinalitet i *modellen* er ikke det samme som JOIN-typen i *forespørgslen* — men de hænger sammen: forkert JOIN skjuler eller fordobler virkeligheden.
+Raymond skelner mellem, hvad **modellen tillader**, og hvad en **forespørgsel viser**. JOIN-typen skaber ikke en 1:n-regel; den bestemmer, hvilke matches og manglende matches vi ser. Reglerne kommer fra nøgler og constraints.
+
+> [!RAYMOND:question] Kan få rækker bevise en regel?
+>
+> To tabeller kan tilfældigvis have én række hver uden at være en 1:1-model. Peg på den nøgle eller UNIQUE-regel, som gør din påstand sand, også når der kommer flere data.
 
 ## Prøv selv
 

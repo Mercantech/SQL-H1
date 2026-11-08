@@ -27,7 +27,9 @@ sandbox:
 
 # Funktioner i Postgres
 
-En **funktion** pakker logik, du vil genbruge: beregning, opslag eller et lille “API” inde i databasen.
+Raymond ser den samme beregning af ordrebeløb tre steder i caféens kode. Han vil samle den ét sted, men først skal du kunne forklare dens input, resultat og afhængighed af tabellerne.
+
+En **funktion** giver genbrugelig logik et navn. Raymond begynder med en almindelig SELECT, som du kan kontrollere, og giver derefter beregningen en parameter og en returtype.
 
 ## Skalar funktion (SQL-sprog)
 
@@ -49,7 +51,11 @@ ORDER BY id
 LIMIT 5;
 ```
 
-`$…$` er **dollar-quoting** — så semikolon inde i kroppen ikke afslutter `CREATE`.
+`$$…$$` er **dollar-quoting**: kroppen er en samlet streng, hvor de indre semikoloner ikke afslutter den ydre CREATE-sætning.
+
+> [!RAYMOND:question] Ét ordre-id ind — hvad kommer ud?
+>
+> Kald `order_line_total` med et eksisterende ordre-id og derefter et id, der ikke findes. Forudsig først resultatet. Hvilken forskel gør det, at funktionen læser tabeller frem for kun at regne på sine argumenter?
 
 ## RETURNS TABLE
 
@@ -105,11 +111,11 @@ I Postgres kan flere funktioner dele navn med forskellige argumenttyper — derf
 
 | | `LANGUAGE sql` | `LANGUAGE plpgsql` |
 |--|----------------|---------------------|
-| Krop | ét SQL-udtryk / query | blokke, `IF`, loops |
+| Krop | SQL-sætninger; den sidste leverer normalt resultatet | blokke, `IF`, loops |
 | Enkelhed | bedst til rene beregninger | bedst til logik |
-| Plan | kan inlines ofte | mere procedurelt |
+| Plan | nogle enkle funktioner kan inlines | procedurel udførelse; SQL indeni planlægges også |
 
-Start med `sql`, skift til `plpgsql` når I får brug for kontrolstrukturer.
+Raymond vælger `LANGUAGE sql`, når SQL beskriver arbejdet klart. Når valideringen kræver grene, giver `plpgsql` mulighed for IF. Sproget vælges efter opgaven.
 
 ## Parametre: IN (og OUT — kendskab)
 
@@ -124,7 +130,7 @@ $$;
 SELECT name, price, add_vat(price) AS med_moms FROM products LIMIT 5;
 ```
 
-## Searched vs. table functions
+## Skalar funktion eller tabelresultat?
 
 - **Skalar:** én værdi pr. kald (`order_line_total`)  
 - **Set-returning / `RETURNS TABLE`:** bruges i `FROM` (`top_products(3)`)
@@ -134,3 +140,7 @@ SELECT name, price, add_vat(price) AS med_moms FROM products LIMIT 5;
 1. Opret `order_line_total` og `top_products`.  
 2. Skriv en `IMMUTABLE` hjælpefunktion (`add_vat`).  
 3. `DROP` med fuld signatur.
+
+> [!RAYMOND:thinking] Forklar funktionen uden at læse op
+>
+> Beskriv input og returværdi for `order_line_total` og `top_products`. Hvorfor kaldes den ene i SELECT-listen og den anden i FROM? Peg på den del af definitionen, der understøtter dit svar.

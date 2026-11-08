@@ -14,7 +14,7 @@ objectives:
 
 **Mission · 30 minutter · Målpind #22**
 
-»Det føles hurtigere« er starten på en hypotese. Det er ikke slutningen på en undersøgelse.
+Raymond får to demoer og hører: “Min løsning føles hurtigere.” Han beder først om at se, om de leverer det samme svar, og hvor stopuret starter og slutter. Fornemmelsen er en hypotese, som du nu skal gøre målbar.
 
 ## Aftal banen før løbet
 
@@ -28,7 +28,7 @@ Aftal før testen:
 - Én opvarmning og mindst syv gentagelser. Gem alle tal; brug median, og forklar spredning.
 - Om du måler kun serverens arbejde eller hele klientkaldet inklusive netværk og mapping.
 
-Når du vil måle noget andet, så giv forsøget et nyt navn. En forespørgsel, der kun tæller, konkurrerer ikke fair mod en, der returnerer hele profiler.
+Raymond giver forsøget et navn og gemmer aftalen sammen med resultaterne. Ændrer du spørgsmålet, kræver det et nyt forsøg: en forespørgsel, der kun tæller, konkurrerer ikke fair mod en, der returnerer hele profiler.
 
 ## Tre representationer, ét spørgsmål
 
@@ -44,6 +44,10 @@ Servernes explain-tider har forskellige målemetoder og opløsning. Brug ikke en
 
 ## Gør én ændring ad gangen
 
+> [!RAYMOND:skeptical] Er nul millisekunder en vinder?
+>
+> En explain-rapport viser `0 ms`, mens en anden viser en brøkdel af et millisekund. Er opløsning og målegrænse ens? Kontrollér **samme resultatfelter**, **samme rækker** og **samme målte arbejde**, før du bruger tallene til at rangere løsninger.
+
 1. Kør en korrekt forespørgsel uden det foreslåede indeks.
 2. Gem resultat og plan.
 3. Tilføj ét relevant indeks og opdatér statistik efter behov.
@@ -54,8 +58,10 @@ Lav derefter et **separat** ORM-forsøg i ORM-labben: sammenlign en fuld entitet
 
 ## Når målingen ikke afgør valget
 
-Hvis alle løsninger opfylder svartidskravet, kan integritet, teamets erfaring, ændringer i data og drift være vigtigere. Hvis én måling er usikker, skriv det. En god beslutning kan sagtens være: »Vi vælger PostgreSQL nu og gentester ved 1 million profiler.«
+Hvis alle løsninger opfylder svartidskravet, spørger Raymond videre til integritet, teamets erfaring, ændringer i data og drift. Markér usikre målinger. En begrundet beslutning kan være: “Vi vælger PostgreSQL nu og gentester ved 1 million profiler,” når det beskrives, hvad der vil blive målt igen.
 
-**Dit checkpoint:** Du kan beskrive ét forsøg, der ville være fair, og ét, der ville give en misvisende konklusion.
+> [!RAYMOND:testing] Kan en makker gentage forsøget?
+>
+> Beskriv **ét fair forsøg** og **ét misvisende forsøg** med GameHub-data. Giv din makker versioner, data, indeks, forespørgsel og målegrænse. Forklar, hvorfor et nyt indeks både skal vurderes på læsegevinsten og på omkostningen ved skrivning.
 
 Kilder: [PostgreSQL EXPLAIN](https://www.postgresql.org/docs/16/using-explain.html), [MongoDB explain-resultater](https://www.mongodb.com/docs/manual/reference/explain-results/) og [EF Core performanceundersøgelser](https://learn.microsoft.com/en-us/ef/core/performance/performance-diagnosis).

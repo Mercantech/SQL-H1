@@ -14,7 +14,7 @@ objectives:
 
 ![Raymond arbejder med objektmodeller](/raymond/course/orm.webp)
 
-GameHub får sin første feature: **En turnering har mange tilmeldinger. Samme spillertag må kun tilmeldes én gang til den samme turnering.** Dit job er at omsætte kravet til C#, SQL og noget, der faktisk kører.
+Raymond kommer med GameHubs første krav: **En turnering har mange tilmeldinger. Samme spillertag må kun tilmeldes én gang til den samme turnering.** Han vil kunne pege på reglen både i C#-modellen og i den kørende database. Dit job er at forbinde de to.
 
 ## Hvem bestemmer strukturen?
 
@@ -42,7 +42,9 @@ entity.HasOne(r => r.Tournament)
 
 Den første regel forhindrer en dublet **i samme turnering**. Den anden fastholder relationen og afviser sletning af en turnering med tilmeldinger. Det er stadig de SQL-regler, du kender.
 
-**Makkercheck:** Må spillertagget `Raymond` findes i to forskellige turneringer? Peg på de kolonner, der afgør svaret.
+> [!RAYMOND:question] Hvilken dublet forbyder reglen?
+>
+> Må spillertagget `Raymond` findes i to forskellige turneringer? Peg på **begge kolonner** i det unikke indeks, og forudsig udfaldet af to tilmeldinger til samme turnering. Forklar også, hvad `Restrict` betyder for en sletning.
 
 ## Tryk ikke bare på næste
 
@@ -72,12 +74,16 @@ docker compose run --rm workshop dotnet ef migrations add AddPrizePool --project
 docker compose run --rm workshop dotnet ef migrations script InitialGameHub AddPrizePool --project CodeFirst
 ```
 
-Forudsig det nye SQL, og undersøg derefter det faktiske script. Er det en ny kolonne eller et `DROP TABLE`? Hvad sker der med de eksisterende rækker? Anvend først migrationen, når du kan forklare det.
+Raymond godkender ikke ændringen ud fra migrationsnavnet alene. Forudsig SQL'en, og gennemgå det faktiske script sammen: tilføjer det en kolonne, eller sletter det noget? Hvor kommer værdien 0 i de gamle rækker fra? Anvend først migrationen, når I kan følge konsekvensen for de eksisterende data.
 
 Brug migrationer konsekvent i dette projekt. `EnsureCreated` er en anden oprettelsesmekanisme og skal ikke blandes ind som en genvej. I en rigtig produktion skal ændringer desuden gennemgås og udrulles kontrolleret.
 
 ## Dit bevis
 
 Gem en kort forklaring af kravet, modelændringen, migrations-SQL og antal rækker før/efter. Det viser **#19** bedre end et skærmbillede af en succesbesked alene. Byg videre i [GameHub-projektet](/learn/orm-project-01).
+
+> [!RAYMOND:testing] Bevis at præmierne ikke kostede tilmeldinger
+>
+> Sammenlign **antal rækker før og efter** migrationen. Vis en gammel turnering med beløbet 0, og prøv et negativt præmiebeløb. Hvilket resultat beviser henholdsvis databevarelse og den nye CHECK-regel?
 
 Se [EF Cores migrationsforløb](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/) og [relationer og fremmednøgler](https://learn.microsoft.com/en-us/ef/core/modeling/relationships).

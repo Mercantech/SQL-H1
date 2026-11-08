@@ -33,6 +33,8 @@ sandbox:
 
 # Audit- og timestamp-mønstre
 
+Raymond vil kunne svare på to forskellige spørgsmål: Hvornår blev produktet sidst opdateret, og hvem ændrede prisen? Det kræver tydelige felter og et dokumenteret revisionsspor, ikke bare flere skjulte handlinger.
+
 ## updated_at automatisk
 
 ```sql
@@ -56,7 +58,11 @@ FOR EACH ROW
 EXECUTE FUNCTION touch_updated_at();
 ```
 
-`BEFORE` + ændring af `NEW` er det klassiske mønster.
+Raymond ændrer `NEW.updated_at` før rækken gemmes. Den viste trigger reagerer på enhver UPDATE af rækken, også `SET price = price`. Feltet fortæller derfor, at en opdatering blev udført, ikke nødvendigvis at en forretningsværdi blev anderledes.
+
+> [!RAYMOND:question] Opdateret er ikke altid ændret
+>
+> Forudsig, hvad der sker med `updated_at`, når prisen sættes til sin nuværende værdi. Sammenlign med pris-audit-triggeren fra første lektion: hvilken betingelse gør deres resultater forskellige?
 
 ## Hvad I *ikke* skal trigge på
 
@@ -82,7 +88,7 @@ Undgå at sætte `created_at` i en UPDATE-trigger — den skal være immutable.
 
 ## Audit: hvem ændrede hvad?
 
-Udvid `product_audit` med `changed_by TEXT` og sæt værdien fra appen (`current_setting('app.user', true)`) eller fra C# via separat kolonne. I SQL-H1 er `session`-bruger typisk elev-rollen — fint til demo.
+Raymond skelner mellem databaserollen og personen i appen. `current_user` kan vise elevrollen eller en fælles appkonto. En applikationsidentitet kan tilføjes via en kontrolleret kolonne eller en lokalt sat sessionsindstilling som `current_setting('app.user', true)`. Den er kun troværdig, hvis den validerede backend styrer værdien; et frit klientinput er ikke et bevis på brugerens identitet.
 
 ## Disable til import
 
@@ -99,3 +105,7 @@ Kun når I forstår konsekvensen.
 1. Tilføj `updated_at` + trigger.  
 2. Opdatér Te og læs `updated_at`.  
 3. Opdatér uden at ændre værdier (`SET price = price`) — se at trigger stadig kører (BEFORE UPDATE kører alligevel).
+
+> [!RAYMOND:reading] Gør det skjulte synligt
+>
+> Beskriv triggerens hændelse, tidspunkt og ændrede felter til en makker. Kan makkeren forudsige effekten af en UPDATE uden at læse appens kode? Dokumentér også, hvordan I kontrollerer data efter en eventuel importpause.

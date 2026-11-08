@@ -19,7 +19,11 @@ sandbox:
 
 # Subqueries
 
-En **subquery** er en `SELECT` inde i en anden SQL-sætning.
+Raymond vil finde varer, der er dyrere end gennemsnittet. Først skal gennemsnittet findes; derefter kan hver pris sammenlignes med det. En **subquery** er en SELECT inde i en anden SQL-sætning, som udtrykker netop sådan et delspørgsmål.
+
+> [!RAYMOND:thinking] Hvor mange værdier skal delspørgsmålet give?
+>
+> En pris kan sammenlignes med ét gennemsnit. En skalar subquery må højst returnere én række: ingen række bliver til NULL, og flere rækker giver fejl. AVG-udtrykket her giver én opsummering.
 
 ## Skalar subquery (én værdi)
 
@@ -45,6 +49,8 @@ WHERE id IN (
 ORDER BY name;
 ```
 
+Opslaget på produktnavnet `Espresso` forudsætter her, at navnet finder netop ét produkt. Seedet opfylder det, men navnekolonnen har ikke en UNIQUE-regel. Raymond vil bruge et entydigt produkt-id eller en passende forespørgsel, hvis navne kan gentages i et rigtigt system.
+
 ## Subquery i FROM
 
 ```sql
@@ -69,7 +75,11 @@ FROM customers c
 ORDER BY antal DESC, c.name;
 ```
 
-Ofte kan det omskrives til `JOIN` + `GROUP BY` — begge dele er nyttige.
+En korreleret subquery bruger en værdi fra den ydre forespørgsel. Ofte kan den også udtrykkes med JOIN og GROUP BY. Raymond vælger en læselig formulering, kontrollerer resultatet og undersøger planen, hvis performance bliver et problem.
+
+> [!RAYMOND:question] Hvad forbinder den indre og den ydre række?
+>
+> Find `o.customer_id = c.id` i kundeeksemplet. Hvad ville tællingen betyde, hvis betingelsen manglede? Brug samme tanke, når gennemsnittet skal gælde produktets egen kategori.
 
 ## Prøv selv
 

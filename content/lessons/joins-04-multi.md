@@ -21,7 +21,11 @@ sandbox:
 
 # Flere tabeller og aggregering
 
-En ordre kender kun id’er. For at få *navne* skal du joine **to** gange: først kunden, så produktet.
+Raymond vil følge salget hele vejen fra kunde til ordre til produkt. Ordren gemmer henvisningerne; to JOINs giver navnene og den aktuelle produktpris. Følg én ordre ad gangen, før du lægger en opsummering ovenpå.
+
+> [!RAYMOND:foreign-key] Kan du følge de to forbindelser?
+>
+> Peg først på ordren, så kunden via customer_id og til sidst produktet via product_id. Hvis én forbindelse mangler et match, hvad betyder de to INNER JOINs så for ordrelinjen?
 
 ## Følg en ordre gennem kæden
 
@@ -41,6 +45,8 @@ JOIN products p ON p.id = o.product_id
 GROUP BY c.city
 ORDER BY omsaetning DESC;
 ```
+
+Rapporten bruger den **aktuelle** produktpris og kun ordrer med en registreret kunde. Raymond kalder derfor tallet en beregning på caféens nuværende data, ikke en revisionssikker historisk omsætning.
 
 ## Topkunder
 
@@ -62,7 +68,11 @@ FROM customers a
 JOIN customers b ON a.city = b.city AND a.id < b.id;
 ```
 
-Det finder kundekombinationer i samme by.
+Det finder par af kunder i samme by. Raymond følger de to aliaser som to pladser ved bordet: `a.id < b.id` udelukker både en kunde parret med sig selv og det samme par i omvendt rækkefølge.
+
+> [!RAYMOND:thinking] Tæl det, rapporten spørger efter
+>
+> En ordrelinje med quantity 3 er én linje, men tre solgte styk. Forklar forskellen på COUNT(*) og SUM(quantity) i topkunderapporten, inden du vælger, hvem der er "topkunde".
 
 ## Prøv selv
 

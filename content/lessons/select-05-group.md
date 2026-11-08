@@ -16,7 +16,7 @@ sandbox:
 
 # Gruppering og aggregering
 
-Aggregater opsummerer flere rækker til én værdi.
+Raymond vil have overblik over caféen: Hvor mange varer har vi, og hvad koster de i gennemsnit? **Aggregater** opsummerer flere rækkers værdier. Beslut først, hvad én række i din færdige rapport skal repræsentere.
 
 | Funktion | Betydning |
 |----------|-----------|
@@ -25,6 +25,10 @@ Aggregater opsummerer flere rækker til én værdi.
 | `SUM(x)` | sum |
 | `AVG(x)` | gennemsnit |
 | `MIN(x)` / `MAX(x)` | mindste / største |
+
+> [!RAYMOND:question] Hvad tæller vi egentlig?
+>
+> `COUNT(*)` tæller rækker. `COUNT(email)` tæller rækker med en oplyst e-mail. Kan de give forskellige svar på den samme kundetabel, og hvad ville forskellen betyde?
 
 ## Uden GROUP BY
 
@@ -49,7 +53,7 @@ GROUP BY customer_id
 ORDER BY customer_id;
 ```
 
-Regel: kolonner i `SELECT` skal enten være i `GROUP BY` eller inde i en aggregat-funktion.
+Raymonds arbejdsregel her: Hver valgt kolonne skal enten beskrive gruppen eller beregnes med et aggregat. I vores eksempler skriver vi gruppekolonnerne i `GROUP BY`. PostgreSQL kan også acceptere andre kolonner, når de er funktionelt afhængige af en grupperet primærnøgle; det ser vi nærmere på i databasedesign.
 
 ## HAVING — filter efter gruppering
 
@@ -61,6 +65,10 @@ FROM products
 GROUP BY category
 HAVING COUNT(*) >= 2;
 ```
+
+> [!RAYMOND:thinking] Filtrerer du varer eller grupper?
+>
+> Vil jeg fjerne billige varer **før** optællingen, bruger jeg `WHERE`. Vil jeg beholde kategorier med mindst et bestemt antal varer **efter** optællingen, bruger jeg `HAVING`. Peg på, hvad hver række betyder på de to tidspunkter.
 
 ## Prøv selv
 

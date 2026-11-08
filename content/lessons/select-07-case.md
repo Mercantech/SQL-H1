@@ -23,7 +23,11 @@ sandbox:
 
 # CASE og betingede værdier
 
-`CASE` vælger en værdi ud fra betingelser — som `if/else` i SQL.
+Raymond vil give menuens varer en prisgruppe, så rapporten er nemmere at læse. `CASE` vælger en **værdi** ud fra betingelser — beslægtet med `if/else`, men her som et udtryk inde i forespørgslen.
+
+> [!RAYMOND:question] Et nyt felt eller færre varer?
+>
+> Når jeg tilføjer en kolonne med `CASE`, skal varerne så forsvinde fra listen? Skeln mellem at beregne en etiket med CASE og at vælge rækker med WHERE.
 
 ## Simpel form
 
@@ -50,6 +54,8 @@ FROM products
 ORDER BY price;
 ```
 
+Raymond læser betingelserne oppefra. Den første sande `WHEN` bestemmer værdien. Derfor får en vare til præcis 30 kr. ikke etiketten `billig` i eksemplet. Uden en matchende gren og uden `ELSE` bliver resultatet `NULL`.
+
 ## Med aggregater
 
 ```sql
@@ -67,6 +73,10 @@ SELECT
   SUM(CASE WHEN NOT in_stock THEN 1 ELSE 0 END) AS udsolgt
 FROM products;
 ```
+
+> [!RAYMOND:thinking] Følg én række gennem beslutningen
+>
+> Vælg en pris på en af grænserne, 30 eller 45. Gå gennem WHEN-grenene i rækkefølge, og forklar den valgte etiket. Gør bagefter det samme for en lagerført og en udsolgt vare.
 
 ## Prøv selv
 

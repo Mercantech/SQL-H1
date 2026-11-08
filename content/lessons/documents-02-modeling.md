@@ -14,9 +14,11 @@ objectives:
 
 **Mission · 25 minutter · Målpind #21**
 
-GameHub får en turnering. Spillerens profil skal vise indstillinger med det samme; tilmeldinger skal kunne søges på tværs af tusindvis af spillere. De to behov behøver ikke samme løsning.
+Raymond åbner både profilvisningen og turneringens deltagerliste. Profilen skal vise indstillinger med det samme; tilmeldinger skal kunne søges på tværs af tusindvis af spillere. Han opdager, at de to læsemønstre ikke behøver samme løsning.
 
-> Raymond: »Spørg først: Hvad læser og ændrer vi sammen?«
+> [!RAYMOND:question] Hvad læser og ændrer vi sammen?
+>
+> Sammenlign **en spillers temaindstilling** med **alle tilmeldinger til en turnering**. Hvilke data hører til én profil, og hvilke skal findes fra mange retninger? Brug de to konkrete opslag til at foreslå dokumentgrænser.
 
 ## Embedding: data bor sammen
 
@@ -33,7 +35,7 @@ Det gør **ikke** en række adskilte `updateOne`-kald til én samlet transaktion
 
 ## Referencing: selvstændige ting får deres eget hjem
 
-En turnering har eget liv. Dens navn skal ikke kopieres ind i hver spillerprofil og bagefter holdes opdateret tusind steder.
+Raymond omdøber Fredagsfinalen. Hvis det aktuelle turneringsnavn var kopieret ind i tusind profiler, skulle alle kopier holdes enige. En turnering har derfor sit eget liv og kan have ét autoritativt navn, som tilmeldingerne refererer til. Et historisk snapshot er et andet, bevidst behov.
 
 ```json
 { "_id": 101, "name": "Fredagsfinalen", "capacity": 16 }
@@ -55,7 +57,7 @@ Hvis én plads og én betaling skal reserveres samlet på tværs af dokumenter, 
 | Turneringens aktuelle navn i alle profiler | Flere kopier af samme sandhed | Reference; eventuelt et tydeligt historisk snapshot |
 | Opdatér balance med læs → plus én → skriv | Samtidige kald kan overskrive hinanden | `$inc` eller betinget opdatering efter behov |
 
-Der er en dokumentgrænse på 16 MiB i MongoDB. Den er en øvre grænse, ikke et designmål. Store dokumenter giver også større læsninger og mere arbejde ved ændringer.
+Raymond lader chatbeskeder få deres egen collection, så profilen ikke vokser med hver samtale. MongoDB har en dokumentgrænse på 16 MiB; det er en øvre grænse, ikke et designmål. Også før grænsen kan store dokumenter give større læsninger og mere arbejde ved ændringer.
 
 ## Arkitektduellen
 
@@ -65,6 +67,8 @@ Tegn to modeller for GameHub: én med mest muligt indlejret og én med flere ref
 - Hvad sker der, når turneringen omdøbes?
 - Hvad sker der, når en spiller har 50.000 beskeder?
 
-**Dit checkpoint:** Vælg model for profilindstillinger, chatbeskeder og turneringstilmeldinger. Skriv ét adgangsmønster og én ulempe ved hvert valg.
+> [!RAYMOND:thinking] Hvor knækker dit forslag først?
+>
+> Vælg model for **profilindstillinger**, **chatbeskeder** og **turneringstilmeldinger**. Skriv et adgangsmønster og en ulempe ved hvert valg. Forklar desuden, hvorfor atomicitet i ét dokument ikke gør tre separate opdateringer til én samlet transaktion.
 
 Kilder: [Embedding](https://www.mongodb.com/docs/manual/data-modeling/embedding/), [referencing](https://www.mongodb.com/docs/manual/data-modeling/referencing/) og [atomicitet](https://www.mongodb.com/docs/manual/core/write-operations-atomicity/).

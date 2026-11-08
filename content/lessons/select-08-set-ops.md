@@ -18,7 +18,11 @@ sandbox:
 
 # UNION, INTERSECT og EXCEPT
 
-Nogle gange skal du **sammensætte** flere `SELECT`-resultater til ét.
+Raymond har to lister, der skal samles i én rapport. Her lægger vi resultater **under hinanden** med mængdeoperationer. Det er et andet arbejde end JOIN, som kombinerer oplysninger fra matchende rækker.
+
+> [!RAYMOND:curious] Kan listerne passe sammen?
+>
+> Den ene SELECT leverer kundenavne, den anden produktnavne. Begge leverer én tekstkolonne. Hvad ville gå galt, hvis den ene i stedet leverede to kolonner?
 
 ## UNION — alle rækker (uden dubletter)
 
@@ -31,7 +35,7 @@ SELECT name FROM products
 ORDER BY label;
 ```
 
-`UNION ALL` beholder dubletter og er ofte hurtigere.
+`UNION ALL` beholder dubletter og undgår arbejdet med at fjerne dem. Raymond vælger først ud fra, om gentagelser har betydning for svaret; en eventuel forskel i hastighed undersøges bagefter.
 
 ```sql
 SELECT city FROM customers WHERE city = 'Viborg'
@@ -57,7 +61,11 @@ SELECT 'Aarhus';
 
 ## Tip
 
-Sortering sker typisk **efter** hele mængdeoperationen. Brug kolonnenavne fra den **første** `SELECT`.
+Sortér det samlede resultat med en afsluttende `ORDER BY`. Resultatets kolonnenavne kommer fra den **første** SELECT. En sortering eller begrænsning af en enkelt del kræver en tydeligt afgrænset del-forespørgsel.
+
+> [!RAYMOND:skeptical] Er gentagelsen vigtig?
+>
+> To ens bynavne kan enten være en dublet, du vil fjerne, eller to registreringer, du vil beholde. Forklar, hvorfor UNION og UNION ALL kan besvare forskellige spørgsmål med de samme kildedata.
 
 ## Prøv selv
 

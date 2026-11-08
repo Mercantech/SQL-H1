@@ -26,6 +26,8 @@ sandbox:
 
 # JOIN-mapping, multi-result og transaktioner
 
+Raymond skal vise en ordreliste med kunde- og produktnavne. Skærmen har brug for en flad rapportlinje, ikke en kopi af alle databasens tabeller som objektgrafer. Derfor starter han med resultatets form og vælger en DTO, der matcher den.
+
 ## Flad DTO fra JOIN (simpelt og godt)
 
 ```csharp
@@ -48,7 +50,7 @@ var lines = await conn.QueryAsync<OrderLineDto>(
     new { city = "Viborg" });
 ```
 
-Til H1 er **flade DTO’er** næsten altid klarere end avanceret multi-mapping.
+En **flad DTO** gør her udvælgelsen tydelig: én række indeholder netop det, rapporten viser. Raymond lader relationerne bo i databasen og skriver en JOIN, der samler dem til denne læseopgave.
 
 ## QueryMultiple (to resultsets)
 
@@ -64,6 +66,10 @@ var productCount = await multi.ReadSingleAsync<int>();
 ```
 
 ## Transaktion med Dapper
+
+> [!RAYMOND:question] To plausible tal kan stadig være byttet om
+>
+> `QueryMultiple` læses i samme rækkefølge som resultatsættene. Hvad sker der, hvis du bytter de to SELECTs, men beholder C#-linjerne? Begge tal kan se rimelige ud. Forklar, hvorfor **rækkefølge og betydning** er en del af kontrakten.
 
 ```csharp
 await using var conn = new NpgsqlConnection(cs);
@@ -91,10 +97,10 @@ await tx.CommitAsync();
 | Behov | Værktøj |
 |-------|---------|
 | Lære fundamentals / specielle reader-flows | ADO.NET |
-| 95% af API CRUD + rapporter | Dapper |
+| Egen SQL til CRUD og rapporter med automatisk mapping | Dapper |
 | Begge | samme SQL, samme parametre, samme transaktioner |
 
-Næste skridt i projektet: vælg **én** stil i DAL’en (helst Dapper oven på Npgsql) og vær konsekvente.
+Vælg en tydelig hovedstil i DAL'en, og forklar eventuelle undtagelser. Raymond vurderer Dapper ud fra behovet for egen SQL og EF Core ud fra behovet for model, LINQ og ændringssporing; et valg skal kunne begrundes med projektets arbejde.
 
 ## Multi-mapping (kort kendskab)
 
@@ -102,10 +108,18 @@ Dapper kan splitte en JOIN-række ud i flere objekter (`QueryAsync<Order, Custom
 
 ## Buffered
 
-`QueryAsync` buffer som default (hele resultatet i hukommelse). Til kæmpe exports: `buffered: false` og stream — men pas på connection-levetid.
+`QueryAsync` buffer som udgangspunkt resultatet i hukommelsen. Den almindelige async-overload har ikke et `buffered: false`-argument. Nyere Dapper-versioner har `QueryUnbufferedAsync<T>` til `await foreach`; kontrollér den installerede versions API, og hold forbindelsen åben under hele gennemløbet. Streaming kræver derfor et bevidst valg af levetid og fejlhåndtering.
 
 ## Prøv selv
 
 1. Kør Viborg-JOIN’en i SQL-H1.  
 2. Definér `OrderLineDto` og skitsér `QueryAsync`.  
 3. Skriv i README: “Vi bruger Dapper til X; rå Npgsql til Y (hvis noget).”
+
+> [!RAYMOND:thinking] Tre forskellige problemer
+>
+> Forklar forskellen på **en JOIN-række til en DTO**, **flere resultatsæt fra QueryMultiple** og **flere skrivninger i en transaktion**. Hvilken af de tre mekanismer sikrer, at to ændringer enten gemmes sammen eller rulles tilbage sammen?
+
+## Kilde
+
+- [Dappers officielle async-API og implementering](https://github.com/DapperLib/Dapper/blob/main/Dapper/SqlMapper.Async.cs)

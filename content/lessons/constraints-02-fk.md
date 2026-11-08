@@ -17,7 +17,11 @@ sandbox:
 
 # Fremmednøgler under DML
 
-Fremmednøgler beskytter **referenceintegritet**: barnet må ikke pege på en forælder, der ikke findes — og forælderen må ikke forsvinde, mens børn stadig pejer (medmindre reglen siger andet).
+Raymond forsøger at slette Bo fra kundelisten, men caféen skal stadig kunne forklare Bos ordrer. Fremmednøglen beskytter **referenceintegriteten**: en ikke-NULL reference skal pege på en gyldig række, og sletning eller nøgleændring skal følge relationens aftalte regler.
+
+> [!RAYMOND:foreign-key] Hvilken tabel har brug for Bo?
+>
+> Før du kører sletningen: find tabellen med `customer_id`, og undersøg dens rækker for Bo. En FK-fejl fortæller, at en reference skal håndteres; den vælger ikke caféens slettestrategi for dig.
 
 ## Sletning i forkert rækkefølge
 
@@ -49,12 +53,7 @@ I produktion vælger I ofte **soft delete** eller `ON DELETE`-strategi i stedet 
 
 ## Opdatering af nøgler
 
-Undgå at ændre `id`-værdier, der bruges som FK. Hvis I *skal* (sjælden migration):
-
-- `ON UPDATE CASCADE` på FK (sættes i DDL), eller  
-- opdatér børn først / brug en midlertidig mapping  
-
-Surrogat-id’er er netop designet til at være **stabile**.
+Raymond beholder surrogat-id’er stabile. En nøgleændring med eksisterende referencer kræver en planlagt migration: eksempelvis `ON UPDATE CASCADE` eller passende udskudte constraints inden for én transaktion. »Opdatér børn først« virker ikke alene med en almindelig umiddelbar FK, hvis den nye forældrenøgle endnu ikke findes.
 
 ## Hvad FK *ikke* løser alene
 
@@ -67,9 +66,13 @@ Surrogat-id’er er netop designet til at være **stabile**.
 
 FK siger kun: *peger I på noget gyldigt?*
 
+> [!RAYMOND:question] Gyldig er ikke det samme som obligatorisk
+>
+> Hvis vi gør `customer_id` til `NULL`, bevarer vi ordren uden en kundereference. Hvis vi sletter ordren, fjerner vi historikken. Begge kan være teknisk lovlige; hvilken handling passer til caféens krav?
+
 ## Matchende indeks
 
-Når I joiner og sletter på `orders.customer_id`, hjælper et indeks. PK/UNIQUE på forælderen findes allerede; **barn-kolonnen** bør indekseres i større systemer:
+Et indeks på `orders.customer_id` kan hjælpe opslag og kontrol ved sletning af kunder. Forælderens PK/UNIQUE har allerede et understøttende indeks; et indeks på **barn-kolonnen** skal I vurdere særskilt ud fra arbejdsbelastningen:
 
 ```sql
 -- I DDL-modulet / jeres projekt:
@@ -92,3 +95,7 @@ Slet **fra bladene ind mod roden**, medmindre CASCADE er bevidst valgt.
 3. Slet Espresso-ordrer, derefter produktet.  
 4. Nulstil igen, når du er færdig.  
 5. (Valgfrit) Prøv `UPDATE customers SET id = 999 WHERE name = 'Anna Jensen'` — forstå hvorfor det er farligt.
+
+> [!RAYMOND:idea-notes] Fortæl historien bag fejlen
+>
+> Læs én FK-fejl højt for en makker. Udpeg barnet, forælderen og den reference, der ville blive ugyldig. Foreslå derefter en handling, der både overholder databasen og bevarer den historik, caféen har brug for.

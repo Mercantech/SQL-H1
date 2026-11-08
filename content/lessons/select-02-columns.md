@@ -16,6 +16,12 @@ sandbox:
 
 # Kolonner, alias og DISTINCT
 
+Raymond skal lave en enkel kundeliste til caféens skranke. Der er brug for navn og by, men ikke alle oplysninger i kundetabellen. Nu bestemmer du både indholdet og overskrifterne i resultatet.
+
+> [!RAYMOND:reading] Bestil kun de oplysninger, du skal bruge
+>
+> Hvis jeg vælger `city, name` i stedet for `name, city`, hvad ændrer sig så? Forudsig resultatets overskrifter og rækkefølge, inden du kører.
+
 ## Vælg bestemte kolonner
 
 ```sql
@@ -33,7 +39,7 @@ SELECT name AS kundenavn, city AS bynavn
 FROM customers;
 ```
 
-`AS` er valgfri, men gør SQL’en lettere at læse.
+Raymond læser `AS kundenavn` som en overskrift på rapporten. Aliaset ændrer navnet i **resultatet**; kolonnen i `customers` hedder stadig `name`. `AS` kan udelades her, men hjælper os med at læse SQL’en.
 
 ## DISTINCT — unikke værdier
 
@@ -42,7 +48,11 @@ SELECT DISTINCT city FROM customers;
 SELECT DISTINCT category FROM products;
 ```
 
-`DISTINCT` fjerner dubletter i resultatet.
+`DISTINCT` fjerner ens **resultatrækker**. Vælger du flere kolonner, sammenlignes kombinationen af dem alle; det er ikke kun den første kolonne, der skal være ens.
+
+> [!RAYMOND:skeptical] Er det samme by eller samme række?
+>
+> To kunder kan begge bo i Viborg. Hvorfor kan `SELECT DISTINCT city` samle dem, mens `SELECT DISTINCT name, city` normalt stadig viser to rækker? Forklar, hvilke værdier databasen sammenligner.
 
 ## Prøv selv
 

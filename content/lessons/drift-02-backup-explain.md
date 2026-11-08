@@ -18,9 +18,11 @@ sandbox:
 
 # Backup, indeks og EXPLAIN
 
+Raymond får to beskeder: En rapport er langsom, og en større skemaændring er på vej. Det første kræver en måling; det andet kræver en vej tilbage. Her øver du begge dele uden at forveksle et indeks med en backup.
+
 ## Backup og restore (værktøj uden for editoren)
 
-I produktion tager man kopi af databasen — ikke “håber på det bedste”.
+Raymond vil kunne genskabe både struktur og data efter en fejl. Derfor skal kopien ligge sikkert og faktisk kunne indlæses igen. Et Docker-volume bevarer data ved en container-genstart, men er ikke i sig selv en uafhængig backup.
 
 | Værktøj | Brug |
 |---------|------|
@@ -40,6 +42,10 @@ I SQL-H1 er **Nulstil database** jeres “genindlæs seed” — ikke en erstatn
 `COPY ... TO/FROM` fil er **blokeret** i sandboxen (filadgang på serveren). I Docker/admin kan I stadig bruge `pg_dump`.
 
 ## Indeks i drift
+
+> [!RAYMOND:backup] Hvad overlever en forkert UPDATE?
+>
+> En fejl gemmer `price = 0` på alle produkter. Containeren genstartes, og dens volume er intakt. Hvilke priser får du tilbage? Forklar, hvorfor en **tidligere backup** og en afprøvet gendannelse løser et andet problem end vedvarende disk.
 
 ```sql
 CREATE INDEX IF NOT EXISTS ix_orders_date ON orders (order_date);
@@ -70,7 +76,7 @@ ANALYZE products;
 
 ## Checkliste til projektet
 
-1. Har FK-kolonner indeks?
+1. Har I vurderet indeks på FK-kolonner ud fra opslag, JOINs og ændringer i de refererede rækker?
 2. Kan I genskabe DB fra seed/migration + dump?
 3. Ved I, hvilken connection string Docker Compose bruger?
 
@@ -87,7 +93,7 @@ Til H1: kunne tage et `pg_dump` og genskabe er nok til aflevering.
 ## EXPLAIN ANALYZE-etikette
 
 - Brug på **dev/kopi**, ikke blindt mod prod under load  
-- Kør to gange (cold/warm cache) før I konkluderer  
+- Gentag målingen og beskriv cacheforholdene; første kørsel er ikke nødvendigvis med kold cache
 - Kig efter de dyre noder (`cost` / `actual time`)
 
 ## Prøv selv
@@ -95,3 +101,7 @@ Til H1: kunne tage et `pg_dump` og genskabe er nok til aflevering.
 1. Opret indeks + `EXPLAIN` på ordrer efter dato.  
 2. Kør `EXPLAIN ANALYZE` på et JOIN med `GROUP BY`.  
 3. Skriv i README hvordan I ville backup’e projekt-DB’en.
+
+> [!RAYMOND:performance] Er Seq Scan et problem her?
+>
+> Raymond får en `Seq Scan` efter at have oprettet et indeks. Forklar, hvorfor det kan være et fornuftigt valg på caféens få rækker. Hvilken større datamængde og hvilken selektiv forespørgsel ville give en mere nyttig test af indekset?

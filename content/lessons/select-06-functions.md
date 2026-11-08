@@ -15,7 +15,11 @@ sandbox:
 
 # SQL-funktioner
 
-Funktioner transformerer værdier i `SELECT` (og i `WHERE`/`ORDER BY`).
+Raymond har fået en rapport med blandede store og små bogstaver og priser med decimaler. SQL-funktioner kan beregne nye værdier til resultatet, så visningen bliver brugbar. De kan også indgå i filtre og sortering.
+
+> [!RAYMOND:curious] Ændrer vi navnet i databasen?
+>
+> Forudsig, hvad `UPPER(name)` viser. Når du bagefter vælger `name` alene, forventer du så store bogstaver dér også? Et beregnet SELECT-resultat er ikke en UPDATE.
 
 ## Strenge
 
@@ -37,6 +41,8 @@ SELECT name, price * 1.25 AS med_moms
 FROM products;
 ```
 
+Raymond bruger `price * 1.25` som et regneeksempel: aliaset `med_moms` forudsætter, at udgangspunktet er en pris uden moms. Et kolonnenavn alene fortæller ikke, om den antagelse passer i et rigtigt system.
+
 ## Dato
 
 ```sql
@@ -53,6 +59,8 @@ SELECT name, COALESCE(email, '(ingen e-mail)') AS email
 FROM customers;
 ```
 
+`COALESCE` vælger den første værdi, der ikke er `NULL`. Det gør rapporten læselig, men udfylder ikke den manglende e-mail i tabellen.
+
 ## Kombiner med filtrering
 
 ```sql
@@ -60,6 +68,10 @@ SELECT name, city
 FROM customers
 WHERE LOWER(city) = 'viborg';
 ```
+
+> [!RAYMOND:eureka] Visning og data er to forskellige ting
+>
+> Jeg kan vise `(ingen e-mail)` uden at gemme den tekst som kundens adresse. Forklar forskellen på en beregnet resultatkolonne og en ændring af de gemte data. Hvornår ville en UPDATE være nødvendig?
 
 ## Prøv selv
 

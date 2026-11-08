@@ -16,7 +16,9 @@ objectives:
 
 Raymond vil åbne **GameHub**: et sted, hvor spillere finder turneringer og tilmelder sig. SQL kan du allerede. Nu skal din C#-kode tale med databasen uden at du manuelt flytter hver eneste kolonne ind i hvert eneste objekt.
 
-> **Raymond:** “Jeg bestilte en liste af turneringer. Hvorfor sidder jeg stadig og kalder `reader.GetString(1)`?”
+> [!RAYMOND:question] Hvem oversætter bestillingen?
+>
+> “Jeg bestilte en liste af turneringer. Hvorfor sidder jeg stadig og kalder `reader.GetString(1)`?” Følg én **titel** fra resultatkolonne til C#-objekt: hvilket arbejde vil du lade værktøjet overtage?
 
 Et **ORM**, Object Relational Mapper, forbinder en objektmodel med relationelle data. En `Tournament` kan blive til en række, `Id` til en primærnøgle og en liste af tilmeldinger til en relation med fremmednøgler. SQL og PostgreSQL findes stadig under motorhjelmen.
 
@@ -28,7 +30,7 @@ Et **ORM**, Object Relational Mapper, forbinder en objektmodel med relationelle 
 | Dapper | SQL og den C#-type resultatet skal passe til | Mapping fra resultatkolonner til objekter |
 | EF Core | Entiteter, mapping og LINQ | SQL-generering, mapping og sporing af ændringer; migrationsværktøjet kan udvikle skemaet |
 
-Dapper er en **micro-ORM**. EF Core har flere funktioner, men stiller også flere spørgsmål: Hvilke data skal indlæses? Hvad spores? Hvornår rammer forespørgslen serveren? Hvor effektiv bliver SQL'en?
+Dapper er en **micro-ORM**. Raymond kan beholde sin håndskrevne rapport med Dapper eller beskrive en model og forespørgsel i EF Core. Med EF følger nye beslutninger: Hvilke data skal indlæses? Hvad spores? Hvornår rammer forespørgslen serveren? Derfor spørger han både, **hvem der skriver SQL**, og **hvem der ejer skemaets udvikling**.
 
 **EF Core er ikke en database.** PostgreSQL er databasen; Npgsqls EF-provider oversætter mellem EF Core og PostgreSQL. Du kan vælge at beholde din database og skifte adgangslag.
 
@@ -63,7 +65,7 @@ db.Tournaments.Add(new Tournament { Title = "Fredagsfinalen" });
 
 **Stop før du læser videre:** Hvilken handling mangler?
 
-`Add` fortæller EF, at objektet skal indsættes. `await db.SaveChangesAsync()` sender ændringerne til databasen. Databasens constraints kan stadig afvise dem. En `DbContext` er kortlivet og skal frigives korrekt, eksempelvis med `await using`.
+`Add` fortæller EF, at objektet skal indsættes. `await db.SaveChangesAsync()` sender ændringerne til databasen. Raymond skelner derfor mellem et objekt i hukommelsen og en gemt række. Databasens constraints kan stadig afvise ændringen. En `DbContext` er kortlivet og skal frigives korrekt, eksempelvis med `await using`.
 
 ## Vælg dit værktøj
 
@@ -79,5 +81,9 @@ Argumentér for Dapper eller EF Core i hvert tilfælde. Flere valg kan være for
 Hent [GameHub-laboratoriet](/downloads/orm-lab.zip). Næste lektion får **rigtig C#-kode** til at skabe et skema gennem migrationer. Laboratoriet indeholder også en separat gammel database til database-first; de to arbejdsgange blandes ikke.
 
 **Målpind:** #18. Når du kan forklare tabellen ovenfor med egne ord, har du den basale ORM-forståelse, resten bygger på.
+
+> [!RAYMOND:thinking] Oversæt uden at gemme databasen væk
+>
+> Forklar forskellen på `Add` og `SaveChangesAsync`. Vis derefter, hvor en **fremmednøgle** beskytter relationen bag `Registrations`. Hvilke dele af GameHub kan bevares, hvis adgangslaget skifter fra Dapper til EF Core?
 
 Læs videre i [Npgsqls EF Core-dokumentation](https://www.npgsql.org/efcore/) og [EF Cores introduktion til relationer](https://learn.microsoft.com/en-us/ef/core/modeling/relationships).

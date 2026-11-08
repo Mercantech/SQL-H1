@@ -22,9 +22,13 @@ sandbox:
 
 # Database-design og normalisering
 
-**Database-design** er kunsten at vælge *hvilke tabeller*, *hvilke kolonner* og *hvordan de hænger sammen*, før (eller mens) du skriver SQL. Et godt design gør CRUD, JOIN og constraints enkle — et dårligt design giver dubletter, inkonsistens og smertefulde `UPDATE`/`DELETE`.
+Raymond får et ark, hvor kundens by står på hver ordrelinje. Anna er flyttet, men kun halvdelen af linjerne er rettet. **Database-design** handler om at vælge tabeller, kolonner, nøgler og forbindelser, så sådanne oplysninger kan vedligeholdes sammenhængende.
 
-Café-skemaet (`customers`, `products`, `orders`) er allerede **normaliseret**. Her lærer du *hvorfor*.
+Caféens skema adskiller kunder, produkter og køb. Vi bruger det til at undersøge **normalisering**: Hvilke kendsgerninger hører sammen, og hvilke afhængigheder skal modellen udtrykke?
+
+> [!RAYMOND:curious] Hvor mange steder skal Anna flytte?
+>
+> Hvis kundens aktuelle by gentages på alle ordrelinjer, hvor mange steder skal vi rette den? Find også ud af, om rapporten skal vise kundens by nu eller leveringsbyen ved købet. Det er forskellige oplysninger.
 
 ## Hvad prøver vi at undgå?
 
@@ -61,13 +65,13 @@ Normalisering splitter data, så hver kendsgerning gemmes **ét sted**.
 
 ## Normalformer (det du skal kunne)
 
-Vi fokuserer på **1NF → 2NF → 3NF**. (Der findes BCNF, 4NF, … — kendskab; 3NF er arbejdshorse i praksis.)
+Vi fokuserer på **1NF → 2NF → 3NF**. (Der findes BCNF, 4NF, … — kendskab; 3NF er et nyttigt udgangspunkt for mange transaktionssystemer.)
 
 ### 1NF — First Normal Form
 
 **Regel (praktisk):**
 
-1. Hver celle har **én værdi** (ikke lister i en celle).
+1. Hver celle har **én værdi for den valgte attribut**. I vores ordrelinjemodel skal produktreferencer ikke pakkes sammen i en liste.
 2. Hver række er unik (har en nøgle).
 3. Ingen gentagne kolonnegrupper (`produkt1`, `produkt2`, …).
 
@@ -92,9 +96,9 @@ ORDER BY o.id;
 ### 2NF — Second Normal Form
 
 **Forudsætter 1NF.**  
-**Regel:** Ingen ikke-nøgle-kolonne må afhænge af kun *en del* af en sammensat nøgle.
+**Arbejdsregel:** Ingen attribut, der står uden for alle kandidatnøgler, må afhænge af kun en del af en sammensat kandidatnøgle. En kandidatnøgle er et minimalt sæt attributter, som identificerer en række; analysen handler ikke kun om den PK, vi tilfældigvis vælger.
 
-Klassisk fejl: ordrelinje med nøgle `(ordre_id, produkt_id)` og kolonnen `kundenavn` — kundenavn afhænger kun af ordren/kunden, ikke af produktet.
+Eksempel: Antag, at `(ordre_id, produkt_id)` er en kandidatnøgle, og at hver ordre har én kunde. Så afhænger kundenavnet gennem ordren af `ordre_id`, mens produktnavnet afhænger af `produkt_id`. Begge bliver gentaget på linjerne uden at afhænge af hele nøglen.
 
 **I caféen:** kundenavn og by bor i `customers`, ikke gentaget på hver `orders`-række. Pris og produktnavn bor i `products`.
 
@@ -106,10 +110,14 @@ ORDER BY id
 LIMIT 8;
 ```
 
+> [!RAYMOND:normalize] Et nyt id løser ikke alle afhængigheder
+>
+> Hvis vi tilføjer et teknisk id til en flad tabel, forsvinder de gentagne kunde- og produktoplysninger ikke af sig selv. Beskriv stadig kandidatnøglerne og hvilke kendsgerninger, der bestemmer andre værdier.
+
 ### 3NF — Third Normal Form
 
 **Forudsætter 2NF.**  
-**Regel:** Ingen ikke-nøgle-kolonne må afhænge af en *anden* ikke-nøgle-kolonne (ingen “transitativ” afhængighed).
+**Arbejdsregel for vores eksempler:** Fjern transitive afhængigheder, hvor en ikke-nøgle-oplysning bestemmer en anden ikke-nøgle-oplysning. Den formelle 3NF-definition tager også højde for kandidatnøgler og attributter, der indgår i dem; her bruger vi den enklere regel på caféens almindelige entiteter.
 
 **Dårligt eksempel:**
 
@@ -117,9 +125,9 @@ LIMIT 8;
 |------------|------|----------|------------------|
 | 1 | Espresso | Drikke | Mia |
 
-`category_manager` afhænger af `category`, ikke af produktet. Rettes Mia’s titel, skal mange rækker opdateres.
+Antag, at hver kategori har én ansvarlig. Så bestemmer `category` værdien af `category_manager`. Skifter kategorien ansvarlig, skal mange produktrækker ellers rettes.
 
-**Bedre (mønster):** egen `categories`-tabel (lookup) — se næste lektion om designmønstre. I vores seed er `category` en simpel tekst på `products` (pragmatisk 3NF-light til undervisning).
+**Bedre i dette tilfælde:** Gem kategoriens ansvarlige i en categories-tabel. Seedet har kun en kategoritekst, ikke en kategoriansvarlig. Tekstfeltet alene er derfor ikke et 3NF-brud; en lookup-tabel kan stadig give fælles stavning, identitet og FK-kontrol.
 
 ## Fra fladt ark til café-design
 
@@ -139,18 +147,18 @@ Det er **normaliseret 1:n / n:1** via en koblingstabel (`orders`).
 
 | | Normaliseret | Denormaliseret |
 |--|--------------|----------------|
-| Mål | én sandhed, få anomalier | færre JOIN, hurtigere læsning |
+| Mål | færre problematiske gentagelser og anomalier | enklere læsninger eller mindre gentaget beregningsarbejde |
 | Typisk | OLTP (daglig CRUD) | rapporter, data warehouse, cache |
 | Risiko | flere JOIN | inkonsistens ved opdatering |
 
-I SQL-H1 designer vi til **OLTP-undervisning**: sandhed først. Senere kan man *bevidst* denormalisere til reports — aldrig af uvidenhed.
+Raymond starter med en sammenhængende model til daglige transaktioner. Hvis læsebehov senere kræver afledte kopier, skal vi beskrive, hvordan de holdes korrekte. Færre JOINs er ikke i sig selv et bevis på bedre performance.
 
 ## Designproces (mini-opskrift)
 
 1. Find **substantiver** i forretningen (kunde, produkt, ordre).
 2. Find **relationer** (1:n, n:n).
 3. Vælg **nøgler** (surrogat `id` er ok og almindeligt).
-4. Placér hvert attribut dér, hvor det **afhænger af nøglen**.
+4. Placér hver attribut dér, hvor den **afhænger af nøglen**.
 5. Tjek 1NF → 2NF → 3NF med anomalierne i baghovedet.
 6. Tegn E/R (se også Database-siden) og verificér med `SELECT`/`JOIN`.
 
@@ -168,26 +176,30 @@ I caféen (forenklet):
 
 2NF/3NF handler om at **ikke** have afhængigheder, der “hænger skævt” ift. nøglen (delnøgle eller transitativt via en ikke-nøgle).
 
-### Hurtig 3NF-test
+### Hurtig kontrol for vores enkle modeller
 
-For hver ikke-nøgle-kolonne X i en tabel med PK K:
+I en tabel med én kandidatnøgle K kan du bruge denne kontrol for hver ikke-nøgle-kolonne X:
 
 1. Afhænger X af hele K? (ellers brud på 2NF ved sammensat K)  
 2. Afhænger X kun af K — ikke af en anden ikke-nøgle Y? (ellers brud på 3NF: K → Y → X)
 
-Hvis `category_manager` afhænger af `category`, og `category` ikke er PK, falder I på test 2.
+Hvis `category_manager` afhænger af `category`, og `category` ikke identificerer produktet, falder produktmodellen ovenfor på test 2. Har tabellen flere overlappende kandidatnøgler, skal I bruge den fulde definition frem for denne genvej.
 
 ## BCNF — kort kendskab
 
-**Boyce–Codd Normal Form** er en skærpelse af 3NF: enhver determinant skal være en kandidatnøgle. I H1 skal du primært **kende navnet** og vide, at 3NF er nok i de fleste OLTP-apps. Nævn BCNF, hvis underviseren spørger til “findes der noget efter 3NF?”.
+**Boyce–Codd Normal Form** er strengere end 3NF: I hver ikke-triviel funktionel afhængighed skal den bestemmende side være en **supernøgle** — et sæt attributter, der identificerer rækken, eventuelt med ekstra attributter. En kandidatnøgle er en minimal supernøgle. Her er BCNF perspektiv; øvelserne fokuserer på at forklare og forbedre caféens design.
 
 ## Normalisering i praksis (café-walkthrough)
 
 Start med den flade tabel (kunde, by, produkt, pris, antal, dato):
 
 1. **1NF:** én linje pr. køb — ikke kommaseparerede produkter.  
-2. **2NF:** træk `kunde/by` ud til `customers`, `produkt/pris` til `products` — `orders` beholder id’er + antal/dato.  
-3. **3NF:** hvis I tilføjer `category_manager`, så lav `categories` — ellers er I “3NF-light” med tekst-kategori.
+2. **Afhængigheder:** Gør nøglen tydelig. Under den beskrevne sammensatte nøgle hører ordrehovedets kundeoplysninger og produktets stamdata ikke til på hver linje.
+3. **3NF:** Tilføjer I en kategoriansvarlig, som bestemmes af kategorien, så placér den oplysning ved kategorien. En kategoritekst alene gør ikke modellen til "3NF-light".
+
+> [!RAYMOND:skeptical] Hvilken pris er en kendsgerning?
+>
+> Produktets pris nu og den aftalte stykpris ved et tidligere køb kan være forskellige fakta. At gemme købets stykpris er derfor ikke automatisk et brud på normalisering. Forklar først, hvilket tidspunkt og hvilken hændelse prisen beskriver.
 
 ## Prøv selv
 
@@ -197,3 +209,5 @@ Start med den flade tabel (kunde, by, produkt, pris, antal, dato):
 4. Skriv tre funktionelle afhængigheder for caféen med pil-notation.
 
 Næste lektion: **designmønstre** (lookup, koblingstabel, soft delete, stjerne m.m.).
+
+Kilder: [Microsofts introduktion til normalisering](https://learn.microsoft.com/en-us/office/troubleshoot/access/database-normalization-description), [Griffith Universitys normaliseringsdefinitioner](https://www.ict.griffith.edu.au/normalization_tools/normalization/assets/Functional%20Dependencies%20and%20Normalization.pdf) og [PostgreSQLs nøgler og constraints](https://www.postgresql.org/docs/16/ddl-constraints.html).

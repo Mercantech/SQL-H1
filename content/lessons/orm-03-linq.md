@@ -60,11 +60,15 @@ var all = await db.Tournaments.ToListAsync();
 var b = all.Where(t => t.GameTitle == game).ToList();
 ```
 
-Begge kan give de samme turneringer. Den første filtrerer på serveren. Den anden henter alle turneringer og filtrerer bagefter i programmet. Forestil dig, at `all` indeholder en million rækker.
+Begge kan give de samme turneringer. Den første filtrerer på serveren. Den anden henter alle turneringer og filtrerer bagefter i programmet. Raymond vil derfor kontrollere **arbejdet bag svaret**, ikke kun de få rækker, der ender på skærmen.
+
+> [!RAYMOND:skeptical] Samme rækker, samme arbejde?
+>
+> Forestil dig en million turneringer og kun ti med det valgte spil. Hvor mange rækker sendes omtrent over forbindelsen i de to udgaver? Peg på `ToListAsync`, hvor forespørgslen skifter fra **beskrivelse** til **udførelse**.
 
 ## Hent det, skærmen behøver
 
-Rapporten vælger bestemte felter med `Select`. Det kaldes en **projektion**. Et skærmbillede med titel og deltagerantal behøver ikke automatisk hente hele objektgrafen.
+Raymonds skærm viser titel og deltagerantal. Rapporten vælger derfor bestemte felter med `Select`, en **projektion**, frem for automatisk at hente hele objektgrafen. Modellens mange egenskaber er ikke en bestilling på at sende dem alle til brugeren.
 
 En almindelig læsning af entiteter kan spores af EF's change tracker. Når du ændrer en sporet entitet og kalder `SaveChangesAsync`, kan EF gemme ændringen. Til rene læsninger af entiteter er `AsNoTracking()` ofte relevant. Det gør ikke en dårlig forespørgsel god af sig selv.
 
@@ -78,6 +82,10 @@ En almindelig læsning af entiteter kan spores af EF's change tracker. Når du �
 4. Forklar, hvorfor et nul i deltagerantal skal blive til fuld kapacitet i `SpotsLeft`.
 5. Skriv én fejl, som en kompilerende LINQ-forespørgsel stadig kan have.
 
-Din nye superkraft er at kunne læse **både C# og SQL**. ORM gør det lettere at bygge dataadgang; din databaseforståelse gør det muligt at kontrollere den.
+Når du kan læse **både C# og SQL**, kan du kontrollere den dataadgang, ORM'en genererer. Raymond forventer en forklaring af filter, kolonner og databasekald, også når LINQ-koden kompilerer uden fejl.
+
+> [!RAYMOND:thinking] Forklar ét databasekald
+>
+> Beskriv rapportens forventede **kolonner**, **filter** og **antal databasekald**, før du kører den. Henter `ToQueryString()` data? Hvad sker der, hvis samme `query` udføres med `ToListAsync` to gange?
 
 **Målpinde:** #18 og #19. Læs [LINQ i EF Core](https://learn.microsoft.com/en-us/ef/core/querying/), [tracking](https://learn.microsoft.com/en-us/ef/core/querying/tracking) og [effektive forespørgsler](https://learn.microsoft.com/en-us/ef/core/performance/efficient-querying).

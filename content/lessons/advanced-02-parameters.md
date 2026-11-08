@@ -24,6 +24,12 @@ sandbox:
 
 # Parametre og sikker SQL
 
+En gæst i caféen har en apostrof i sit navn. Raymond vil kunne finde gæsten uden at ændre navnet og uden at lade teksten ændre SQL-koden. Det kræver, at programmet holder **værdier og SQL-struktur adskilt**.
+
+> [!RAYMOND:question] Et navn er stadig data
+>
+> Hvis input indeholder en apostrof, hvorfor er løsningen så ikke bare at fjerne tegnet? Beskriv, hvordan databasen skal forstå værdien, også når den ligner et stykke SQL.
+
 ## Det farlige mønster
 
 Hvis en app bygger SQL sådan her:
@@ -43,9 +49,11 @@ cmd.CommandText = "SELECT * FROM customers WHERE name = @name";
 cmd.Parameters.AddWithValue("name", userInput);
 ```
 
-Værdien sendes **separat** fra SQL-teksten — den kan ikke “bryde ud” af strengen.
+Værdien sendes **separat** fra SQL-teksten og behandles som data. Raymond lader også navne med apostroffer blive hele; han ændrer måden forespørgslen bygges på, ikke gæstens navn.
 
 I SQL-H1-editoren skriver du SQL direkte (du *er* eleven). I projektet skal I **altid** bruge parametre fra C#.
+
+En værdiparameter kan ikke erstatte et tabelnavn, kolonnenavn eller `ASC`/`DESC`. Skal brugeren vælge sortering, vælger programmet mellem faste tilladte SQL-fragmenter. Se den konkrete allowlist i [sikkerhedsforløbet](/learn/security-01-threats).
 
 ## Parametre i Postgres-funktioner
 
@@ -62,11 +70,15 @@ SELECT product_price('Espresso');
 SELECT product_price('Latte');
 ```
 
-Her er `p_name` en ægte parameter — ikke streng-konkatenering.
+Her indgår `p_name` som værdi i en fast SQL-definition. Raymond understreger forskellen fra en funktion, der selv sammensætter dynamisk SQL af brugerinput: den bliver ikke automatisk sikker, blot fordi den kaldes en funktion.
+
+> [!RAYMOND:safe-lock] Se efter, hvad der faktisk sammensættes
+>
+> Find SQL-teksten og parameteroprettelsen i C#-eksemplet. Hvilken af dem indeholder værdien? Brug samme kontrol, når du læser Dapper-kode eller en funktion med dynamisk SQL.
 
 ## Kontrolstrukturer (smagsprøve)
 
-I `plpgsql` kan du bruge `IF` / `LOOP` (næste modul uddyber):
+PL/pgSQL har kontrolstrukturer. Raymond starter med `IF`: en betingelse vælger, hvilken værdi funktionen returnerer. Funktioner og fejlhåndtering uddybes i det næste modul:
 
 ```sql
 CREATE OR REPLACE FUNCTION stock_label(p_in_stock BOOLEAN)
@@ -85,7 +97,7 @@ $$;
 SELECT name, stock_label(in_stock) FROM products ORDER BY name;
 ```
 
-## Takeaway til projektet
+## Tag med til projektet
 
 | Lag | Gør |
 |-----|-----|
@@ -113,3 +125,7 @@ Dapper/ADO.NET beskytter **kun**, hvis I bruger parametre.
 1. Opret `product_price` og kald den med to produktnavne.  
 2. Skriv (på papir) den *forkerte* C#-streng og den *rigtige* med `@name`.  
 3. Forklar hvorfor `product_price(p_name TEXT)` ikke er injection, selvom input kommer udefra.
+
+> [!RAYMOND:idea-notes] Forklar grænsen mellem kode og data
+>
+> Peg på én sikker værdiparameter og én situation, der kræver en fast liste over tilladte SQL-navne. Hvorfor løser det ikke problemet at pakke en usikker sammensat streng ind i Dapper?

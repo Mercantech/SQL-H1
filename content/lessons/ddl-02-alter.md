@@ -22,7 +22,11 @@ sandbox:
 
 # ALTER TABLE og constraints i DDL
 
-`CREATE` laver nyt. **`ALTER TABLE`** ændrer noget, der allerede findes — typisk i produktion, når systemet vokser.
+Raymond har allerede gemt leverandører, da caféen får brug for deres telefonnumre. Han vil bevare rækkerne og ændre strukturen med **`ALTER TABLE`**. Nu skal du både tænke på det nye skema og på de data, der allerede ligger der.
+
+> [!RAYMOND:question] Hvad får de gamle rækker?
+>
+> Du tilføjer `phone TEXT` uden default til en tabel med leverandører. Hvad vil de eksisterende rækker have i den nye kolonne? Forudsig svaret, før du forsøger at gøre feltet påkrævet.
 
 ## Tilføj kolonne
 
@@ -36,7 +40,7 @@ CREATE TABLE IF NOT EXISTS suppliers (
 ALTER TABLE suppliers
   ADD COLUMN phone TEXT;
 
--- Postgres 9.1+: undgå fejl hvis kolonnen allerede findes
+-- Undgå fejl hvis kolonnen allerede findes
 ALTER TABLE suppliers
   ADD COLUMN IF NOT EXISTS phone TEXT;
 ```
@@ -87,7 +91,7 @@ ALTER TABLE suppliers RENAME COLUMN phone TO phone_number;
 ALTER TABLE suppliers DROP COLUMN IF EXISTS phone_number;
 ```
 
-`DROP COLUMN` sletter data i kolonnen — permanent (indtil du nulstiller seed).
+`DROP COLUMN` fjerner kolonnen og dens indhold, når ændringen gemmes. En nulstilling genskaber kun lektionens seed, ikke dine egne indtastede værdier; de kræver en egnet backup eller en anden bevaret kopi.
 
 ## Rækkefølge betyder noget
 
@@ -98,11 +102,15 @@ ALTER TABLE suppliers DROP COLUMN IF EXISTS phone_number;
 
 Samme tænkning som ved `DELETE` og cascading — **grafen** styrer rækkefølgen.
 
+> [!RAYMOND:idea-notes] En ændring i tre skridt
+>
+> Først en ny kolonne, så en begrundet udfyldning af gamle rækker, til sidst den nye regel. En vilkårlig tekst som »ukendt« gør måske `NOT NULL` tilfreds, men gør den også leverandørens telefonnummer brugbart?
+
 ## ALTER som migration
 
 I et hold-projekt er hver `ALTER` en **versioneret ændring**:
 
-1. Skriv SQL-scriptet (gerne idempotent med `IF EXISTS` hvor det giver mening)  
+1. Skriv SQL-scriptet og beslut, om det er en engangsmigration eller bevidst kan genkøres
 2. Kør det mod en kopi / elev-DB først  
 3. Dokumentér breaking changes (API DTO’er, seeds)
 
@@ -124,3 +132,7 @@ ALTER TABLE products ALTER COLUMN vat_pct SET NOT NULL;
 1. Tilføj `phone` på `suppliers`, indsæt data, sæt derefter `NOT NULL` (med backfill).  
 2. Tilføj FK fra `products` til `suppliers` og bryd den bevidst med DML.  
 3. Nulstil, når du er færdig.
+
+> [!RAYMOND:reading] Gennemgå migrationen med en makker
+>
+> Forklar starttilstand, rækkefølge og sluttilstand for din ændring. Vis, hvilke gamle rækker der er bevaret, og hvilken ny ugyldig værdi databasen nu skal afvise.

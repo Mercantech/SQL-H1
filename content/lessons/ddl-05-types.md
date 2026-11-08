@@ -26,19 +26,27 @@ sandbox:
 
 # Datatyper, IDENTITY og defaults
 
+Raymond vil give caféen rabatkoder. En kode er tekst, en rabat er et præcist tal, og oprettelsen sker på et tidspunkt. Ved at vælge typer og defaults beskriver du, hvad hver oplysning betyder, før den første række indsættes.
+
+> [!RAYMOND:question] Hvilken værdi må databasen selv vælge?
+>
+> Sammenlign `id`, `code` og `created_at` i startereksemplet. Hvad skal eleven eller appen levere, og hvad kan databasen generere? En default skal være en bevidst regel, ikke et gæt på manglende information.
+
 ## Hyppige typer i H1
 
 | Type | Brug |
 |------|------|
 | `INT` / `BIGINT` | tællere, FK, id |
 | `NUMERIC(p,s)` | penge (undgå `float` til beløb) |
-| `TEXT` | ubegrænset tekst (Postgres-favorit) |
+| `TEXT` | tekst uden en angivet længdegrænse i skemaet |
 | `VARCHAR(n)` | når I *vil* have max-længde |
 | `BOOLEAN` | sand/falsk |
 | `DATE` | kun dato |
-| `TIMESTAMPTZ` | tidspunkt med tidzone (anbefalet til “skete hvornår”) |
+| `TIMESTAMPTZ` | et tidspunkt, der kan vises i forskellige tidszoner |
 
 ## SERIAL vs IDENTITY
+
+Raymond sammenligner her to **udsnit af en kolonnedefinition**. De skal stå inde i en fuld `CREATE TABLE`-sætning for at kunne køres.
 
 ```sql
 -- Klassisk (stadig udbredt)
@@ -48,7 +56,7 @@ id SERIAL PRIMARY KEY
 id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY
 ```
 
-Begge giver auto-increment. `IDENTITY` er tydeligere ift. “databasen ejer værdien”.
+Begge kan generere nye tal. `GENERATED ALWAYS AS IDENTITY` markerer tydeligt, at databasen normalt leverer værdien; **unikheden kommer fra `PRIMARY KEY` eller `UNIQUE`**, ikke fra identity alene. Huller i talrækken er normale, eksempelvis efter afviste indsættelser.
 
 ## DEFAULT
 
@@ -75,9 +83,13 @@ price REAL
 price NUMERIC(10,2) NOT NULL
 ```
 
+> [!RAYMOND:skeptical] Et tal er ikke bare et tal
+>
+> Et beløb skal kunne sammenlignes og beregnes med den aftalte præcision. Forklar, hvorfor et omtrentligt flydende tal og `NUMERIC(10,2)` ikke er samme kontrakt. Skalaen kan give afrunding, så vælg også den bevidst.
+
 ## TEXT vs VARCHAR
 
-I Postgres er `TEXT` og `VARCHAR` (uden hård grund) ofte lige hurtige. Brug `VARCHAR(n)` når **forretningen** har max-længde (fx kuponkode 16 tegn) — ellers `TEXT`.
+Raymond vælger `VARCHAR(n)`, når en længdegrænse er et faktisk krav, eksempelvis en kode på højst 16 tegn. `TEXT` og `VARCHAR` uden grænse har ikke en generel hastighedsforskel, der i sig selv afgør valget i PostgreSQL.
 
 ## Tid og tidzoner
 
@@ -87,7 +99,7 @@ I Postgres er `TEXT` og `VARCHAR` (uden hård grund) ofte lige hurtige. Brug `VA
 | `TIMESTAMP` | uden tidzone (undgå i distribuerede apps) |
 | `TIMESTAMPTZ` | “skete hvornår” i den virkelige verden |
 
-`now()` returnerer `timestamptz`. Gem UTC i tankerne; vis lokal tid i UI.
+`now()` returnerer `timestamptz`. PostgreSQL gemmer tidspunktet normaliseret og viser det i sessionens tidszone; den oprindelige tidszonebetegnelse gemmes ikke i værdien. Har forretningen brug for eksempelvis navnet `Europe/Copenhagen`, skal det modelleres særskilt.
 
 ## Domæne vs. applikationstype
 
@@ -98,7 +110,7 @@ I Postgres er `TEXT` og `VARCHAR` (uden hård grund) ofte lige hurtige. Brug `VA
 | `NUMERIC` | `decimal` |
 | `TEXT` | `string` |
 | `BOOLEAN` | `bool` |
-| `TIMESTAMPTZ` | `DateTimeOffset` |
+| `TIMESTAMPTZ` | typisk UTC-`DateTime`; `DateTimeOffset` med offset 0 i Npgsql |
 | `DATE` | `DateOnly` |
 
 Forkerte mappinger (fx `float` til penge) giver snigende bugs.
@@ -115,3 +127,9 @@ ORDER BY ordinal_position;
 ```
 
 Argumentér: hvorfor `NUMERIC` til `discount_pct` og ikke `REAL`?
+
+> [!RAYMOND:reading] Læs det, du faktisk oprettede
+>
+> Undersøg `promo_codes` i metadataoversigten. Forklar én datatype, én default og én constraint hver for sig. Hvilken del ville afvise en dubletkode, og hvilken del ville udfylde tidspunktet?
+
+Kilde: [Npgsqls mapping af datoer, tidspunkter og UTC](https://www.npgsql.org/doc/types/datetime.html).

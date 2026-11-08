@@ -19,7 +19,11 @@ sandbox:
 
 # RETURNING og API-venlig DML
 
-Når en API opretter en række, skal klienten ofte have det nye **`id`** tilbage. I stedet for `INSERT` + `SELECT MAX(id)` (race condition!) bruger du **`RETURNING`**.
+Raymonds café-API har lige oprettet et produkt. Skærmen skal nu kende **id’et på netop den række**. Med `RETURNING` kan samme ændring levere de ønskede værdier tilbage uden et separat opslag efter »det største id«.
+
+> [!RAYMOND:question] Hvem fik det største id?
+>
+> To klienter indsætter næsten samtidig. Hvorfor kan `SELECT MAX(id)` bagefter finde den anden klients produkt? `RETURNING` knytter svaret til den ændring, som din egen kommando udførte.
 
 ## INSERT … RETURNING
 
@@ -37,6 +41,10 @@ SET price = price + 1.00
 WHERE category = 'Bagværk'
 RETURNING name, price;
 ```
+
+> [!RAYMOND:reading] Læs rækkerne fra din ændring
+>
+> Ved `INSERT` og `UPDATE` ser du de nye værdier; ved `DELETE` ser du værdierne fra de fjernede rækker. Resultatets kolonner er din kontrakt til C#-koden, så vælg dem bevidst.
 
 ## DELETE … RETURNING
 
@@ -59,9 +67,13 @@ RETURNING id, name;
 
 ## Bro til ADO.NET / Dapper
 
-I C# kører du samme SQL og læser resultatsættet fra `RETURNING` — præcis som en `SELECT`. Det er standardmønsteret i jeres H1-API’er.
+Raymond lader C# læse resultatkolonnerne fra `RETURNING` med en reader eller en passende Dapper-metode. Der kan komme nul, én eller flere rækker; vælg en metode, der passer til den forventede mængde.
 
 | Undgå | Foretræk |
 |-------|----------|
 | `SELECT MAX(id)` efter insert | `RETURNING id` |
 | Gætte id-sekvens | lade databasen returnere værdien |
+
+> [!RAYMOND:skeptical] En kørsel uden resultatrækker
+>
+> Din `UPDATE ... RETURNING` kører uden fejl, men returnerer ingen rækker. Hvad kan det fortælle om dit `WHERE`? Forklar hvorfor »SQL kørte« ikke alene betyder, at det ønskede produkt blev ændret.

@@ -34,6 +34,12 @@ Kør `npm test` fra `web/` for at kontrollere den entydige beviskæde mod rigtig
 
 **Raymond Stonebraker Codd** er den gennemgående elefantprofessor: "Jeg er Professor Codd, men I kan kalde mig Raymond."
 
+Raymond er også underviser i alle 75 teorilektioner. Han præsenterer konkrete
+problemer, hjælper med misforståelser og beder eleven forudsige, afprøve og forklare.
+De 182 korte dialoger bruger hans eksisterende reaktioner og vises både ved læsning
+og på slides. [Skrivevejledningen](docs/raymond-i-teorien.md) beskriver stemme,
+Markdown-format og faglige krav til kommende lektioner.
+
 - En firetrins rundvisning åbnes fra forsiden, Raymonds hjælp eller elevprofilen. Velkomstinvitationen huskes i denne browser.
 - Raymond-knappen følger siderne med en AI-samtale samt emneforklaringer, eksempler, refleksionsspørgsmål og links til PostgreSQLs dokumentation.
 - Alle SQL-opgaver og GameHub-projekter har tre gradvise hints under **Guide** i det flydende Raymond-panel.

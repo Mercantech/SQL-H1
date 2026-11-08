@@ -20,7 +20,11 @@ sandbox:
 
 # NULL — tre-værdi-logik
 
-I SQL er **`NULL`** “ukendt / mangler” — ikke det samme som `0`, `''` eller `false`. Sammenligninger med `NULL` giver hverken sand eller falsk, men **ukendt**.
+Raymond finder en kunde uden e-mail og en ordre uden registreret kunde. Begge bruger **`NULL`**, men betydningen kommer fra modellen: ikke oplyst e-mail eller walk-in-ordre. NULL er ikke det samme som `0`, `''` eller `false`; almindelige sammenligninger med NULL giver **ukendt**.
+
+> [!RAYMOND:curious] Ukendt er ikke det samme som forkert
+>
+> Hvis jeg ikke kender en e-mail, kan jeg så afgøre, om den er forskellig fra `anna@example.com`? WHERE beholder kun sande betingelser, så både falsk og ukendt bliver sorteret fra.
 
 ## IS NULL / IS NOT NULL
 
@@ -68,18 +72,20 @@ SELECT
   name,
   price,
   quantity,
-  price / NULLIF(quantity, 0) AS pris_pr_stk_paa_ordre
+  (o.quantity * p.price) / NULLIF(o.quantity, 0) AS beregnet_stykpris
 FROM products p
 JOIN orders o ON o.product_id = p.id
 LIMIT 5;
 ```
+
+Her beregner Raymond en stykpris ud fra linjebeløb divideret med antal. `products.price` er allerede caféens stykpris, så regnestykket er kun en demonstration af NULLIF. Hvis antal er 0, bliver nævneren NULL, og resultatet bliver NULL frem for en divisionsfejl. Det erstatter ikke en regel om gyldigt antal.
 
 ## IS DISTINCT FROM
 
 Sammenlign inkl. NULL-sikkert:
 
 ```sql
--- true hvis værdierne er forskellige (NULL tæller med)
+-- Tæl rækker med en pris forskellig fra 28.00 (også en eventuel NULL-pris)
 SELECT COUNT(*) AS ændret
 FROM products
 WHERE price IS DISTINCT FROM 28.00;
@@ -93,6 +99,10 @@ SELECT * FROM customers WHERE city = 'Viborg' OR email IS NULL;
 ```
 
 En række, hvor betingelsen er **ukendt**, filtreres fra — derfor skal du eksplicit håndtere NULL, når kolonnen kan mangle.
+
+> [!RAYMOND:skeptical] Har vi erstattet værdien eller forstået den?
+>
+> COALESCE gør en manglende værdi læselig, mens IS NULL undersøger, om den mangler. Forklar, hvorfor teksten `(ingen e-mail)` i en rapport ikke er dokumentation for, at en kunde faktisk har oplyst en e-mail.
 
 ## Café-tip
 

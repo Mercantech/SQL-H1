@@ -46,7 +46,11 @@ db.profiles.find({ region: "EU", rating: { $gte: 1200 } })
   .explain("executionStats");
 ```
 
-Undersøg planen og antal undersøgte dokumenter. Et indeks koster lagerplads og arbejde ved skrivning. Det er hverken en garanti for bedste plan eller en gratis turbo på alle forespørgsler.
+Raymond vil vide, om indekset sparer arbejde, ikke blot om det findes. Undersøg planen og antal undersøgte dokumenter. Et indeks koster lagerplads og arbejde ved skrivning; kontrollér, om den konkrete forespørgsel faktisk får gavn af det.
+
+> [!RAYMOND:question] Filter eller felter?
+>
+> Hvis `rating` kun står i projektionen, er spillere med lav rating så sorteret fra? Peg på **filteret**, **projektionen** og **sorteringen** i `find`-kaldet, og forudsig hvilke felter de matchende dokumenter afleverer.
 
 ## PostgreSQL kan også gemme dokumenter
 
@@ -63,7 +67,7 @@ WHERE profile ->> 'region' = 'EU'
 ORDER BY handle;
 ```
 
-`->` giver en JSONB-værdi; `->>` giver tekst. Derfor caster vi rating til et tal, før det sammenlignes numerisk. Et manglende felt giver SQL `NULL` ved disse opslag.
+Raymond oversætter samme spørgsmål til PostgreSQL. `->` giver en JSONB-værdi; `->>` giver tekst, så rating castes til et tal før den numeriske sammenligning. Et manglende felt giver SQL `NULL` ved disse opslag. Det er stadig PostgreSQLs SQL- og typeregler, der styrer denne udgave.
 
 ```sql
 SELECT profile #>> '{settings,theme}' AS theme
@@ -80,5 +84,9 @@ WHERE profile @> '{"games":[{"slug":"rocket"}]}'::jsonb;
 ## Din næste mission
 
 Gennemfør først [JSONB-broen](/learn/documents-ex-01). Fortsæt derefter med [MongoDB-labben](/learn/documents-project-01), hvor du bruger en rigtig dokumentdatabase. De to øvelser supplerer hinanden; JSONB-opgaven alene dækker ikke arbejdet med MongoDB.
+
+> [!RAYMOND:testing] Vis samme spørgsmål i to motorer
+>
+> Find EU-profiler med mindst 1.200 rating i **mongosh** og med **SQL mod JSONB**. Sammenlign identiteter, filter og valgte felter. Forklar, hvorfor JSONB er en datatype i PostgreSQL og ikke gør SQL-editoren til en MongoDB-terminal.
 
 Kilder: [MongoDB CRUD](https://www.mongodb.com/docs/manual/crud/), [MongoDB-indeks](https://www.mongodb.com/docs/manual/indexes/) og [PostgreSQL JSONB](https://www.postgresql.org/docs/16/datatype-json.html).

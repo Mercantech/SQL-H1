@@ -26,7 +26,9 @@ Eksisterende PostgreSQL-skema → EF-scaffolding → entiteter og DbContext → 
 
 [GameHub-laboratoriet](/downloads/orm-lab.zip) har en separat database, `gamehub_legacy`. Åbn `database/init.sql`. Find tabellerne `tournament` og `registration`, FK'en og unikheden på turnering + spillertag.
 
-**Forudsig før generation:** Hvilke C#-klasser vil du forvente? Hvilke egenskaber må være `null`? Hvilken navigation vil forbinde en tilmelding med en turnering?
+> [!RAYMOND:question] Forudsig før generation
+>
+> Læs `init.sql`, før værktøjet giver dig et svar. Hvilke **C#-klasser** forventer du? Hvilke egenskaber må være `null`, og hvilken navigation forbinder en tilmelding med en turnering? Underbyg hvert bud med skemaet.
 
 ## Lad databasen tegne første udkast
 
@@ -43,7 +45,7 @@ Find nu `Tournament`, `Registration` og `LegacyContext`. Sammenlign de generered
 
 ## Hvad kan EF ikke læse i dine tanker?
 
-Skemaet kan vise kolonner, nøgler, nullability og relationer. Det indeholder ikke nødvendigvis din applikations workflow, brugergrænseflade eller alle forretningsregler. Scaffolding er et startpunkt, som du skal gennemgå. Ikke alle databasespecifikke regler kan repræsenteres som modelkonfiguration.
+Raymond har fået strukturen tilbage, men ikke hele det gamle program. Skemaet kan vise kolonner, nøgler, nullability og relationer; det forklarer ikke nødvendigvis workflow, brugergrænseflade eller alle forretningsregler. Han gennemgår derfor den genererede model og skriver de manglende domænebeslutninger ned. Ikke alle databasespecifikke regler kan repræsenteres som modelkonfiguration.
 
 **Makkercheck:** Kan en `CHECK (max_players > 0)` fortælle, at holdkaptajnen skal godkende en spiller før tilmelding? Hvilken regel bor hvor?
 
@@ -79,5 +81,9 @@ Gennemse diffen. På et senere projekt kan man vælge at skifte til migrationsst
 |---|---|---|
 | Code-first i labben | C#-model og mapping | Migration og databaseopdatering |
 | Database-first i labben | Eksisterende databaseskema | Ny scaffolding og gennemgang af kode |
+
+> [!RAYMOND:testing] Hvad overlever næste generation?
+>
+> Vis `Platform` i databasen og i den genererede model, og vis derefter `DisplayName` i din egen **partial-fil**. Forklar, hvorfor regenerering må overskrive den første fil, men ikke bør koste din udvidelse eller eksisterende rækker. Hvilken kilde starter næste skemaændring i denne lab?
 
 **Målpind:** #20. Afprøv hele forløbet i [legacy-projektet](/learn/orm-project-02). Den officielle beskrivelse af muligheder og begrænsninger findes i [EF Core-scaffolding](https://learn.microsoft.com/en-us/ef/core/managing-schemas/scaffolding/).

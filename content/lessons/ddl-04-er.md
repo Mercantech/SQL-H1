@@ -27,7 +27,11 @@ sandbox:
 
 # E/R — dokumentér dit skema
 
-**E/R** (*Entity-Relationship*) er tegningen af din database: **hvad** findes, og **hvordan** hænger det sammen. SQL er implementeringen; E/R er kortet I designer efter (eller dokumenterer med).
+Raymond skal forklare caféens database til en ny kollega. I stedet for at læse alle `CREATE TABLE`-sætninger højt tegner han et **E/R-diagram**: hvilke entiteter der findes, og hvordan nøgler forbinder dem. Nu skal tegningen og den faktiske database fortælle samme historie.
+
+> [!RAYMOND:foreign-key] Hvor hører walk-in-kunden til?
+>
+> En ordre kan være uden navngiven kunde, men skal have et produkt. Hvordan vil du vise forskellen på **valgfri** og **påkrævet** reference? Brug både diagrammet og kolonnernes nullability i din forklaring.
 
 ## Caféen som E/R
 
@@ -41,7 +45,7 @@ customers (1) ──< (n) orders (n) >── (1) products
 | Produkt | `products` | `id` PK |
 | Ordre | `orders` | `id` PK, FK til begge |
 
-Kardinalitet: én kunde har mange ordrer; én ordre pejer på ét produkt (MVP). Walk-in: `orders.customer_id` må være `NULL`.
+Kardinalitet i undervisningsmodellen: én kunde kan have nul eller flere ordrer; én ordre peger på præcis ét produkt. Walk-in betyder, at `orders.customer_id` må være `NULL`, så ordren kan være uden en kundereference.
 
 ## Fra E/R til DDL
 
@@ -77,6 +81,10 @@ WHERE tc.constraint_type = 'FOREIGN KEY'
 ORDER BY barn, fk_kolonne;
 ```
 
+> [!RAYMOND:reading] Tegningen skal kunne efterprøves
+>
+> Find én forbindelse i dit diagram, og peg på den FK, der håndhæver den. Metadataforespørgslen her er en enkel oversigt til caféens navngivne, enkolonne-relationer; komplekse sammensatte nøgler kræver en mere detaljeret sammenkobling.
+
 ## Mini-designøvelse (café-udvidelse)
 
 Tegn (på papir eller i tekst) og implementér gerne:
@@ -91,7 +99,7 @@ Krav:
 - `categories(id, name)` med `UNIQUE(name)`
 - `products` får `supplier_id` og/eller `category_id` (FK)
 
-Når det virker: tjek **Database**-diagrammet og metadata-forespørgslen ovenfor.
+Når det virker, lader Raymond dig sammenligne din håndtegnede model, `CREATE TABLE`/`ALTER TABLE` og **Database**-oversigten. En uenighed mellem dem er et konkret sted at undersøge.
 
 ## Hvorfor det betyder noget i projektet
 
@@ -122,3 +130,7 @@ I behøver ikke tegne perfekt UML — men pil/kardinalitet skal være entydig.
 1. Tegn caféen med kardinalitet.  
 2. Udvid med `suppliers` og opdatér **Database**-siden.  
 3. Kør FK-metadata-forespørgslen og match den til tegningen.
+
+> [!RAYMOND:idea-notes] Lad en anden læse modellen
+>
+> Giv en makker dit diagram uden at forklare det først. Kan de finde primærnøglen, mange-siden og en valgfri reference? Ret de steder, hvor tegningen kræver, at læseren gætter.

@@ -21,7 +21,11 @@ sandbox:
 
 # Views til sikkerhed og forenkling
 
-I en rigtig app må kassen **ikke** se kundernes e-mails, og en rapportbruger behøver ikke `in_stock`-flaget. Views er et klassisk lag mellem **rå tabeller** og **hvem der må se hvad**.
+Raymond får et konkret krav fra caféen: menuskærmen skal kun vise varer på lager og behøver ingen kundeoplysninger. Et view kan afgrænse de rækker og kolonner, skærmen læser. For at gøre afgrænsningen til adgangskontrol skal rettighederne også passe.
+
+> [!RAYMOND:safe-lock] Hvad behøver skærmen at vide?
+>
+> Vælg de nødvendige felter til en offentlig menu. Hvilke felter udelader du, og hvorfor? Et lille, tydeligt resultat er lettere at begrunde end at give klienten alle kolonner for en sikkerheds skyld.
 
 ## Skjul kolonner
 
@@ -50,7 +54,7 @@ WHERE city = 'Viborg';
 | | View | Tabel / materialiseret data |
 |--|------|------------------------------|
 | Lagring | Kun definitionen (`SELECT`) | Rækker på disk |
-| Opdatering | Ser altid nyeste data | Skal synkroniseres |
+| Opdatering | Beregnes fra data, der er synlige for forespørgslens snapshot | En separat materialiseret kopi kan kræve synkronisering |
 | Performance | Kører underliggende SQL hver gang | Kan være hurtigere (trade-off) |
 
 Postgres har også **materialized views** (`CREATE MATERIALIZED VIEW` + `REFRESH`) — nyttigt til tunge rapporter. Til H1 er almindelige views nok.
@@ -73,7 +77,11 @@ FROM information_schema.views
 WHERE table_schema = 'public';
 ```
 
-## Security barrier (idéen)
+> [!RAYMOND:skeptical] Kan rollen gå uden om vinduet?
+>
+> Hvis samme rolle stadig kan læse `customers` direkte, beskytter et view uden e-mail ikke i sig selv e-mailkolonnen. Undersøg både viewet og andre adgangsveje. En ejerrolle i øvelsen er ikke bevis for, hvad en begrænset app-rolle må.
+
+## Rettighederne er afgørende
 
 I streng opsætning:
 
@@ -81,9 +89,9 @@ I streng opsætning:
 2. App-rollen har `SELECT` på udvalgte views  
 3. Views eksponerer kun tilladte kolonner/rækker  
 
-Så kan en SQL-injection i værste fald kun læse det, view’et tillader — ikke hele skemaet.
+En korrekt begrænset rolle kan reducere, hvilke data en sårbar forespørgsel kan nå. Det gør ikke SQL injection ufarlig: andre rettigheder, kald af funktioner og adgang gennem API’et skal stadig undersøges, og værdier skal fortsat sendes som parametre.
 
-I SQL-H1 er I ejer af DB’en (til læring). I projektet: tænk least privilege fra starten.
+I SQL-H1 ejer du dine egne objekter og kan undersøge viewets resultat. En reel rettighedstest kræver en anden, begrænset rolle, eksempelvis i [sikkerhedslabben](/learn/security-project-01). Et almindeligt view kontrollerer normalt basistabellernes rettigheder med viewejerens rettigheder; indstillingen `security_invoker` ændrer dette. Vælg opsætningen bevidst.
 
 ## Column-level vs. view
 
@@ -99,3 +107,7 @@ Til H1-projekter anbefales **views som læse-API** + Dapper `QueryAsync` mod vie
 1. Opret `v_public_products` uden `in_stock`.  
 2. Opret `v_viborg_customers` uden e-mail.  
 3. Forklar hvilken “rolle” der må bruge hvilket view.
+
+> [!RAYMOND:question] Adskil resultat og adgang
+>
+> Vis først, at dit view kun returnerer de ønskede oplysninger. Beskriv derefter, hvilken rolle du ville afprøve med, og hvad et direkte opslag i basistabellen skal gøre. Det er to forskellige kontroller.

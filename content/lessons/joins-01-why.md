@@ -16,13 +16,17 @@ sandbox:
 
 # Hvorfor JOIN?
 
-Café-databasen er **normaliseret**: ordrer gemmer `customer_id` og `product_id` — ikke kundens navn eller produktets pris.
+Raymond skal læse en ordre højt: Hvem købte hvad? Caféen gemmer kunder og produkter i hver sin tabel, og `orders` henviser til dem med `customer_id` og `product_id`. Derfor er én ordretabel ikke nok til hele sætningen.
 
 ```sql
 SELECT * FROM orders LIMIT 5;
 ```
 
 Du ser tal, ikke “Anna købte Espresso”.
+
+> [!RAYMOND:foreign-key] Tallene er henvisninger
+>
+> Kunde-id 1 og produkt-id 1 er ikke samme slags ting, selvom begge er tallet 1. Peg på, hvilken tabel hvert id henviser til, før du slår navnene op.
 
 ## Den dårlige idé: mange SELECT
 
@@ -31,11 +35,11 @@ SELECT name FROM customers WHERE id = 1;
 SELECT name FROM products WHERE id = 1;
 ```
 
-Det skalerer ikke. I stedet **kobler** du tabellerne i én forespørgsel med `JOIN`.
+Raymond vil undgå at hente et navn i et nyt databasekald for hver eneste ordre. Med JOIN beskriver vi sammenhængen i én forespørgsel og lader databasen kombinere oplysningerne.
 
 ## Se nøglerne i aktion
 
-Klik rundt i diagrammet: hver streg er et match på `customer_id`. Clara har ingen ordrer, og der findes walk-in-ordrer med `customer_id NULL` — det giver huller på **begge** sider ved FULL JOIN.
+Klik rundt i diagrammet: hver streg er et match på `customer_id`. Clara har ingen ordrer, og der findes walk-in-ordrer med `customer_id NULL`. Diagrammet bruger et lille demonstrationsdatasæt; SQL-editoren bruger caféens større seed. Begge viser, hvorfor manglende matches betyder noget.
 
 ```join-viz
 match
@@ -48,5 +52,9 @@ match
 | `customers` | `id` | — |
 | `products` | `id` | — |
 | `orders` | `id` | `customer_id` → customers (kan være `NULL`), `product_id` → products |
+
+> [!RAYMOND:question] Hvilke rækker må vi miste?
+>
+> Skal rapporten også vise kunder uden ordrer og ordrer uden en registreret kunde? Gem spørgsmålet: JOIN-typen afgør, om de rækker overlever i resultatet.
 
 Næste lektion: `INNER JOIN` — kun de rækker, hvor nøglerne matcher.

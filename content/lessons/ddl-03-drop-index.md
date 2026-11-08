@@ -18,6 +18,12 @@ sandbox:
 
 # DROP, indeks og performance-hint
 
+Raymond har en tom hjælpetabel, der kan fjernes, og en voksende ordreliste, der skal undersøges. Det er to forskellige opgaver: **DROP fjerner struktur**, mens et **indeks** kan ændre, hvordan databasen finder rækker. Ingen af delene bør vælges på gæt.
+
+> [!RAYMOND:warning] Hvad følger med ud?
+>
+> Hvis en anden tabel har en FK til `suppliers`, kan `DROP TABLE ... CASCADE` fjerne den afhængige constraint. Det betyder ikke, at hele den anden tabel også slettes. Undersøg afhængighederne, før du accepterer konsekvensen.
+
 ## DROP — fjern struktur
 
 ```sql
@@ -31,7 +37,7 @@ DROP TABLE IF EXISTS suppliers CASCADE;
 | `... CASCADE` | Fjerner også afhængige objekter (FX FK, views) |
 | `... RESTRICT` | Fejler hvis noget afhænger af tabellen (default i Postgres for mange tilfælde) |
 
-**Pas på `CASCADE`:** det kan fjerne mere, end du tror. I din elev-DB er det “bare øv” — i produktion er det kritisk.
+**Undersøg `CASCADE`:** skriv ned, hvilke afhængige objekter der må forsvinde. Elevdatabasen er et sted at øve sig, men dine egne ændringer og indtastede data kan stadig gå tabt.
 
 Du kan også:
 
@@ -49,12 +55,12 @@ CREATE INDEX ix_orders_customer ON orders (customer_id);
 CREATE INDEX ix_products_category ON products (category);
 ```
 
-Unikt indeks (svarer til `UNIQUE`-constraint):
+Et unikt indeks håndhæver unikhed for de rækker, det omfatter. Her er det desuden **partielt**, fordi det kun medtager udfyldte e-mails:
 
 ```sql
 CREATE UNIQUE INDEX ux_customers_email
   ON customers (email)
-  WHERE email IS NOT NULL;  -- partial index: flere NULL tilladt
+  WHERE email IS NOT NULL;  -- partial index: kun udfyldte e-mails
 ```
 
 ## EXPLAIN — se planen
@@ -74,18 +80,22 @@ GROUP BY c.name;
 
 `EXPLAIN` viser planen. `EXPLAIN ANALYZE` **kører** forespørgslen og viser faktiske tider — brugbart, men dyrere.
 
+> [!RAYMOND:performance] Hurtigere for hvilken forespørgsel?
+>
+> Et indeks koster plads og arbejde ved skrivning. Før du opretter det, så peg på det opslag eller den FK-kontrol, du vil hjælpe. Sammenlign planen med samme data og samme forespørgsel bagefter.
+
 ## Tommelfingerregler
 
-- Indeks på **FK-kolonner** (`orders.customer_id`, `orders.product_id`) — næsten altid godt
-- Indeks på kolonner I ofte filtrerer på (`WHERE`, `JOIN`)
+- Overvej indeks på **FK-kolonner**, når opslag eller ændringer på den refererede tabel ellers skal undersøge mange barn-rækker
+- Vurdér ofte brugte `WHERE`- og `JOIN`-kolonner sammen med datamængde og hvor stor en del af tabellen forespørgslen henter
 - For mange indeks = langsommere `INSERT`/`UPDATE` (hver skrivning opdaterer indeks)
 
 ## Hvilke indeks betaler sig?
 
 | Situation | Indeks? |
 |-----------|---------|
-| FK-kolonne (`orders.customer_id`) | næsten altid |
-| `WHERE` / `JOIN` på samme kolonne ofte | ja |
+| FK-kolonne (`orders.customer_id`) | undersøg opslag og referentiel kontrol på realistiske data |
+| `WHERE` / `JOIN` på samme kolonne ofte | en kandidat, som skal vurderes med planen |
 | Kolonne der næsten aldrig filtreres | nej (skriv-omkostning) |
 | Lav kardinalitet alene (`boolean`) | ofte svagt alene; kombinér evt. |
 
@@ -98,7 +108,7 @@ CREATE INDEX IF NOT EXISTS ix_products_cat_active
   WHERE in_stock = TRUE;
 ```
 
-Partial indexes er mindre og hurtigere, når filteret matcher.
+Et partielt indeks omfatter færre rækker, men hjælper kun relevante forespørgsler, hvor planneren kan bruge betingelsen. Raymond vil se planen og målingen, før han kalder løsningen hurtigere.
 
 ## EXPLAIN-læsning (minimum)
 
@@ -108,7 +118,7 @@ Partial indexes er mindre og hurtigere, når filteret matcher.
 | `Index Scan` / `Bitmap …` | brug indeks |
 | `Nested Loop` / `Hash Join` | JOIN-strategi |
 
-På små café-tabeller vælger planneren ofte seq scan — det er OK. Målet er at **kunne læse** planen, ikke at “tvinge indeks” blindly.
+På små café-tabeller vælger planneren ofte seq scan — det er OK. Målet er at **kunne læse** planen og begrunde valget ud fra målinger.
 
 ## Prøv selv
 
@@ -116,3 +126,7 @@ På små café-tabeller vælger planneren ofte seq scan — det er OK. Målet er
 2. Kør `EXPLAIN` før/efter (efter `DROP INDEX` og opret igen).
 3. Opret en midlertidig tabel, fyld den, drop den igen.
 4. Sammenlign `EXPLAIN` på `WHERE customer_id = 1` med og uden indeks.
+
+> [!RAYMOND:skeptical] Seq Scan er ikke automatisk en fejl
+>
+> På caféens lille tabel kan en sekventiel læsning være billigst. Forklar, hvorfor dit indeks godt kan være oprettet korrekt uden at blive brugt. Hvilken større datamængde eller anden forespørgsel ville være relevant at undersøge?

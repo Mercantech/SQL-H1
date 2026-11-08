@@ -20,11 +20,15 @@ sandbox:
 
 # Designmønstre til databaser
 
-Normalisering siger *hvor data hører hjemme*. **Designmønstre** er genbrugelige måder at bygge skemaet på — som “opskrifter”, du genkender i næsten alle forretningssystemer.
+Raymond lægger forskellige skitser på bordet: en lookup-tabel, en koblingstabel og en historisk pris på en ordrelinje. **Designmønstre** er genbrugelige løsninger på bestemte behov. Du skal kunne vælge og begrunde et mønster, ikke presse alle tabeller ned i samme opskrift.
+
+> [!RAYMOND:idea-notes] Start med behovet
+>
+> Kategorien skal have fælles stavning, og ordren skal huske købets pris. Det er to forskellige problemer. Hvilket mønster nedenfor adresserer hvert af dem, og hvilken regel vil du kunne teste bagefter?
 
 ## 1) Surrogatnøgle (`id`)
 
-**Mønster:** Hver tabel får et teknisk `SERIAL`/`IDENTITY`-id som PK.
+**Mønster:** En entitet får et teknisk SERIAL-/IDENTITY-id som PK. Det er et valg; koblingstabeller kan også have en passende sammensat nøgle.
 
 ```sql
 SELECT id, name FROM customers ORDER BY id LIMIT 5;
@@ -35,7 +39,7 @@ SELECT id, name FROM customers ORDER BY id LIMIT 5;
 | Stabilt, kort, nemt i FK | siger intet forretningsmæssigt |
 | Undgår sammensatte nøgler overalt | kan skjule naturlige unikheder (brug `UNIQUE` ekstra) |
 
-Caféen bruger surrogater overalt — standard i .NET/Postgres-apps.
+Caféen bruger surrogater i alle tre tabeller. Raymond undersøger stadig de naturlige unikheder, fordi et nyt id ikke forhindrer to forretningsmæssigt ens registreringer.
 
 ## 2) Lookup / reference-tabel
 
@@ -52,7 +56,7 @@ GROUP BY p.category
 ORDER BY p.category;
 ```
 
-Når systemet vokser: løft `category` til lookup (3NF + konsistens).
+En categories-tabel giver fælles identitet, FK-kontrol og plads til kategoriens egne attributter. Det er ikke kategoriteksten alene, der afgør, om products overholder 3NF.
 
 ## 3) Koblingstabel til n:n
 
@@ -69,7 +73,7 @@ orders (hoved) 1──< order_lines >── products
 | `orders` | hvem, hvornår, status |
 | `order_lines` | produkt, antal, linjepris |
 
-Vores MVP har “flatet” linjen ind i `orders` — godt til læring; i produktion splitter man ofte hoved + linjer.
+Undervisningsmodellen samler købet i én orders-række pr. produktlinje. Et system med flere produkter på samme ordre har ofte et separat ordrehoved og tilhørende linjer.
 
 ```sql
 -- n:n via orders: hvilke produkter har Anna købt?
@@ -105,7 +109,7 @@ JOIN customers b ON a.city = b.city AND a.id < b.id
 ORDER BY a.city, a.name;
 ```
 
-Ægte org-hierarkier, kategoritræer (`parent_id`) og mappe-strukturer følger samme idé.
+Et hierarki kræver en faktisk parent-/manager-henvisning. Self-join-eksemplet ovenfor finder blot par i samme by; det viser to aliaser, men **ikke** en model med forældre og børn.
 
 ## 6) Soft delete
 
@@ -118,7 +122,11 @@ FROM products
 WHERE in_stock = FALSE;
 ```
 
-`in_stock` er et lille søskende til soft delete: historik og FK overlever. Kombineres ofte med `ON DELETE RESTRICT`.
+`in_stock` angiver lagerstatus, **ikke** om en række er slettet eller arkiveret. SELECT-eksemplet ændrer intet. Et egentligt soft-delete-design skal også definere, hvilke forespørgsler der skjuler slettede rækker, og hvordan unikhed og relationer håndteres.
+
+> [!RAYMOND:skeptical] Udsolgt er ikke det samme som slettet
+>
+> En udsolgt vare kan komme på lager igen og stadig være synlig i gamle ordrer. Hvis vi senere tilføjer deleted_at, hvilke to forskellige spørgsmål besvarer de to felter så?
 
 ## 7) Audit-kolonner
 
@@ -130,11 +138,11 @@ FROM customers
 ORDER BY created_at, id;
 ```
 
-Gør support, debugging og GDPR-sporbarhed lettere. I API’er sættes de ofte i applikationslaget eller via triggers.
+De hjælper med support og fejlsøgning, når betydning, adgang og opbevaring er planlagt. Audit-kolonner alene dokumenterer ikke alle ændringer. De kan sættes i applikationslaget eller via triggers.
 
 ## 8) Historisk pris på linjen (snapshot)
 
-**Trade-off fra normalisering:**
+**Skeln mellem to forskellige priser:**
 
 - **Kun `products.price`:** prisændring ændrer “historikken” semantisk, hvis du joiner bagud.
 - **Snapshot:** `orders.unit_price` gemmer prisen *på købstidspunktet*.
@@ -151,7 +159,7 @@ ORDER BY o.id
 LIMIT 8;
 ```
 
-I et rigtigt kassesystem: gem **linjepris** på ordren (bevidst denormalisering / snapshot-mønster).
+Et kassesystem skal normalt kunne dokumentere den aftalte stykpris ved købet. Den er en oplysning om købet og behøver ikke være en kopi af produktets pris **nu**. Raymond kalder den derfor en historisk kendsgerning; den er ikke automatisk denormalisering.
 
 ## 9) Stjerne vs. snefnug (analytisk — kendskab)
 
@@ -173,7 +181,7 @@ FROM orders
 WHERE customer_id IS NULL;
 ```
 
-Matcher `ON DELETE SET NULL` og anonymisering — du så det i DML-cascading-lektionen.
+`ON DELETE SET NULL` kan bevare ordren, når kundereferencen fjernes, som i DML-cascading-lektionen. En tom kundereference er dog ikke i sig selv en fuld anonymisering; undersøg også, om andre data stadig kan identificere personen.
 
 ## Sådan vælger du mønster
 
@@ -193,7 +201,7 @@ Matcher `ON DELETE SET NULL` og anonymisering — du så det i DML-cascading-lek
 | `id`-kolonner | Surrogat-PK |
 | `orders` mellem kunde og produkt | Kobling / faktalinje |
 | `category` tekst | Lookup-kandidat |
-| `in_stock` | Status / soft-udfasing |
+| `in_stock` | Lagerstatus, ikke soft delete |
 | `created_at` | Audit |
 | `customer_id NULL` | Valgfri FK / walk-in |
 
@@ -214,13 +222,17 @@ Når API’en skal fortælle andre systemer om en ændring, gemmes begivenheden 
 
 | Anti-mønster | Hvorfor skidt |
 |--------------|---------------|
-| Én “godtabel” med 80 kolonner | umulig at forstå, mange NULL |
-| Array/CSV i en celle i stedet for barn-tabel | bryder 1NF, umulig FK |
+| Én tabel med blandede, uafhængige entiteter | uklare afhængigheder og vanskelige ændringer |
+| Ordre-id’er som CSV/array i stedet for den nødvendige barn-tabel | hver henvisning får ikke en almindelig FK-kontrol |
 | Slette PK/FK “for at det skal være nemt” | mister integritet |
-| Gemme JSON *i stedet for* tabeller til kernedata | svært at joine og constrainte |
-| Skifte naturlige nøgler ofte | knækker historik og FK |
+| Gemme en vilkårlig objektgraf i JSON uden begrundede regler | centrale relationer og integritetskrav kan blive vanskelige at håndhæve |
+| Vælge en ofte skiftende nøgle uden opdateringsstrategi | flere referencer skal opdateres korrekt |
 
-JSON/JSONB i Postgres er fint til **fleksible** attributter — ikke som erstatning for kerne-entiteter.
+PostgreSQL understøtter arrays og JSONB som rigtige datatyper. Vælg dem efter adgangsmønstre og regler; de fritager ikke modellen for designarbejde. For caféens centrale kunde-, produkt- og købsforbindelser bruger vi almindelige tabeller og FK’er.
+
+> [!RAYMOND:question] Hvad er mønstrets pris?
+>
+> Vælg ét mønster, og forklar både hvilket problem det løser, og hvilket nyt ansvar det giver. En cache skal fx holdes ajour, mens et historisk snapshot netop skal bevare den gamle oplysning.
 
 ## Prøv selv
 
@@ -229,4 +241,6 @@ JSON/JSONB i Postgres er fint til **fleksible** attributter — ikke som erstatn
 3. Argumentér: hvornår vil du gemme `unit_price` på ordren i stedet for kun at joine `products.price`?
 4. Peg på ét anti-mønster, I bevidst *ikke* vil bruge i H1-projektet.
 
-Du kan nu både **normalisere** og **genkende mønstre** — det er kernen i database-design.
+Raymonds afsluttende makkercheck: Kan din makker følge dit valg fra forretningskrav til skema og videre til en konkret kontrol? Så har du mere end blot et navn på et mønster.
+
+Læs videre om [arrays og deres anvendelse i PostgreSQL](https://www.postgresql.org/docs/16/arrays.html).

@@ -17,6 +17,8 @@ sandbox:
 
 # Query, Execute og parametre
 
+Raymond har tre handlinger i caféens API: list drikkevarer, find én vare, og ændr en pris. Før han vælger Dapper-metode, beskriver han, om svaret skal være en samling, ét objekt eller et antal ændrede rækker.
+
 ## Query med parametre
 
 ```csharp
@@ -43,6 +45,10 @@ if (product is null) { /* 404 */ }
 ```
 
 ## Execute (DML)
+
+> [!RAYMOND:skeptical] Ét produkt — er det en garanti?
+>
+> `QuerySingleOrDefaultAsync` giver `null` ved nul rækker og fejler ved mere end én. Den opretter ingen **UNIQUE-constraint**. Hvorfor skal databasen håndhæve entydighed, hvis applikationen bygger på den forventning?
 
 ```csharp
 var rows = await conn.ExecuteAsync(
@@ -84,7 +90,7 @@ ORDER BY name;
 | `QuerySingleAsync` | præcis én — ellers exception |
 | `QuerySingleOrDefaultAsync` | 0 eller 1 |
 
-Brug `Single` når PK-opslag *skal* være unikt.
+Vælg `Single`-varianterne, når koden skal opdage et brud på forventningen om højst eller præcis én række. En primærnøgle er allerede unik i databasen; metoden dokumenterer og kontrollerer, hvad applikationen forventer af resultatet.
 
 ## Dynamiske parametre
 
@@ -101,3 +107,7 @@ Nyttigt når I bygger WHERE dynamisk — stadig parametre, aldrig streng-konkat 
 1. Kør drikke-SQL’en.  
 2. Skitsér `GetByCategoryAsync` med Dapper.  
 3. Skitsér `UpdatePriceAsync` med `ExecuteAsync` + tjek `rows == 1`.
+
+> [!RAYMOND:testing] Hvordan ser “findes ikke” ud?
+>
+> Prøv et eksisterende og et opdigtet produktnavn i din lokale C#-kode. Vis forskellen på **`null` fra et opslag** og **`rows == 0` fra en UPDATE**. Beskriv, hvad API'en skal fortælle brugeren i hvert tilfælde.

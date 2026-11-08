@@ -22,7 +22,7 @@ sandbox:
 
 # DDL — fra data til struktur
 
-Indtil nu har du mest **læst** (`SELECT`) og **ændret rækker** (`INSERT`/`UPDATE`/`DELETE`). Nu bygger du selve **skelettet**: tabeller, kolonner, nøgler og indeks.
+Raymond mangler et sted at gemme caféens leverandører. Flere produktrækker løser ikke det problem; først skal der findes en passende tabel. Med **DDL** bygger du strukturen, som dine senere forespørgsler og ændringer skal arbejde med.
 
 Du har **din egen Postgres-database**. Du må gerne eksperimentere med DDL — brug **Nulstil database**, hvis noget går galt.
 
@@ -36,6 +36,10 @@ Du har **din egen Postgres-database**. Du må gerne eksperimentere med DDL — b
 | **DCL** | `GRANT`, `REVOKE` | **rettigheder** |
 
 Café-seed’en (`customers`, `products`, `orders`) er allerede DDL, der er kørt for dig. Nu skriver du den selv.
+
+> [!RAYMOND:idea-notes] Tegn leverandøren før du bygger
+>
+> Hvilke oplysninger beskriver én leverandør, og hvilken nøgle kan udpege den? Skriv tre kolonner på papir. Så kan du forklare formålet med hver kolonne, når du læser `CREATE TABLE`.
 
 ## CREATE TABLE
 
@@ -53,7 +57,7 @@ CREATE TABLE suppliers (
 |-----|-----------|
 | `SERIAL` | auto-increment heltal (surrogat-PK) |
 | `PRIMARY KEY` | unik identifikator for rækken |
-| `NOT NULL` | kolonnen må ikke være tom |
+| `NOT NULL` | værdien må ikke være `NULL`; tom tekst er stadig en værdi |
 | `DEFAULT` | værdi hvis du ikke angiver noget |
 | `TEXT` / `NUMERIC` / `BOOLEAN` / `DATE` | datatype |
 
@@ -86,7 +90,11 @@ CREATE TABLE IF NOT EXISTS suppliers (
 );
 ```
 
-Godt når du kører scripts flere gange — men i undervisning er det ofte klarere at **DROP** og oprette forfra, når du øver dig.
+Det kan gøre en oprettelse genkørbar, men det kontrollerer ikke, at den eksisterende tabel har den ønskede struktur. Raymond bruger `ALTER` til ændringer, der skal bevare data, og opretter kun forfra i en afgrænset øvelse, hvor data må kasseres.
+
+> [!RAYMOND:skeptical] Findes er ikke det samme som passer
+>
+> Startereksemplet har en enkel `suppliers`-tabel, mens det større eksempel også har `email`. Hvis tabellen allerede findes, tilføjer `IF NOT EXISTS` ikke det manglende felt. Sammenlign kolonnerne med din plan, før du fortsætter.
 
 ## Navngivning og schema
 
@@ -110,7 +118,7 @@ Når I `CREATE TABLE`, lover I API’en og hinanden en struktur. Ændringer sene
 | Fejl | Typisk årsag |
 |------|----------------|
 | `already exists` | tabel findes — `IF NOT EXISTS` eller `DROP` først |
-| `syntax error` | manglende komma/parentes i kolonneliisten |
+| `syntax error` | manglende komma/parentes i kolonnelisten |
 | `type … does not exist` | stavefejl i datatype |
 
 ## Prøv selv
@@ -121,3 +129,7 @@ Når I `CREATE TABLE`, lover I API’en og hinanden en struktur. Ændringer sene
 4. List alle basistabeller via `information_schema`.
 
 > Tip: Hold dig til små hjælpetabeller ved siden af caféen — eller nulstil, når du er færdig med eksperimentet.
+
+> [!RAYMOND:reading] Læs kontrakten tilbage
+>
+> Vis din tabel i Database-oversigten. Forklar, hvordan en række identificeres, hvilke værdier der kræves, og hvilke databasen selv udfylder. Kan en makker indsætte en gyldig leverandør ud fra din forklaring?

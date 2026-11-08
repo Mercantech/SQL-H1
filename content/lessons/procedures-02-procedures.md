@@ -25,7 +25,9 @@ sandbox:
 
 # PROCEDURE vs FUNCTION
 
-Postgres har både **funktioner** og **procedures** (siden Postgres 11). Til H1 er forskellen vigtigst sådan her:
+Raymond skal åbne caféen igen efter en udsolgt dag. Han vil markere et produkt som på lager og have handlingen kaldt tydeligt. Du hjælper ham med at vælge mellem en funktion og en procedure.
+
+Postgres har både **funktioner** og **procedures**. Raymond bruger især kaldemåden til at holde dem adskilt: en funktion kan indgå i en forespørgsel, mens en procedure kaldes med CALL.
 
 | | `FUNCTION` | `PROCEDURE` |
 |--|------------|-------------|
@@ -55,6 +57,10 @@ WHERE name = 'Chokoladebolle';
 
 ## Transaktioner i procedures
 
+> [!RAYMOND:question] Et kald er ikke bevis nok
+>
+> Hvilken række bør lagerkaldet ændre? Vælg et produkt, kontrollér det før kaldet, og læs det igen bagefter. Overvej også, hvad du kan se, hvis produktnavnet slet ikke findes.
+
 Procedures kan styre `COMMIT`/`ROLLBACK` i nogle scenarier (avanceret). I elev-sandboxen: hold det simpelt — én opgave pr. procedure.
 
 ## Hvor skal logikken bo?
@@ -65,7 +71,7 @@ Procedures kan styre `COMMIT`/`ROLLBACK` i nogle scenarier (avanceret). I elev-s
 | Genbrug på tværs af klienter | Orkestrering, validering af DTO |
 | Tæt på data (ét statement) | Kompleks domænelogik, tests i .NET |
 
-Tommelfinger: **constraints + enkelte triggers/funktioner** i DB; **applikationsflow** i API’et.
+Raymond placerer reglen dér, hvor den kan håndhæves og forklares. En FK hører til i databasen; et flow med HTTP, Auth og beskeder styres i API’et. En procedure er et muligt værktøj til afgrænset databehandling.
 
 ## DROP
 
@@ -92,3 +98,7 @@ I mange kodebaser lever det meste stadig som **FUNCTION** + app-orchestration. P
 1. Opret `restock_product` og `CALL` den på Chokoladebolle.  
 2. Verificér med `SELECT`.  
 3. Skriv tre linjer: hvad hører i DB vs. i C# i *jeres* projekt.
+
+> [!RAYMOND:idea-notes] Vælg et formål før et objekt
+>
+> Forklar, hvorfor lagerhandlingen passer til CALL, og giv et eksempel på en beregning, du hellere vil bruge i SELECT. Vis derefter, hvordan proceduren kan ændres og slettes med sin signatur.

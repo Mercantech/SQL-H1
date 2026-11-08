@@ -17,6 +17,8 @@ sandbox:
 
 # Command og DataReader
 
+Raymond vil vise caféens kunder fra Viborg i en C#-liste. Forespørgslen kender du allerede; nu skal hver kolonne oversættes til den rigtige .NET-type. Følg én række fra SQL-resultat til objekt, før du bygger resten af API'en.
+
 ## SELECT → DataReader
 
 ```csharp
@@ -63,6 +65,10 @@ ORDER BY name;
 
 ## INSERT med RETURNING (scalar)
 
+> [!RAYMOND:question] Hvilken form har svaret?
+>
+> Vælg metode til **en kundeliste**, **antal berørte rækker** og **ét nyt id**. Begrund valget ud fra resultatets form. Et `INSERT … RETURNING id` er stadig en skrivning, selv om du bruger `ExecuteScalarAsync` til at læse svaret.
+
 ```csharp
 await using var cmd = new NpgsqlCommand(
     """
@@ -78,11 +84,13 @@ var newId = (int)(await cmd.ExecuteScalarAsync())!;
 
 ## NULL fra reader
 
+Raymond tilføjer `email` til kundelisten. Linjen nedenfor er en separat skitse: den forudsætter, at du også tilføjer `email` som **fjerde kolonne** i SELECT-listen. Det første eksempel vælger kun tre kolonner og har derfor intet indeks 3.
+
 ```csharp
 string? email = reader.IsDBNull(3) ? null : reader.GetString(3);
 ```
 
-Samme tre-værdi-logik som i SQL — husk `IS NULL` / `COALESCE` når I designer forespørgslen.
+`IsDBNull` undersøger SQL-resultatets manglende værdi, som du her mapper til en nullable `string?` i C#. SQL's tre-værdi-logik gælder i forespørgslen; den bliver ikke automatisk til samme logik i dine C#-betingelser.
 
 ## Ordinal vs. navn
 
@@ -90,7 +98,7 @@ Samme tre-værdi-logik som i SQL — husk `IS NULL` / `COALESCE` når I designer
 var name = reader.GetString(reader.GetOrdinal("name"));
 ```
 
-Navne er mere robuste end hårde indeks, hvis `SELECT`-listen ændrer sig.
+Navne gør hensigten tydeligere og tåler ændret kolonnerækkefølge, men det valgte navn og datatypen skal stadig passe. Ved mange rækker kan du slå ordinalen op én gang før løkken og genbruge den.
 
 ## CommandTimeout
 
@@ -109,3 +117,7 @@ Undgå at hænge request-tråde på tunge queries — sæt timeout bevidst.
 1. Kør Viborg-SQL’en i SQL-H1.  
 2. Skriv C#-skitsen der mapper til `record Customer(int Id, string Name, string City)`.  
 3. Håndter `email` som nullable.
+
+> [!RAYMOND:testing] Følg den manglende e-mail
+>
+> Vis, hvor `email` vælges, hvor SQL `NULL` kontrolleres, og hvor resultatet bliver til `string?`. Hvad gør `ReadAsync`-løkken, hvis ingen kunder matcher byen? Forklar forskellen på **ingen rækker** og **en række med en NULL-kolonne**.

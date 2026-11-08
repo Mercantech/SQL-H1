@@ -1,4 +1,4 @@
-import { isValidElement, type ReactNode } from "react";
+import { Children, isValidElement, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
@@ -8,6 +8,8 @@ import yaml from "highlight.js/lib/languages/yaml";
 import type { PluggableList } from "unified";
 import { CodeBlock } from "./CodeBlock";
 import { JoinViz, parseJoinVizFence } from "./join/JoinViz";
+import { parseRaymondLessonHeader } from "../lib/raymondLesson";
+import { RaymondLessonNote } from "./raymond/RaymondLessonNote";
 
 type Props = {
   children: string;
@@ -65,6 +67,13 @@ export function Markdown({ children, onInsertCode, onRunCode, keepLeadingH1 }: P
       remarkPlugins={[remarkGfm]}
       rehypePlugins={rehypePlugins}
       components={{
+        blockquote: ({ children: quoteChildren }) => {
+          const nodes = Children.toArray(quoteChildren);
+          const headerIndex = nodes.findIndex((node) => isValidElement(node));
+          const header = headerIndex >= 0 ? parseRaymondLessonHeader(getText(nodes[headerIndex])) : null;
+          if (!header) return <blockquote>{quoteChildren}</blockquote>;
+          return <RaymondLessonNote {...header}>{nodes.slice(headerIndex + 1)}</RaymondLessonNote>;
+        },
         img: ({ src, alt }) => (
           <img src={src} alt={alt ?? ""} loading="lazy" decoding="async" className={src?.startsWith("/raymond/course/") ? "lesson-raymond" : undefined} />
         ),

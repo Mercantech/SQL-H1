@@ -15,7 +15,11 @@ sandbox:
 
 # Filtrering med WHERE
 
-`WHERE` begrænser hvilke **rækker** der kommer med.
+Raymond vil finde bestemte varer på caféens menu. `SELECT` vælger oplysningerne, mens `WHERE` afgør, hvilke **rækker** der må komme med. Beskriv først dit krav med ord, og oversæt det derefter til en betingelse.
+
+> [!RAYMOND:filter] Skal varen med på listen?
+>
+> Vi søger varer med `price > 30`. Forestil dig en vare til præcis 30 kr.: Kommer den med? En enkelt ændring fra `>` til `>=` ændrer vores grænse.
 
 ## Sammenligninger
 
@@ -43,6 +47,8 @@ FROM customers
 WHERE city = 'Viborg' OR city = 'Aarhus';
 ```
 
+Raymond læser `AND` som, at begge krav skal holde, og `OR` som, at mindst ét skal holde. Brug parenteser, når du blander dem, så din hensigt er tydelig. `AND` binder tættere end `OR`.
+
 ## IN, BETWEEN, LIKE
 
 ```sql
@@ -54,6 +60,8 @@ SELECT name FROM customers WHERE name LIKE 'A%';
 SELECT name FROM customers WHERE name LIKE '%sen';
 ```
 
+`BETWEEN 20 AND 40` tager begge endepunkter med. I `LIKE` betyder `%` nul eller flere tegn; det er derfor placeringen af tegnet ændrer søgningen.
+
 ## NULL
 
 `NULL` betyder “mangler værdi”. Brug aldrig `= NULL`:
@@ -62,6 +70,10 @@ SELECT name FROM customers WHERE name LIKE '%sen';
 SELECT name, email FROM customers WHERE email IS NULL;
 SELECT name, email FROM customers WHERE email IS NOT NULL;
 ```
+
+> [!RAYMOND:question] Hvad betyder en manglende e-mail?
+>
+> Når en e-mail er `NULL`, kender vi ikke en almindelig tekstværdi at sammenligne med. Derfor spørger vi `IS NULL`. Kan du forklare, hvorfor det ikke er det samme spørgsmål som, om e-mailen er en tom tekst?
 
 ## Prøv selv
 

@@ -27,11 +27,15 @@ sandbox:
 
 # Nøgler og relationer
 
-En **relation** i database-forstand er en tabel med rækker, der hænger sammen via **nøgler**. Uden nøgler er JOIN gætteri — med nøgler er det en kontrakt.
+Raymond tegner caféens tre tabeller og spørger, hvordan vi sikkert genkender en bestemt kunde. I den relationelle model betegner en **relation** grundlæggende et tabel-lignende sæt af rækker. En **relation mellem tabeller** er forbindelsen, vi her beskriver med nøgler. De to betydninger skal holdes adskilt.
+
+> [!RAYMOND:primary-key] To kunder kan hedde det samme
+>
+> Jeg får endnu en kunde ved navn Anna Jensen. Hvilken værdi skal en ordre gemme for stadig at pege på den rigtige Anna? Et navn er læsbart, men behøver hverken være unikt eller stabilt.
 
 ## Primærnøgle (PK)
 
-**Primærnøglen** unik identificerer én række i tabellen.
+**Primærnøglen** identificerer en række entydigt i tabellen.
 
 I café-databasen:
 
@@ -63,7 +67,7 @@ En **fremmednøgle** er en kolonne (eller flere), der **peger på** en PK (eller
 Det er det, der:
 
 - gør `JOIN … ON o.customer_id = c.id` meningsfuldt  
-- forhindrer “forældreløse” ordrer (medmindre kolonnen tillader `NULL`)
+- kræver, at en udfyldt fremmednøgle henviser til en eksisterende nøgle; en tilladt NULL-værdi betyder derimod, at henvisningen mangler
 
 ```sql
 SELECT o.id, c.name, p.name, o.quantity
@@ -73,6 +77,10 @@ JOIN products p ON p.id = o.product_id
 ORDER BY o.id;
 ```
 
+> [!RAYMOND:foreign-key] En valgfri forbindelse er stadig kontrolleret
+>
+> En walk-in-ordre kan have NULL som kunde-id, hvis kolonnen tillader det. Men et opdigtet, udfyldt kunde-id bliver ikke lovligt af den grund. Forklar forskellen på ingen henvisning og en ugyldig henvisning.
+
 ## Naturlig nøgle vs. surrogatnøgle
 
 | Type | Eksempel | Typisk brug |
@@ -80,7 +88,7 @@ ORDER BY o.id;
 | **Naturlig** | e-mail, CPR, ISBN | kommer fra forretningen |
 | **Surrogat** | `SERIAL` / `IDENTITY` `id` | teknisk, genereret af DB |
 
-Caféen (og de fleste .NET-apps) bruger **surrogater** som PK og lægger naturlige unikheder som `UNIQUE` oveni, når det er nødvendigt (fx unik e-mail).
+Caféen bruger **surrogater** som PK. Raymond behandler det som et designvalg: En teknisk nøgle løser identifikation, men forretningsmæssig unikhed kan stadig kræve en særskilt UNIQUE-regel, fx på en påkrævet e-mail.
 
 | Fordele ved surrogat | Ulemper |
 |----------------------|---------|
@@ -89,7 +97,7 @@ Caféen (og de fleste .NET-apps) bruger **surrogater** som PK og lægger naturli
 
 ## Kandidatnøgle og alternativ nøgle
 
-- **Kandidatnøgle:** ethvert minimalt unsæt kolonner, der unik identificerer rækken  
+- **Kandidatnøgle:** et minimalt sæt kolonner, der identificerer rækken entydigt
 - **Primærnøgle:** den kandidat I vælger som “den officielle”  
 - **Alternativ nøgle:** øvrige kandidater — ofte modelleret som `UNIQUE`
 
@@ -97,7 +105,7 @@ Eksempel: `customers.email` *kunne* være naturlig nøgle, men er valgfri (`NULL
 
 ## Sammensat nøgle
 
-Nogle gange er nøglen **flere kolonner** sammen, fx `(order_id, line_no)` på ordrelinjer. Café-MVP’en undgår det med ét `orders.id` pr. linje — enklere at lære, men mindre “ægte ordrehoved + linjer”.
+Nogle gange er nøglen **flere kolonner** sammen, fx `(order_id, line_no)` på ordrelinjer. Undervisningsmodellen bruger ét `orders.id` pr. linje. Den har endnu ikke et separat ordrehoved med flere linjer.
 
 ## Se relationen i data
 
@@ -132,6 +140,10 @@ På **Database**-siden ser du samme relationer som diagram.
 | `Order` | `Id` | `CustomerId`, `ProductId` |
 
 I ADO.NET/Dapper mapper I `customer_id` → `CustomerId`. Nøglerne er broen mellem SQL og objekter.
+
+> [!RAYMOND:question] Kan du pege begge veje?
+>
+> Find et ordre-id og følg dets kunde-id til kundens primærnøgle. Forklar, hvorfor kunden kan have flere ordrer, mens ét udfyldt customer_id på ordren kun peger på én kunde.
 
 ## Prøv selv
 

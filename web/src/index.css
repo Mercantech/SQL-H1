@@ -1431,14 +1431,11 @@ body.is-resizing-split .sql-result {
 }
 
 .md-code-actions {
-  position: absolute;
-  top: 0.4rem;
-  right: 0.45rem;
-  z-index: 2;
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 0.35rem;
-  padding: 0;
+  padding: 0.4rem 0.45rem 0;
   pointer-events: none;
 }
 

@@ -19,7 +19,11 @@ sandbox:
 
 # Vinduesfunktioner
 
-Aggregater med `GROUP BY` **slår rækker sammen**. Vinduesfunktioner beholder alle rækker og tilføjer en beregnet kolonne.
+Raymond vil rangere varerne inden for hver kategori og stadig kunne se hvert produkt. `GROUP BY` samler rækker til grupper. **Vinduesfunktioner** beregner på tværs af de valgte rækker uden at slå dem sammen.
+
+> [!RAYMOND:thinking] Hvor mange rækker forventer du?
+>
+> Vi har otte produkter i caféens udgangspunkt. Skal en nummerering inden for kategorier give otte produktrækker eller én række pr. kategori? Dit svar afgør, om du tænker i vinduer eller gruppering.
 
 ## ROW_NUMBER
 
@@ -48,7 +52,7 @@ FROM products
 ORDER BY price DESC;
 ```
 
-`RANK` springer over ved lighed; `DENSE_RANK` gør ikke.
+Ved samme sorteringsværdi giver begge samme rang. For priser med én delt førsteplads kan `RANK` give `1, 1, 3`, mens `DENSE_RANK` giver `1, 1, 2`. `ROW_NUMBER` giver derimod hver række sit eget nummer; ved lige priser kræves et ekstra sorteringskriterium, hvis valget skal være entydigt.
 
 ## Løbende sum
 
@@ -61,7 +65,11 @@ ORDER BY order_date, id;
 
 ## Tip
 
-Vinduesfunktioner er stadig **kun SELECT** — perfekt til rangerede lister uden at miste detaljer.
+Vinduesfunktionerne her beregner rapportværdier uden at ændre tabellens data. Sorteringen inde i `OVER` styrer beregningen; den afsluttende `ORDER BY` styrer, hvordan hele resultatet vises.
+
+> [!RAYMOND:question] Hvorfor skal filteret ligge udenom?
+>
+> Jeg skal først have en beregnet placering at filtrere på. Derfor laver vi nummereringen i en underforespørgsel eller CTE og vælger de ønskede placeringer i den ydre SELECT. Forklar, hvorfor almindelig LIMIT 2 ikke giver to varer i hver kategori.
 
 ## Prøv selv
 

@@ -28,6 +28,8 @@ sandbox:
 
 # Fejlhåndtering og SECURITY
 
+Raymond vil genbruge en funktion, som kun må modtage positive heltal. En tom værdi er også ugyldig. Nu undersøger I, hvordan funktionen siger fra, og hvilke rettigheder den arbejder med.
+
 ## RAISE EXCEPTION
 
 ```sql
@@ -49,9 +51,13 @@ SELECT require_positive(3);   -- OK
 
 Brug det i funktioner der kaldes fra triggers eller API-nære flows, når constraints ikke er nok.
 
+> [!RAYMOND:skeptical] Tre input — tre beviser
+>
+> Forudsig udfaldet for `3`, `0` og `NULL`. Et positivt tal alene viser ikke, at valideringen virker. Kontrollér både den returnerede værdi og de fejl, der skal afvise de øvrige input.
+
 ## SECURITY INVOKER vs DEFINER
 
-| | INVOKER (default i moderne PG) | DEFINER |
+| | INVOKER (standard) | DEFINER |
 |--|-------------------------------|---------|
 | Rettigheder | kører med **kalderens** rettigheder | kører med **ejerens** rettigheder |
 | Risiko | sikrere default | kan utilsigtet eskalere rettigheder |
@@ -63,10 +69,10 @@ Til H1: husk at **DEFINER** er kraftfuldt og skal bruges bevidst (sjældent i el
 | Markør | Betydning |
 |--------|-----------|
 | `IMMUTABLE` | samme input → samme output altid |
-| `STABLE` | konstant inden for én statement (typisk `SELECT` på tabeller) |
+| `STABLE` | samme argumenter giver samme resultat inden for én SQL-sætning; må ikke ændre databasen |
 | `VOLATILE` | kan ændre sig / have side effects (default) |
 
-Forkert markør kan give forkerte planer — start med default, og sæt `STABLE`/`IMMUTABLE` når I er sikre.
+Raymond behandler markøren som et løfte til planlæggeren. STABLE betyder ikke, at alle ordre-id’er får samme beløb: løftet gælder gentagne kald med **samme argumenter** i én sætning. IMMUTABLE kræver desuden, at resultatet ikke afhænger af skiftende tabeldata eller indstillinger.
 
 ## RAISE-niveauer
 
@@ -95,3 +101,9 @@ Fang specifikke SQLSTATE-navne i stedet for blind `WHEN OTHERS`.
 1. Opret `require_positive` og kald med `3` og `0`.  
 2. Læs fejlbeskeden ved `0`.  
 3. Diskutér: skal denne regel være CHECK i stedet? (Ja, hvis den er simpel — funktioner til det mere dynamiske.)
+
+> [!RAYMOND:safe-lock] Hvilket løfte giver du databasen?
+>
+> Forklar forskellen mellem inputvalidering, INVOKER/DEFINER og volatilitet. De besvarer tre spørgsmål: Er input gyldigt, hvis rettigheder bruges, og hvornår kan resultatet ændre sig?
+
+Kilde: [PostgreSQL om funktionsvolatilitet](https://www.postgresql.org/docs/16/xfunc-volatility.html).

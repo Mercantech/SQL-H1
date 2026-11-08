@@ -20,27 +20,30 @@ sandbox:
 
 # Normalisering vs. pragmatisme
 
-3NF er et **mål**, ikke en religion. I projektet skal I kunne sige: “Vi normaliserer her — og *her* denormaliserer vi bevidst.”
+Raymond beder dig tage arkitekthatten på: Hvilke fakta gemmer caféen, hvilke regler beskytter dem, og hvad skal rapporterne kunne? Et godt designvalg kan forklares med et behov og en konsekvens. Vi skelner mellem normalisering, historik og afledte kopier.
 
-## Hvad café-seed’en “skylder” 3NF
+> [!RAYMOND:thinking] Hvilken oplysning skal overleve?
+>
+> Når en vare får en ny pris, skal gårsdagens kvittering så ændre sig? Besvar først spørgsmålet om betydning. Det kommer før en diskussion om færre tabeller eller hurtigere forespørgsler.
 
-| Observation | Ren 3NF | Pragmatisk valg i seed |
-|-------------|---------|------------------------|
-| `products.category` som tekst | `categories`-tabel + FK | Fri tekst — simpelt til undervisning |
-| Ordre = én produktlinje | `orders` + `order_lines` | Fladet ind i `orders` |
-| Ingen pris-historik på linjen | gem `unit_price` på linjen | Bruger altid nuværende `products.price` |
+## Tre valg i caféens forenklede model
 
-Det sidste er en **ægte faldgrube**: hvis I ændrer produktprisen, ændrer gamle ordrers “linjebeløb” sig, hvis I joiner live. I produktion gemmer man ofte `unit_price` på ordrelinjen.
+| Observation | Behov vi skal undersøge | Mulig udvidelse |
+|-------------|--------------------------|-----------------|
+| products.category er tekst | Fælles stavning og oplysninger om kategorien | categories-tabel og FK |
+| Én ordrerække er én produktlinje | Flere linjer under samme ordrehoved | orders og order_lines |
+| Kun aktuel produktpris | Dokumentere den aftalte pris ved købet | unit_price på købs-/ordrelinjen |
 
-## Bevidst denormalisering
+Valgene er ikke i sig selv en liste over 3NF-brud. Normalformer undersøges ud fra nøgler og afhængigheder. Den sidste række er et særligt vigtigt **historikkrav**: Et JOIN til den aktuelle produktpris kan ikke alene dokumentere prisen ved et tidligere køb.
 
-Eksempler der *kan* være OK:
+## Historiske fakta og afledte kopier
 
-- Gem `customer_name` på en faktura-tabel (snapshot)
-- Cache `order_total` der opdateres af trigger/app
-- Materialized view til dashboard
+Raymond skelner mellem to formål:
 
-Krav: I ved **hvem** der opdaterer den afledte data, og **hvordan** I undgår inkonsistens.
+- **Historik:** Et kundenavn på en udstedt faktura beskriver tidspunktet for fakturaen. Det skal ikke nødvendigvis følge kundens navn nu.
+- **Afledt kopi:** En cache af den aktuelle order_total skal holdes i overensstemmelse med sine kilder. Et materialized view gemmer også et resultat, der kan blive forældet.
+
+Historiske fakta er ikke automatisk normaliseringsbrud. Ved en afledt kopi skal I derimod beskrive, hvem der opdaterer den, hvornår det sker, og hvor gammel den må være.
 
 ## Mini design-review (caféen)
 
@@ -51,14 +54,18 @@ Besvar for jer selv / i gruppen:
 3. Hvad sker der med historik, hvis `products.price` ændres?
 4. Hvor ville I lægge soft delete (`deleted_at`) hvis kunder ikke må fjernes fysisk?
 
+> [!RAYMOND:skeptical] Et view og en gemt kopi er forskellige valg
+>
+> Et almindeligt view gemmer en forespørgselsdefinition. Et materialized view gemmer resultatdata, som skal opdateres med REFRESH. Hvem opdager det, hvis dashboardets kopi er gammel, og hvilken alder kan brugeren acceptere?
+
 ## Beslutningsramme (brug den i projektet)
 
-For hvert “skævt” felt I overvejer at denormalisere:
+For hver historisk oplysning eller afledt kopi, I overvejer:
 
-1. **Hvor ofte opdateres kilden?** (sjældent → snapshot er sikrere)  
-2. **Hvem ejer sandheden?** (én tabel vs. flere lag)  
-3. **Hvad koster en inkonsistens?** (faktura ≠ dashboard-cache)  
-4. **Kan et view / materialized view løse læsebehovet uden at kopiere?**  
+1. **Hvilket tidspunkt beskriver værdien?** Skal den bevare fortiden eller følge en aktuel kilde?
+2. **Hvem ejer sandheden?** Hvilke ændringer må påvirke resultatet?
+3. **Hvad koster en uoverensstemmelse?** En faktura og en dashboard-cache har forskellige behov.
+4. **Hvad er målt?** Kan en almindelig forespørgsel eller et view løse behovet, før I indfører en gemt kopi?
 
 ```sql
 -- Læsevenlig “rapport” uden at denormalisere stamdata
@@ -76,7 +83,7 @@ Bemærk: `approx_omsaetning` bruger **nutidens** pris — det er præcis trade-o
 
 | | OLTP (daglig app) | OLAP / BI |
 |--|-------------------|-----------|
-| Design | 3NF, mange små tabeller | stjerne, færre JOIN |
+| Typisk design | normaliserede tabeller til korrekte ændringer | ofte stjernemodel til analyse |
 | Belastning | mange små skrivninger | tunge aggregeringer |
 | Café-seed | her | kunne spejles i et view senere |
 
@@ -89,8 +96,14 @@ Afleveringen bør kunne pege på:
 - Hvordan API’en mapper til tabeller (ADO.NET/Dapper)  
 - Hvor I *ikke* denormaliserer — og hvorfor  
 
+> [!RAYMOND:question] Kan dit valg efterprøves?
+>
+> Skriv ét konkret behov, dit valgte design og én kontrol, der kan afsløre en fejl. Hvis argumentet er performance, vil jeg også se en sammenlignelig måling — ikke kun en fornemmelse af, at færre JOINs må være hurtigere.
+
 ## Prøv selv
 
 1. Skriv én sætning: “Vi denormaliserer ___ fordi ___ ; sandheden bor stadig i ___.”  
 2. Peg på én ting i café-seed’en I ville ændre i et rigtigt kassesystem.  
 3. Diskutér: er `category` som tekst acceptabelt i en MVP? Hvornår stopper det med at være det?
+
+Kilde til forskellen på gemte resultater og almindelige views: [PostgreSQLs materialized views](https://www.postgresql.org/docs/16/rules-materializedviews.html).

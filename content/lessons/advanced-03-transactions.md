@@ -21,7 +21,11 @@ sandbox:
 
 # Transaktioner — alt eller intet
 
-En **transaktion** samler flere SQL-udsagn, så de enten **alle lykkes** (`COMMIT`) eller **ingen af dem** slår igennem (`ROLLBACK`).
+Raymond vil gemme en ordre og den tilhørende ændring af lageret som én samlet handling. En **transaktion** samler ændringer, så de kan godkendes med `COMMIT` eller fortrydes med `ROLLBACK`. Den hjælper dig med at undgå, at kun en del af den planlagte handling gemmes.
+
+> [!RAYMOND:transaction] Hvilke trin skal følges ad?
+>
+> Hvis ordren gemmes, men lagerændringen fejler, hvad fortæller databasen så til den næste kunde? Skriv start- og sluttilstanden for den samlede handling, før du vælger transaktionens grænser.
 
 ## Minimal demo
 
@@ -32,7 +36,7 @@ UPDATE products SET in_stock = FALSE WHERE name = 'Chokoladebolle';
 COMMIT;
 ```
 
-Hvis noget fejler midtvejs:
+Hvis noget fejler, skal transaktionen ikke godkendes. Eksemplet nedenfor kan give en CHECK-fejl, **hvis du har tilføjet en prisregel**; café-seedet alene afviser ikke en negativ pris:
 
 ```sql
 BEGIN;
@@ -46,9 +50,9 @@ ROLLBACK;
 | Bogstav | Idé |
 |---------|-----|
 | **A**tomicity | alt eller intet |
-| **C**onsistency | constraints overholdes efter commit |
-| **I**solation | samtidige sessioner ser ikke halvfærdige ting |
-| **D**urability | efter commit ligger data sikkert |
+| **C**onsistency | de definerede regler skal være overholdt; databasen opfinder ikke alle forretningsreglerne |
+| **I**solation | valgte regler for samspillet mellem samtidige transaktioner |
+| **D**urability | godkendte ændringer bevares efter systemets konfiguration; backup er stadig nødvendig |
 
 ## Café-scenarie
 
@@ -62,7 +66,7 @@ Det skal være **én transaktion** — ellers kan I få ordre uden lager-opdater
 
 ## I SQL-H1
 
-I kan øve `BEGIN`/`COMMIT`/`ROLLBACK` i editoren. I C# bruger I typisk `await using var tx = await conn.BeginTransactionAsync()` (ADO.NET) eller et unit-of-work-mønster.
+Kør hele `BEGIN` … `COMMIT` eller `ROLLBACK` **i samme SQL-H1-kørsel**. Editorens næste kørsel får en ny forbindelse. Ved en fejl stopper den aktuelle batch, og de resterende sætninger udføres ikke; en åben transaktion fortrydes, når forbindelsen lukkes. I C# kan du styre forløbet med `BeginTransactionAsync` og fejlhåndtering.
 
 ## Isolation (smagsprøve)
 
@@ -73,7 +77,11 @@ Postgres’ default er typisk **READ COMMITTED**. Til eksamen/H1: kend ordet *is
 1. Insert ordre OK → crash → lager ikke opdateret  
 2. To samtidige køb ser begge “på lager” → overbook  
 
-Transaktioner + evt. `SELECT … FOR UPDATE` (kendskab) er værktøjerne.
+En transaktion alene forhindrer ikke nødvendigvis, at to kunder begge læser »på lager«. Raymond vælger også en passende samtidighedsmekanisme, eksempelvis et betinget `UPDATE`, rækkelåsning eller højere isolation med genforsøg. [Testforløbet](/learn/testing-03-transactions) undersøger den sidste plads.
+
+> [!RAYMOND:rollback] Hvad skal overleve fortrydelsen?
+>
+> I forsøget nedenfor ændres først alle drikkepriser, derefter kun Te igen. `ROLLBACK TO` fortryder det, der skete **efter** mærket. Forudsig Tes slutpris i forhold til startprisen, før du kører hele blokken.
 
 ## SAVEPOINT (kendskab)
 
@@ -83,9 +91,10 @@ Inde i en transaktion kan I rulle *dele* tilbage:
 BEGIN;
 UPDATE products SET price = price + 1 WHERE category = 'Drikke';
 SAVEPOINT kun_drikke;
-UPDATE products SET price = -1 WHERE name = 'Te';  -- fejler evt.
+UPDATE products SET price = price + 10 WHERE name = 'Te';
 ROLLBACK TO SAVEPOINT kun_drikke;
 COMMIT;
+SELECT name, price FROM products WHERE category = 'Drikke' ORDER BY name;
 ```
 
 ## I C# (forhåndsblik)
@@ -104,5 +113,9 @@ try {
 ## Prøv selv
 
 1. Kør `BEGIN` … to updates … `COMMIT` og verificér.  
-2. Gentag med `ROLLBACK` midtvejs — se at intet slog igennem.  
+2. Gentag med `ROLLBACK` i stedet for det afsluttende `COMMIT` — se, at ingen af transaktionens ændringer blev gemt.
 3. Skriv et café-scenarie der *kræver* transaktion (2–3 punkter).
+
+> [!RAYMOND:skeptical] Tre forskellige garantier
+>
+> Forklar forskellen på at samle ændringer i en transaktion, at beskytte mod ugyldige værdier med constraints og at koordinere to samtidige køb. Hvilket problem løser hver mekanisme i caféens ordreflow?

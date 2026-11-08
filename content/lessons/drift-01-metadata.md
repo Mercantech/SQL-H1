@@ -21,7 +21,9 @@ sandbox:
 
 # Databaseserver og metadata
 
-Postgres er ikke “én fil med tabeller”. Det er en **serverproces**, der hoster mange **databaser**, hver med **schemas**, **roller** og **objekter**.
+Raymond ser tabellen `orders` i to forbindelser. Er det samme database? Før han ændrer noget, beder han dig undersøge forbindelsen og læse dens metadata.
+
+En Postgres-instans kan indeholde mange **databaser**. Hver database indeholder **schemas** og objekter som tabeller og views. **Roller** hører til hele instansen og får rettigheder til de relevante databaser og objekter.
 
 I SQL-H1:
 
@@ -53,6 +55,10 @@ ORDER BY ordinal_position;
 
 ## pg_catalog — Postgres’ eget
 
+> [!RAYMOND:reading] Beskriv beholderen og indholdet
+>
+> `information_schema.columns` fortæller, at `orders` har en kolonne ved navn `customer_id`. Fortæller den også, hvilke kunder der har bestilt? Skeln mellem **metadata** om tabellen og **rækkerne** i den, før du vælger din næste forespørgsel.
+
 ```sql
 SELECT indexname, tablename
 FROM pg_indexes
@@ -60,7 +66,7 @@ WHERE schemaname = 'public'
 ORDER BY tablename, indexname;
 ```
 
-Brug katalogerne til at **dokumentere** og **fejlsøge** — samme data, som **Database**-siden viser grafisk.
+Raymond bruger katalogerne til at kontrollere sin dokumentation: findes det indeks, tegningen lover, og må rollen se det? Katalogforespørgslerne viser metadata for den aktuelle forbindelse; **Database**-siden præsenterer mange af de samme oplysninger grafisk.
 
 ## Det du *ikke* må i sandboxen
 
@@ -107,3 +113,7 @@ WHERE table_schema = 'public' AND table_name = 'orders';
 1. Kør `current_database` / `version()`.  
 2. List tabeller og indeks.  
 3. Find alle FK i `public` via `information_schema` (som i DDL/E/R-lektionen).
+
+> [!RAYMOND:thinking] Tegn forbindelsen
+>
+> Vis din makker vejen fra **server** til **database**, **schema** og **tabel**. Placér derefter rollen på tegningen, og brug `current_database()` og `current_user` til at dokumentere, hvor dine forespørgsler faktisk kører.

@@ -40,7 +40,9 @@ sandbox:
 
 # Triggers — automatik ved DML
 
-En **trigger** kører automatisk, når der sker `INSERT`/`UPDATE`/`DELETE` på en tabel. Du bruger dem til **audit**, afledte felter eller regler, der er svære at udtrykke med constraints alene.
+Priserne i caféen bliver ændret, men Raymond kan ikke se, hvad de kostede før. Han beder dig bygge et revisionsspor, som også virker, når en anden klient opdaterer databasen.
+
+En **trigger** reagerer automatisk på en valgt databasehændelse, her INSERT, UPDATE eller DELETE. Raymond starter med audit: vi gemmer den gamle og nye pris, når prisen faktisk ændres. Regler, der kan udtrykkes som constraints, beholder vi som constraints.
 
 ## To dele
 
@@ -89,6 +91,10 @@ SELECT * FROM product_audit ORDER BY id DESC;
 
 ## BEFORE vs AFTER
 
+> [!RAYMOND:question] Definitionen laver endnu ingen historik
+>
+> Triggeren er oprettet. Hvor mange audit-rækker forventer du nu? Udfør derefter en prisændring og en opdatering uden prisændring. Følg betingelsen med OLD og NEW, når du forklarer forskellen.
+
 | Timing | Typisk brug |
 |--------|-------------|
 | `BEFORE` | ret `NEW`-værdier, afvis med `RAISE`, sæt defaults |
@@ -129,3 +135,7 @@ Nyere Postgres kan give `REFERENCING NEW TABLE AS …` til statement-triggers �
 1. Opret audit-tabellen + triggeren.  
 2. Opdatér Espresso-prisen to gange — se flere loglinjer.  
 3. Opdatér kun `name` — forvent **ingen** ny audit, hvis I kun logger pris.
+
+> [!RAYMOND:testing] Følg én ændring hele vejen
+>
+> Vis den ændrede produktrække og dens audit-række. Forklar, hvilken tabel triggeren er knyttet til, hvornår funktionen kaldes, og hvorfor `IS DISTINCT FROM` er nyttig ved sammenligning med NULL.

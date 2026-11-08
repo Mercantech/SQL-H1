@@ -20,7 +20,7 @@ sandbox:
 
 # Drifts-checkliste til projektet
 
-Brug denne side som **mundtlig/skriftlig tjekliste** før I afleverer database-delen.
+Raymond overtager caféprojektet i morgen. Han beder om en kort driftsbeskrivelse, hvor hvert kryds kan underbygges med en fil, en forespørgsel eller en afprøvning. Brug tjeklisten til at finde de huller, en anden ellers ville opdage under drift.
 
 ## 1) Hvad kører hvor?
 
@@ -59,6 +59,10 @@ SELECT
 
 ## Afleverings-tekst (skabelon)
 
+> [!RAYMOND:skeptical] Mange indeks er ikke et kvalitetsmål
+>
+> Statusforespørgslen viser antal tabeller og indeks. Kan de tal bevise gode forespørgsler, korrekte rettigheder eller en brugbar backup? Fortæl, hvilket **konkret bevis** du vil vedlægge til hver af de tre påstande.
+
 Kopiér og udfyld:
 
 > Vores Postgres kører som Docker-service `___` med volume `___`.  
@@ -74,7 +78,7 @@ Kopiér og udfyld:
 |--|------|-----|-----|
 | Secrets | i env | i compose men gitignored | i git |
 | Seed | idempotent script | manuel klik | “husker ikke” |
-| FK-indeks | på alle FK | på de tungeste | ingen |
+| FK-indeks | valg begrundet med relevante forespørgsler og planer | oprettet efter gæt | relevante opslag og relationer er ikke undersøgt |
 | EXPLAIN | dokumenteret på 1 hot query | “det føles hurtigt” | aldrig prøvet |
 
 ## Prøv selv
@@ -82,3 +86,7 @@ Kopiér og udfyld:
 1. Udfyld skabelonen for SQL-H1 *eller* jeres projekt.  
 2. Kør status-SQL’en her.  
 3. Ret én gul ting til grøn i denne uge.
+
+> [!RAYMOND:testing] Lad en makker kontrollere ét kryds
+>
+> Vælg et punkt, som kan efterprøves: fx **gendannelse** i en testdatabase eller app-rollens adgang. Giv din makker fremgangsmåde og forventet resultat. Beskriv også ærligt, hvad I endnu ikke har afprøvet.

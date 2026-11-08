@@ -18,7 +18,9 @@ objectives:
 
 Raymond åbner skolens GameHub. Nogle spiller turneringer, andre bygger verdener, og én vil kun vise sine speedruns. Skal alle profiler have præcis de samme felter?
 
-> Raymond: »Fleksibilitet er fedt. Men hvis dit program ikke ved, hvad et felt betyder, har du bare flyttet problemet.«
+> [!RAYMOND:curious] Hvad betyder feltet for programmet?
+>
+> To profiler må gerne have forskellige ekstra felter. Men hvad skal `rating` betyde i begge? Beskriv **én fælles regel** for feltets type, før du beslutter, hvilke dele af profilen der skal være fleksible.
 
 ## Et dokument er en samlet lille verden
 
@@ -52,7 +54,7 @@ Det er en huskeregel, ikke en fuldstændig oversættelse. MongoDB håndhæver ek
 
 ## Fleksibel betyder ikke uden regler
 
-To dokumenter kan have forskellige felter. Men hvis `rating` nogle gange er et tal og andre gange teksten `"mega god"`, bliver filtrering og sortering upræcis. Aftal felter, typer og fravær; MongoDB kan også håndhæve schema validation.
+Raymond prøver at finde de bedst rangerede spillere. Hvis `rating` nogle gange er et tal og andre gange teksten `"mega god"`, kan han ikke behandle dem som én numerisk rangliste uden yderligere regler. Fleksible felter kræver derfor en aftale om typer, betydning og fravær; MongoDB kan også håndhæve schema validation.
 
 Et manglende felt og et felt med `null` er forskellige tilstande. En MongoDB-forespørgsel `{ badge: null }` matcher som udgangspunkt begge. Brug blandt andet `$exists`, når fravær er det, du undersøger.
 
@@ -64,6 +66,8 @@ Et manglende felt og et felt med `null` er forskellige tilstande. En MongoDB-for
 
 Parøvelse: Byt profil med en makker. Find én uklar datatype og én oplysning, som måske bør ligge et andet sted.
 
-**Dit checkpoint:** Du kan tegne et dokument med array og indlejret objekt og forklare dets identitet. Næste mission handler om, hvor dokumentets grænse bør gå.
+> [!RAYMOND:thinking] Tegn en profil, der kan forklares
+>
+> Tegn dit eget profildokument med **identitet**, **array** og **indlejret objekt**. Forklar forskellen på et manglende felt og `null`, og vælg én oplysning, som ikke bør vokse ubegrænset i profilen. Næste lektion undersøger netop dokumentets grænse.
 
 Kilde: [MongoDBs officielle introduktion til datamodellering](https://www.mongodb.com/docs/manual/data-modeling/).

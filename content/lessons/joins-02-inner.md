@@ -20,7 +20,11 @@ sandbox:
 
 # INNER JOIN
 
-`INNER JOIN` returnerer kun rækker, hvor nøglerne **matcher** i begge tabeller. Alt uden match forsvinder.
+Raymond forbinder ordre, kunde og produkt, så en række kan læses som en hel ordrelinje. `INNER JOIN` kombinerer kun rækker, hvor **ON-betingelsen er sand**. Her sammenligner vi FK med PK; INNER JOIN kan også bruge andre betingelser.
+
+> [!RAYMOND:join] Hvem er ikke med på billedet?
+>
+> Clara har ingen ordrer. En walk-in-ordre har ingen registreret kunde. Forudsig, hvad der sker med begge, når vi kun beholder matches mellem kunder og ordrer.
 
 ## Visuelt: hvad overlever?
 
@@ -41,7 +45,7 @@ INNER JOIN products p ON p.id = o.product_id;
 
 ## Aliasser
 
-`o`, `c`, `p` er korte navne for tabellerne. Brug dem foran kolonner, når navne kolliderer (`name` findes i både kunder og produkter).
+Raymond bruger `o`, `c` og `p` som korte navneskilte på tabellerne. `c.name` og `p.name` er forskellige kolonner, selvom begge hedder name. Et tydeligt alias gør det muligt at følge hvert felt tilbage til sin kilde.
 
 ## Filter + JOIN
 
@@ -54,7 +58,7 @@ WHERE c.city = 'Viborg'
 ORDER BY c.name, p.name;
 ```
 
-`JOIN` uden ord betyder typisk `INNER JOIN` i PostgreSQL.
+`JOIN` uden `LEFT`, `RIGHT` eller `FULL` betyder `INNER JOIN` i PostgreSQL.
 
 ## Linjetotal
 
@@ -66,6 +70,10 @@ JOIN customers c ON c.id = o.customer_id
 JOIN products p ON p.id = o.product_id
 ORDER BY linje_total DESC;
 ```
+
+> [!RAYMOND:skeptical] Er et gentaget navn en fejl?
+>
+> En kunde med tre ordrer kan optræde tre gange efter et JOIN. Undersøg først, hvad én resultatrække repræsenterer, før du forsøger at fjerne gentagelser med DISTINCT.
 
 ## Prøv selv
 

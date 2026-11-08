@@ -19,9 +19,11 @@ sandbox:
 
 # INSERT — Create i dybden
 
-**INSERT** er CRUD-**Create**: du tilføjer *nye* rækker. Eksisterende rækker røres ikke (medmindre triggers/regler i andre systemer — her holder vi det enkelt).
+Raymond vil sætte iste på caféens menu. Produktet findes endnu ikke, så en prisrettelse med `UPDATE` ville ikke være nok: **INSERT** opretter en ny række. I vores enkle seed er der ingen triggers med ekstra sideeffekter; senere lærer du, hvorfor sådanne regler også skal med i vurderingen.
 
-Mentalt: “Her er en ny kendsgerning, databasen skal huske.”
+> [!RAYMOND:question] Hvad ved vi om isteen?
+>
+> Vi kender navn, kategori og pris. Behøver vi selv finde det næste `id`? Kig efter, hvilke værdier tabellen kan udfylde, og hvilke oplysninger du selv skal levere.
 
 ## Anatomi
 
@@ -96,7 +98,7 @@ INSERT INTO customers (name, city, email) VALUES
   ('Helle Dam', 'Aalborg', NULL);
 ```
 
-Brug det når du seed’er testdata eller importerer en lille liste. Til kæmpe imports findes andre værktøjer (`COPY` m.m.) — uden for MVP.
+Raymond bruger en fler-rækkers `INSERT` til små seedlister. Større imports kan bruge værktøjer som `COPY`, men filadgang via `COPY` er ikke en del af elev-sandboxen.
 
 ## INSERT … SELECT (Create fra Read)
 
@@ -133,7 +135,11 @@ INSERT INTO orders (customer_id, product_id, quantity, order_date)
 VALUES (NULL, 1, 1, '2024-05-01');
 ```
 
-**Create + constraints** = databasen er din første valideringslag — før din C#-kode.
+**Constraints er et selvstændigt sikkerhedsnet i databasen.** C# kan validere først og give en venlig besked, men databasen kontrollerer reglerne igen, når ændringen forsøges gemt.
+
+> [!RAYMOND:patient] En afvisning fortæller noget
+>
+> `NULL` i produktnavnet og et ukendt kunde-id bryder to forskellige regler. Læs constraint- eller kolonnenavnet i fejlen, og forklar hvilken oplysning der mangler. Ret data eller din hensigt; fjern ikke reglen blot for at få grønt lys.
 
 ## RETURNING — Create der svarer
 
@@ -152,7 +158,7 @@ Det er stadig DML Create — ikke et separat `SELECT`, selvom resultatet ligner 
 Uden `UNIQUE` på fx `products.name` kan du indsætte “Espresso” to gange. Det er lovligt i vores seed — men forretningsmæssigt måske forkert. Tænk:
 
 1. Skal navnet være unikt? (constraint / unik indeks — DDL, senere)
-2. Eller tjekker applikationen først med `SELECT`?
+2. Er dubletter tilladt, så applikationen blot viser de eksisterende muligheder? Et forudgående `SELECT` kan ikke alene forhindre to samtidige indsættelser; en krævet unikhed skal håndhæves i databasen.
 
 Som elev: brug `SELECT` før/efter, så du *ser* om du lavede en dobbelt-Create.
 
@@ -170,3 +176,7 @@ Næste lektion: **UPDATE** — CRUD Update.
 ## Prøv selv
 
 Indsæt produktet **`Sockerkaka`** i kategorien **`Bagværk`** til **`24.00`**, og brug `RETURNING` så du ser `id`.
+
+> [!RAYMOND:eureka] To måder at lade et felt stå åbent
+>
+> Forklar forskellen på at **udelade en kolonne** og at skrive **`NULL`**. Find bagefter det `id`, databasen gav dit nye produkt, via `RETURNING`. Hvilken del af rækken valgte du, og hvilken del kom fra skemaet?

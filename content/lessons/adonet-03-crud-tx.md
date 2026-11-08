@@ -21,6 +21,8 @@ sandbox:
 
 # CRUD, parametre og transaktioner
 
+Raymond skal oprette en caféordre både for en registreret kunde og for en gæst uden kundekonto. Den samme metode skal håndtere nullable `customerId`, beskytte brugerinput og kunne indgå i en samlet transaktion.
+
 ## Aldrig streng-sammensæt SQL med brugerinput
 
 ```csharp
@@ -32,7 +34,7 @@ cmd.CommandText = "SELECT * FROM customers WHERE name = @name";
 cmd.Parameters.AddWithValue("name", name);
 ```
 
-I har set det i *Rettigheder og avanceret SQL* — her er det **lov** i DAL’en.
+Et navn som `O'Connor` skal behandles som én værdi, uden at apostroffen ændrer SQL'ens struktur. Raymond holder derfor **SQL-tekst** og **parameterværdier** adskilt. Parametre erstatter ikke validering eller rettigheder, men sørger for, at værdier ikke fortolkes som SQL-kode.
 
 ## Repository-skitse
 
@@ -52,7 +54,7 @@ public async Task<int> CreateOrderAsync(int? customerId, int productId, int qty)
         conn,
         tx);
 
-    cmd.Parameters.AddWithValue("cid", (object?)customerId ?? DBNull.Value);
+    cmd.Parameters.AddWithValue("cid", NpgsqlTypes.NpgsqlDbType.Integer, (object?)customerId ?? DBNull.Value);
     cmd.Parameters.AddWithValue("pid", productId);
     cmd.Parameters.AddWithValue("qty", qty);
 
@@ -71,6 +73,10 @@ RETURNING id;
 ```
 
 ## Fejl → Rollback
+
+> [!RAYMOND:transaction] Hvilke ændringer skal følges ad?
+>
+> Ét `INSERT` er allerede atomisk. Forestil dig, at Raymond også skal reservere lager i et ekstra command: hvad skal ske med ordren, hvis reservationen fejler? Begge commands skal bruge **samme forbindelse og transaktion**, før ét samlet `CommitAsync` giver mening.
 
 Hvis `Execute*` kaster, og I ikke comitter, ruller `await using` typisk transaktionen tilbage ved dispose — men vær eksplicit:
 
@@ -98,10 +104,10 @@ catch
 ## DBNull vs. null
 
 ```csharp
-cmd.Parameters.AddWithValue("cid", (object?)customerId ?? DBNull.Value);
+cmd.Parameters.AddWithValue("cid", NpgsqlTypes.NpgsqlDbType.Integer, (object?)customerId ?? DBNull.Value);
 ```
 
-Npgsql skal have `DBNull.Value` for SQL `NULL` — C# `null` alene er ikke altid nok afhængigt af API.
+I dette parameter-API repræsenterer `DBNull.Value` SQL `NULL`. Den eksplicitte **Integer**-type fortæller Npgsql, hvilken PostgreSQL-type parameteren har, også når der ikke findes en C#-heltalsværdi at udlede typen fra.
 
 ## Isolation af SQL
 
@@ -125,3 +131,11 @@ Hold SQL i repository/DAL — ikke i controllers. Så kan I:
 1. Kør `INSERT … RETURNING` for en ordre i SQL-H1.  
 2. Skitsér `CreateOrderAsync` med transaktion.  
 3. List tre ting fra checklisten I vil kræve i code review.
+
+> [!RAYMOND:testing] Afprøv begge slags kunde
+>
+> Kør C#-metoden **lokalt mod en testdatabase** med et gyldigt kunde-id og med `null`. Prøv derefter et produkt-id, der ikke findes. Forklar, hvornår du får et nyt ordre-id, og hvornår databasen afviser ordren; vis, at afvisningen ikke efterlader en halv ordre.
+
+## Kilde
+
+- [Npgsql: parametre, datatyper og transaktioner](https://www.npgsql.org/doc/basic-usage.html)

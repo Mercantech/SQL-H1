@@ -1,0 +1,13 @@
+.md .raymond-lesson-note { display: flex; align-items: flex-start; gap: .85rem; padding: 1rem 1.1rem; margin: 1.35rem 0; border: 1px solid #cad9df; border-left: 3px solid #7195ad; border-radius: 10px; background: #eef4f4; break-inside: avoid; }
+.raymond-lesson-note-copy { min-width: 0; flex: 1; }
+.md p.raymond-lesson-speaker { margin: 0 0 .1rem; font-size: .68rem; line-height: 1.5; font-weight: 700; letter-spacing: .06em; color: #365b74; text-transform: uppercase; }
+.raymond-lesson-note-title { display: block; font-size: .94rem; line-height: 1.5; color: #243f51; }
+.raymond-lesson-note-body { font-size: .93rem; line-height: 1.65; overflow-wrap: anywhere; }
+.md .raymond-lesson-note-body > p { margin: .4rem 0 0; }
+.md .raymond-lesson-note-body > :last-child { margin-bottom: 0; }
+.md .raymond-lesson-note[data-reaction="warning"] { border-left-color: #ae7a2d; background: #f8f3e9; border-color: #e2d4b9; }
+.present-slide .raymond-lesson-note { padding: .8rem 1rem; gap: .75rem; }
+.present-slide .raymond-lesson-note-title { font-size: clamp(1rem, 1.6vw, 1.3rem); }
+.present-slide .raymond-lesson-note-body p, .present-slide .raymond-lesson-note-body li { font-size: clamp(.95rem, 1.5vw, 1.25rem); line-height: 1.55; }
+.present-slide p.raymond-lesson-speaker { font-size: .7rem; margin: 0 0 .1rem; }
+@media (max-width: 600px) { .md .raymond-lesson-note { gap: .6rem; padding: .85rem; } .raymond-lesson-note > .raymond-avatar { width: 42px !important; height: 42px !important; } .raymond-lesson-note-title { font-size: .88rem; } .raymond-lesson-note-body { font-size: .88rem; } }

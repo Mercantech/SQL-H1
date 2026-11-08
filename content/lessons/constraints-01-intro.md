@@ -17,7 +17,7 @@ sandbox:
 
 # Constraints i praksis
 
-En **constraint** er en regel databasen **håndhæver** — uanset om klienten er SQL-H1, en .NET-API eller `psql`. Det er jeres sidste forsvarslinje for datakvalitet.
+Raymond får en ordre, som peger på en kunde, caféen aldrig har haft. Den skal ikke kunne snige sig ind, selv hvis en klient glemmer sin validering. En **constraint** er en regel, som databasen håndhæver ved ændringer, uanset om SQL kommer fra editoren, en .NET-API eller `psql`.
 
 ## Katalog over de vigtigste
 
@@ -26,10 +26,14 @@ En **constraint** er en regel databasen **håndhæver** — uanset om klienten e
 | `PRIMARY KEY` | unik + NOT NULL | `customers.id` |
 | `NOT NULL` | kolonnen skal udfyldes | `products.price` |
 | `UNIQUE` | højst én forekomst (flere `NULL` OK i PG) | (tilføjes ofte på e-mail) |
-| `CHECK` | boolsk udtryk skal være sandt | `price > 0` |
+| `CHECK` | afviser rækker, hvor udtrykket er `FALSE`; `NULL`/UNKNOWN accepteres | `price > 0` kombineret med `NOT NULL`, hvis pris kræves |
 | `FOREIGN KEY` | værdi findes i forældre-tabel (eller `NULL`) | `orders.product_id` |
 
 Her **mærker** du reglerne med DML. At *oprette* dem med `ALTER TABLE` øver du også i dette modul og i *Tabeller og E/R*.
+
+> [!RAYMOND:question] Er tom tekst også NULL?
+>
+> En tom tekst `''` er en tekstværdi; `NULL` er en manglende eller ukendt værdi. Hvilken af dem stopper `NOT NULL`? Beslut, om din forretningsregel også kræver mere end blot en ikke-NULL-værdi.
 
 ## NOT NULL
 
@@ -65,6 +69,10 @@ VALUES (NULL, 1, 1, '2024-05-01');
 | `product_id` | nej | ordre *skal* pege på produkt |
 | `customer_id` | ja | walk-in / anonym |
 
+> [!RAYMOND:foreign-key] Valgfri reference, stadig gyldig reference
+>
+> Caféens kunde er valgfri på en ordre, men produktet er påkrævet. Derfor kræver `product_id` både FK og `NOT NULL`. En fremmednøgle alene gør ikke en nullable reference obligatorisk.
+
 ## Hvorfor constraints i databasen?
 
 | Uden constraints | Med constraints |
@@ -92,10 +100,14 @@ Navngiv constraints i DDL (`CONSTRAINT products_price_positive …`), så fejlbe
 
 - `PRIMARY KEY` og `UNIQUE` opretter typisk et **indeks** automatisk  
 - `CHECK` og `NOT NULL` gør **ikke** i sig selv et indeks  
-- FK *bør* have indeks på barn-kolonnen for performance (se DDL-modulet)
+- PostgreSQL opretter ikke automatisk indeks på FK-kolonnen i barnet. Overvej et ud fra opslag, sletninger og datamængde; mål effekten i DDL-modulet.
 
 ## Prøv selv
 
 1. Fremprovokér `NOT NULL`-fejl og `FK`-fejl — læs begge beskeder.  
 2. Indsæt en gyldig walk-in og verificér med `SELECT`.  
 3. Nulstil databasen, når du er færdig med eksperimenterne.
+
+> [!RAYMOND:primary-key] Vælg reglen med en begrundelse
+>
+> Navnet skal udfyldes, e-mailen skal være unik, og ordren skal pege på et produkt. Find en constraint til hvert krav. Forklar også, hvilket ekstra krav `CHECK (price > 0)` ikke håndhæver, hvis prisen må være `NULL`.

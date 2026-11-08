@@ -35,11 +35,15 @@ sandbox:
 
 # Views oven på views
 
-I store systemer bygger man ofte et **lag**:
+Caféen beder Raymond om både en detaljeret ordreoversigt og omsætning pr. kategori. Han lader et detalje-view beskrive linjerne og et andet view samle dem. Hvert lag får en opgave, som du kan kontrollere for sig:
 
 ```text
 basistabeller → detalje-view → aggregat-view → rapport/API
 ```
+
+> [!RAYMOND:question] Bevarer vi walk-in-ordren?
+>
+> Find `LEFT JOIN` og `COALESCE` i detaljelaget. Hvad sker der med en ordre uden kunde, og hvad ville en `INNER JOIN` ændre? Aggregatet bliver kun rigtigt i forhold til de linjer, som det første lag bevarer.
 
 ## Lag 1 — detalje
 
@@ -58,6 +62,8 @@ LEFT JOIN customers c ON c.id = o.customer_id
 JOIN products p ON p.id = o.product_id;
 ```
 
+Raymond bemærker, at linjebeløbet her beregnes med produktets **aktuelle pris**. Undervisningsmodellen har ikke et prissnapshot på ordren, så dette er ikke i sig selv en historisk korrekt faktureringsmodel.
+
 ## Lag 2 — aggregat
 
 ```sql
@@ -71,6 +77,10 @@ GROUP BY category;
 
 SELECT * FROM v_sales_by_category ORDER BY omsaetning DESC;
 ```
+
+> [!RAYMOND:idea-notes] Hvilket lag afhænger af hvilket?
+>
+> Tegn en pil fra kategorirapporten til detalje-viewet. Hvis du vil fjerne detaljelaget, hvad skal du så gøre med rapporten? Læs en dependency-fejl som information om kontrakter, du er ved at bryde.
 
 ## DROP og afhængigheder
 
@@ -87,7 +97,7 @@ Appen kan `SELECT` fra `v_sales_by_category` uden at kende JOIN-detaljerne — s
 
 ## Versionering af views
 
-Når kontrakten ændrer sig:
+Når kontrakten ændrer sig, kan formen se sådan ud. Skitsens `...` skal erstattes af en fuld `SELECT`, før kommandoen kan køres:
 
 ```sql
 CREATE OR REPLACE VIEW v_sales_by_category AS
@@ -95,7 +105,7 @@ CREATE OR REPLACE VIEW v_sales_by_category AS
   ...
 ```
 
-`OR REPLACE` kan fejle, hvis kolonner ændrer type/rækkefølge på en måde Postgres ikke kan. Så: `DROP VIEW … CASCADE` (pas på!) og opret forfra — eller opret `v_sales_by_category_v2` og migrér API’en.
+`CREATE OR REPLACE VIEW` kræver de eksisterende kolonnenavne, typer og rækkefølge bevaret; nye kolonner kan tilføjes til sidst. Hvis kontrakten skal ændres mere, planlægger Raymond eksempelvis et nyt `v_sales_by_category_v2` og flytter klienterne. `DROP ... CASCADE` kræver en plan for alle de afhængigheder, der fjernes.
 
 ## Afhængighedsgraf
 
@@ -107,10 +117,14 @@ orders + products + customers
   v_sales_by_category
 ```
 
-Ændrer I basistabeller (omdøb kolonne), knækker views. Derfor: E/R + views høører sammen i review.
+PostgreSQL registrerer afhængighederne mellem objekter. En simpel kolonneomdøbning i en basistabel behøver ikke ødelægge viewet, mens en kolonne med afhængige views normalt ikke kan droppes uden at håndtere dem. Gennemgå både databasestruktur og det resultat, som API’et forventer.
 
 ## Prøv selv
 
 1. Byg begge lag.  
 2. Ændr noget i `v_order_lines` og se effekten i aggregatet.  
 3. Prøv `DROP VIEW v_order_lines` uden at droppe barnet — læs fejlen.
+
+> [!RAYMOND:reading] Følg én ændring gennem begge lag
+>
+> Vælg en kategori og forklar dens sum ud fra detalje-viewets linjer. Hvad ændres i rapporten, hvis en produktpris ændres? Vis også, hvorfor `COUNT(*)` af ordrelinjer ikke er det samme som solgt antal `SUM(quantity)`.

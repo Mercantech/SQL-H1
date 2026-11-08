@@ -21,7 +21,11 @@ sandbox:
 
 # Udforsk relationerne
 
-Når skemaet er på plads, **beviser** du forståelsen med forespørgsler: “Hvem hænger sammen med hvem — og hvordan tæller jeg det rigtigt?”
+Raymond lægger skemaet ved siden af en rapport og spørger: Hvad er det egentlig, vi tæller? Forespørgsler kan vise konsekvenserne af modellens relationer. Sammenlign nøgle, række og forretningsbetydning, før du giver et tal et navn.
+
+> [!RAYMOND:question] Tre styk, to linjer eller én kunde?
+>
+> Den samme kunde kan købe et produkt flere gange og købe flere styk ad gangen. Beslut, om "populært" betyder antal styk, ordrelinjer eller forskellige kunder. De tal behøver ikke være ens.
 
 ## Hvor populært er hvert produkt?
 
@@ -61,7 +65,7 @@ JOIN customers b ON a.city = b.city AND a.id < b.id
 ORDER BY a.city, kunde_a;
 ```
 
-Det er **ikke** en FK-relation — det er en ad hoc-relation på attributten `city`. I et mere normaliseret design kunne `city` være FK til `cities`.
+Det er **ikke** en FK-relation; kunderne matches på en fælles byværdi. En særskilt cities-tabel kan være relevant, hvis byer har en kontrolleret identitet eller egne attributter. En gentaget bytekst er ikke alene bevis for et normaliseringsbrud.
 
 ## “Hvem har købt det samme som Anna?”
 
@@ -79,6 +83,10 @@ ORDER BY c.name;
 
 Her kæder du: kunde → ordrer → produkt-id’er → andre kunder. Det er **nøgle-tænkning** i flere hop.
 
+> [!RAYMOND:skeptical] Et navn er ikke nødvendigvis en identitet
+>
+> Eksemplerne grupperer nogle steder på navn, fordi navnene er forskellige i seedet. Hvis to produkter får samme navn, bør en produktvis rapport også gruppere på produkt-id. Kan du forklare, hvilke rækker ellers ville blive slået sammen?
+
 ## Grafen i caféen (husk den)
 
 ```text
@@ -90,9 +98,9 @@ Alt interessant i denne lektion er en sti i den graf.
 
 ## Fælder du skal kende
 
-1. **INNER JOIN dropper** kunder uden ordrer — brug `LEFT JOIN` når “0” er et svar.  
-2. **`COUNT(*)` efter JOIN** kan blæse op, hvis der er flere linjer — vær præcis med `DISTINCT`.  
-3. **Walk-in** mangler i `customers`-siden af verden — tjek altid om `NULL`-FK skal med.
+1. **INNER JOIN udelader** kunder uden ordrer; brug LEFT JOIN, når 0 også er et vigtigt svar.
+2. **COUNT(*) efter JOIN** tæller resultatrækker. DISTINCT er kun rigtigt, hvis du faktisk vil tælle forskellige værdier; det reparerer ikke automatisk et forkert JOIN.
+3. **Walk-in** har ingen matchende kunderække. Undersøg altid, om NULL-kunde-id skal med i rapporten.
 
 ```sql
 -- Ordrer pr. by (walk-in har ingen by)
@@ -102,6 +110,10 @@ LEFT JOIN customers c ON c.id = o.customer_id
 GROUP BY COALESCE(c.city, '(walk-in)')
 ORDER BY ordrer DESC;
 ```
+
+> [!RAYMOND:thinking] Nul kendte kunder er ikke altid nul salg
+>
+> COUNT(DISTINCT customer_id) ignorerer walk-in. Et produkt kan derfor have salg, men ingen identificerede kunder. Hvilken anden tælling vil du sammenligne med for at skelne det fra et usolgt produkt?
 
 ## Prøv selv
 

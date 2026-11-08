@@ -22,7 +22,11 @@ sandbox:
 
 # Views — gemte forespørgsler
 
-Et **view** er en navngiven `SELECT`, som Postgres udstiller som en tabel. Data ligger stadig i underliggende tabeller — view’et er et **vindue** ind i dem.
+Raymond laver den samme ordreoversigt til caféen flere gange. Han giver den et navn med et **view**, så kollegaen kan spørge til oversigten uden at skrive hele JOIN-kæden igen. Et almindeligt view gemmer definitionen; rækkerne kommer fra de underliggende tabeller.
+
+> [!RAYMOND:question] Hvad sker der ved næste ordre?
+>
+> Hvis caféen indsætter en ordre efter oprettelsen af viewet, skal vi så kopiere data ind i viewet? Forudsig svaret ud fra, om et almindeligt view gemmer rækker eller en forespørgselsdefinition.
 
 ## Opret og brug
 
@@ -68,6 +72,10 @@ DROP VIEW IF EXISTS v_customer_orders;
 
 Hvis andre views afhænger af dette view, kan du få brug for `CASCADE` — tænk dig om.
 
+> [!RAYMOND:reading] Et navn ændrer ikke betydningen
+>
+> Kig på JOIN-betingelserne i viewets definition. En ordre uden kunde får ikke pludselig en kunde, fordi SELECT’en nu har et viewnavn. Kontrollér først detalje-forespørgslen, og giv den derefter et navn.
+
 ## Updatable views?
 
 Simple views (én tabel, ingen aggregation) kan nogle gange `INSERT`/`UPDATE` direkte. I praksis opdaterer man ofte **basistabellerne** og lader view’et være read-model. Til H1: **læs via views**, skriv via tabeller.
@@ -77,14 +85,14 @@ Simple views (én tabel, ingen aggregation) kan nogle gange `INSERT`/`UPDATE` di
 | | View | Tabel | CTE (`WITH`) |
 |--|------|-------|--------------|
 | Gemt i kataloget | ja | ja | nej (pr. query) |
-| Data på disk | nej* | ja | nej |
+| Egne vedvarende datarækker | nej* | ja | nej |
 | Genbrug på tværs af queries | ja | ja | kun samme statement |
 
-\*Materialized views er undtagelsen (egne lektion senere i tankerne — vi holder os til almindelige views).
+\*Et materialized view gemmer derimod et resultat, som skal opdateres med `REFRESH`. Her arbejder Raymond med almindelige views.
 
 ## Navngivning
 
-Prefix `v_` (eller `vw_`) gør det tydeligt i `SELECT` og i API-docs: *dette er et read-model*.
+Raymond bruger navne med `v_` for at gøre læsemodeller lette at genkende. Det er en navnekonvention, ikke et krav fra PostgreSQL. Hold også resultatets kolonnenavne tydelige, når andre skal genbruge dem.
 
 ## Performance-note
 
@@ -95,3 +103,7 @@ Et view **cacher ikke** automatisk. Tunge views kørt ofte → overvej indeks p�
 1. Lav `v_product_sales` med produktnavn, kategori og `SUM(quantity)`.  
 2. Forespørg de 3 mest solgte.  
 3. Forklar forskellen på view og CTE til en makker.
+
+> [!RAYMOND:eureka] Forklar hvad du genbruger
+>
+> Vis både definitionen og en forespørgsel mod dit view. Forklar en makker, hvad der er gemt, hvad der beregnes ved læsning, og hvorfor et viewnavn ikke automatisk gør en dyr forespørgsel billig.

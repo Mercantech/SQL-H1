@@ -20,7 +20,11 @@ sandbox:
 
 # EXISTS og NOT EXISTS
 
-`EXISTS` er sand, hvis subqueryen returnerer **mindst én** række.
+Raymond spørger: Har kunden mindst én ordre? Han behøver hverken alle ordrelinjer eller et bestemt produktnavn for at svare. `EXISTS` er sand, hvis delspørgsmålet finder **mindst én** række.
+
+> [!RAYMOND:curious] En kunde eller alle kundens ordrer?
+>
+> Hvis Anna har flere ordrer, hvor mange gange skal hun stå i en liste over kunder med mindst én ordre? EXISTS undersøger, om et match findes, uden at oprette en resultatrække for hvert match.
 
 ## Kunder med ordrer
 
@@ -42,12 +46,13 @@ WHERE NOT EXISTS (
 ORDER BY name;
 ```
 
-(I seed-dataen har alle kunder ordrer — prøv at slette nogle i Playground, eller brug `LEFT JOIN … IS NULL`.)
+I caféens udgangspunkt har **Clara Holm ingen ordrer**, så hun kan bruges til at kontrollere NOT EXISTS. Raymond vil først undersøge de eksisterende data; du behøver ikke slette noget for at skabe et eksempel.
 
 ## EXISTS vs IN
 
-- `IN` er klar ved små lister  
-- `EXISTS` stopper ofte tidligere og håndterer `NULL` mere forudsigeligt i komplekse tilfælde
+- `IN` spørger, om en værdi er blandt delspørgsmålets værdier.
+- `EXISTS` spørger, om delspørgsmålet returnerer en række. `SELECT 1` er en konvention; tallet tælles ikke.
+- Vælg efter betydning og læsbarhed. Databasen kan optimere begge former; EXISTS er ikke automatisk hurtigst. Vær især opmærksom på NULL ved `NOT IN`.
 
 ## Produkter bestilt af Viborg-kunder
 
@@ -63,6 +68,12 @@ WHERE EXISTS (
 ORDER BY p.name;
 ```
 
+> [!RAYMOND:question] Hvilket match undersøger vi?
+>
+> I produktforespørgslen står både produkt-id og kundens by inde i delspørgsmålet. Forklar, hvorfor et køb fra en kunde i en anden by ikke er nok til, at den ydre produktrække bliver valgt.
+
 ## Prøv selv
 
 List kategorier hvor der **findes** mindst ét udsolgt produkt (`NOT in_stock`).
+
+Kilde: [PostgreSQLs Subquery Expressions](https://www.postgresql.org/docs/16/functions-subquery.html).

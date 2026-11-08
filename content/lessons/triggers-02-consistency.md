@@ -32,6 +32,8 @@ sandbox:
 
 # Triggers til konsistens
 
+Raymond bliver foreslået en trigger, hver gang en ny regel dukker op. Han stopper op: Vi skal først finde den mindste mekanisme, der kan beskytte reglen. Her sammenligner I validering, constraints og automatiske handlinger.
+
 Constraints (`CHECK`, `FK`, `UNIQUE`) bør være **første valg**. Triggers er til regler, der er mere dynamiske — eller til side effects (log, cache-tabeller).
 
 ## BEFORE INSERT/UPDATE — afvis ugyldigt
@@ -70,7 +72,11 @@ Bemærk: det samme kunne ofte løses med:
 ALTER TABLE orders ADD CONSTRAINT orders_qty_positive CHECK (quantity > 0);
 ```
 
-**Foretræk CHECK**, når reglen er simpel. Brug trigger, når du skal kigge i andre tabeller, skrive audit, eller beregne felter.
+**Foretræk CHECK sammen med eventuel NOT NULL**, når reglen kan udtrykkes på rækken. Caféens `quantity` er allerede NOT NULL; en CHECK alene ville ellers acceptere et ukendt resultat ved NULL. Til referencekrav vælger Raymond en FK. Audit og visse mere komplekse regler kan kræve en trigger.
+
+> [!RAYMOND:thinking] To forsvar — er de virkelig ens?
+>
+> Triggeren afviser både NULL og et antal under én. Hvilken del af beskyttelsen kommer fra CHECK, og hvilken kommer fra NOT NULL, hvis du vælger constraints? Brug konkrete ugyldige input til at underbygge svaret.
 
 ## Typisk café-regel (idé)
 
@@ -110,13 +116,14 @@ Returnér `NULL` i BEFORE ROW for at **stille** springe rækken over (sjældent 
 
 ## Idempotens og bulk
 
-Triggers kører pr. række ved `UPDATE … WHERE …` der rammer 1000 rækker = 1000 kald. Ved store imports:
-
-- midlertidigt `ALTER TABLE … DISABLE TRIGGER` (kræver rettigheder), eller  
-- læg logikken i et batch-job i C#
+En FOR EACH ROW-trigger kaldes pr. berørt række: 1.000 rækker giver 1.000 kald. Raymond undersøger derfor dens arbejde ved store imports. En eventuel deaktivering kræver de rette rettigheder, en kendt vedligeholdelsesprocedure og efterfølgende kontrol; den må ikke bruges som genvej uden om integritetskrav. Et batch-flow i C# kan være et alternativ, når alle skriveveje stadig beskytter de nødvendige regler.
 
 ## Prøv selv
 
 1. Opret `trg_orders_qty` og prøv `quantity = 0`.  
 2. Tilføj `CHECK (quantity > 0)` i stedet — sammenlign fejloplevelsen.  
 3. Skriv i README: “Triggers bruges til X; constraints til Y; API til Z.”
+
+> [!RAYMOND:idea-notes] Vælg og begrund
+>
+> Fordel tre krav: positivt antal, reference til en eksisterende kunde og log over prisændringer. Vælg den enkleste egnede mekanisme til hvert krav, og forklar, hvad der kan gå galt, hvis en klient omgår appens validering.

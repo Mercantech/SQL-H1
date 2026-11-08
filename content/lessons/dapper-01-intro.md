@@ -17,12 +17,12 @@ sandbox:
 
 # Dapper — micro-ORM oven på ADO.NET
 
-**Dapper** er et tyndt lag (*micro-ORM*) oven på ADO.NET: I skriver stadig SQL, men slipper for manuel `GetInt32`/`GetString`-mapping.
+Raymond har en gennemprøvet kunderapport, men dens reader-løkke fylder mere end selve forespørgslen. Med **Dapper** beholder han SQL'en og lader et tyndt mappinglag (*micro-ORM*) danne C#-objekterne.
 
 ```text
 Rå NpgsqlCommand + Reader  →  meget kontrol, meget boilerplate
 Dapper                     →  SQL + automatisk mapping
-EF Core                    →  LINQ, change tracker (tyngre — ikke H1-fokus her)
+EF Core                    →  LINQ, change tracker og migrationer
 ```
 
 ## NuGet
@@ -51,7 +51,7 @@ var customers = await conn.QueryAsync<Customer>(
     """);
 ```
 
-Dapper mapper kolonnenavne → properties (pas på casing; aliases hjælper).
+Dapper matcher resultatets kolonnenavne og typer med objektet. For denne `record` sker det gennem dens konstruktør. Aliaserne gør kontrakten mellem SQL-resultat og C#-model synlig. C#-eksemplerne køres lokalt med Dapper og Npgsql; SQL-H1's editor bruges til SQL'en.
 
 ## Samme SQL i SQL-H1
 
@@ -63,6 +63,10 @@ LIMIT 5;
 ```
 
 ## Hvornår Dapper?
+
+> [!RAYMOND:question] Hvad forsvandt fra reader-løkken?
+>
+> Sammenlign med ADO.NET-eksemplet: hvem læser nu `Id`, `Name` og `Email` ind i objektet? Peg også på det arbejde, Raymond stadig ejer: **filtrering**, **kolonnevalg**, **NULL-håndtering** og en korrekt JOIN bliver ikke automatisk rigtigt af at bruge Dapper.
 
 | Vælg Dapper når | Overvej noget andet når |
 |-----------------|-------------------------|
@@ -77,6 +81,8 @@ LIMIT 5;
 - `record` / `class` med `get`/`init` fungerer fint  
 - Match NULL-bare kolonner til `string?`, `int?`, …
 
+Raymond vælger ud fra, hvem der skal formulere SQL og vedligeholde datamodellen. I [ORM-forløbet](/learn/orm-01-intro) prøver du EF Core, der også kan oversætte LINQ og holde styr på ændringer. Begge arbejder stadig mod en database; de er forskellige måder at få adgang til den på.
+
 ## Hvad Dapper *ikke* er
 
 - Ikke change tracker (ingen `SaveChanges`)  
@@ -88,3 +94,7 @@ LIMIT 5;
 1. Kør kundelisten i SQL-H1.  
 2. Skriv `Customer`-record og `QueryAsync`-kaldet.  
 3. Sammenlign linjetal med rå ADO.NET-reader-løkke.
+
+> [!RAYMOND:thinking] Tegn mappingkontrakten
+>
+> Forbind hver valgt SQL-kolonne med et felt i `Customer`. Hvad sker der med et manglende eller forkert typet felt? Forklar til sidst, hvorfor det at skrive en ny `record` **ikke** i sig selv opretter en tabel eller ændrer databasen.

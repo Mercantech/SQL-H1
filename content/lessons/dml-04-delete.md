@@ -21,9 +21,11 @@ sandbox:
 
 # DELETE — Delete i dybden
 
-**DELETE** er CRUD-**Delete**: du fjerner *hele rækker*. Kolonner sættes ikke til tomme — rækken er væk.
+En testbestilling er blevet stående i caféens database. Raymond vil fjerne selve ordren med **DELETE**. Det er noget andet end at gøre et felt tomt: kommandoen fjerner hele den valgte række.
 
-Mentalt: “Denne kendsgerning skal ikke længere findes.”
+> [!RAYMOND:warning] Vis mig listen først
+>
+> Før jeg sletter testordren, vil jeg se præcis de rækker, filteret finder. Brug en `SELECT` med samme betingelse. Vil en sletning på navn ramme én række eller måske flere?
 
 ## Anatomi
 
@@ -52,7 +54,7 @@ DELETE FROM orders WHERE quantity = 3;
 DELETE FROM orders WHERE id = 14;
 ```
 
-Det matcher `DELETE /orders/14` i en API. Primærnøgle er dit sikreste filter.
+Det kan svare til `DELETE /orders/14` i en API. Primærnøglen udpeger én bestemt ordre; kontrollér stadig, at netop den ordre skal væk.
 
 ## Delete mange rækker (bevidst)
 
@@ -82,6 +84,10 @@ DELETE FROM customers WHERE name = 'Anna Jensen';
 ```
 
 Postgres afviser det (FK), så du ikke får “forældreløse” ordrer med ugyldig `customer_id`.
+
+> [!RAYMOND:foreign-key] Hvorfor stopper databasen mig?
+>
+> Kunden er stadig forbundet med ordrer. Fejlen er et spor om relationen, ikke en opfordring til at slå fremmednøglen fra. Skal ordrehistorikken bevares, eller er det hele testdata, du bevidst vil fjerne?
 
 ### Mønster: slet børn før forælder
 
@@ -132,7 +138,7 @@ Nyttigt til audit: “hvad forsvandt lige?”
 |--|----------|------------|
 | Type | DML | mere DDL-agtig / vedligehold |
 | `WHERE` | ja | nej (hele tabellen) |
-| MV | tilladt (med filter) | typisk forbudt i sandbox |
+| Afgrænsning i øvelsen | vælg mål-rækker med et filter | hele tabellen; kræver skriveadgang og er ikke en genvej til opgaven |
 
 Brug `DELETE` når du tænker CRUD Delete på udvalgte rækker.
 
@@ -169,3 +175,7 @@ Delete  DELETE   → annullér ordren
 3. Prøv (forstå fejlen) at slette en kunde der stadig har ordrer — og forklar hvorfor.
 
 Næste lektion går i dybden: **cascading**, `ON DELETE`-regler og strategier for sammenhængende data.
+
+> [!RAYMOND:question] Sletning eller en anden ændring?
+>
+> Menuen har et udsolgt produkt og databasen en overflødig testordre. Hvilken handling bør være `UPDATE`, og hvilken kan være `DELETE`? Forklar, hvilken historik der skal overleve i hvert tilfælde.

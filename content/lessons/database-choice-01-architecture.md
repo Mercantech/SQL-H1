@@ -36,7 +36,11 @@ C# → MongoDB-driver           → MongoDB
 | EF Core over SQL | Modeller, migrationer og almindelig CRUD fylder meget | Genereret SQL, tracking, antal kald og projektion |
 | Dapper/rå SQL over SQL | Teamet har brug for præcis kontrol over forespørgsler | Manuel mapping/design, vedligehold og parametre |
 
-Der findes ingen regel om, at dokumentdatabaser altid er hurtigere, eller at ORM altid er langsomt. Datamodel, forespørgsler, indeks, netværk, datamængde og belastning bestemmer resultatet.
+Raymond skriver kravene ved siden af produktnavnene. Der findes ingen regel om, at dokumentdatabaser altid er hurtigere, eller at ORM altid er langsomt. Datamodel, forespørgsler, indeks, netværk, datamængde og belastning bestemmer resultatet, så hvert valg skal undersøges i sin sammenhæng.
+
+> [!RAYMOND:thinking] To beslutninger på tavlen
+>
+> Tegn **databasevalget** og **adgangslaget** som to separate beslutninger. Hvis GameHub skifter fra Dapper til EF Core over samme PostgreSQL-database, hvilke data og regler kan blive stående? Hvad skal undersøges igen i C#-koden?
 
 ## Tre ønsker fra kunden
 
@@ -44,7 +48,7 @@ Der findes ingen regel om, at dokumentdatabaser altid er hurtigere, eller at ORM
 2. **Tilmelding:** Den sidste turneringsplads må ikke sælges to gange.
 3. **Dashboard:** Tæl aktive deltagere pr. spil og uge.
 
-Et indlejret profilkort kan passe godt til dokumenter. Tilmelding kræver et gennemtænkt konsistensflow i begge databasefamilier. Relationelle rapporter kan passe godt til SQL. Et hybridvalg kan være fornuftigt, men to databaser giver også to steder at overvåge, sikre og tage backup af.
+Raymond følger én brugerhandling ad gangen. Et indlejret profilkort kan passe godt til dokumenter; den sidste plads kræver et gennemtænkt konsistensflow i begge databasefamilier. Relationelle rapporter kan passe godt til SQL. Et hybridvalg kan være fornuftigt, men så skal Raymond også overvåge, sikre og tage backup af to databasesystemer.
 
 ## ORM-fælden: 1 + N kald
 
@@ -58,6 +62,10 @@ Vælg løsning til ét af de tre kundeønsker. Brug sætningen:
 
 > Vi vælger ___ fordi adgangsmønstret er ___. Den største omkostning er ___. Vi vil måle ___, før vi kalder det hurtigt nok.
 
-En velbegrundet ulempe giver flere faglige point end et produktnavn.
+En brugbar beslutning beskriver både, hvad løsningen gør let, og hvilket arbejde teamet selv overtager.
+
+> [!RAYMOND:skeptical] Forsvar dit valg med en ulempe
+>
+> Vælg løsning til ét kundeønske. Giv din makker **det stærkeste modargument** til dit valg og en konkret test, der kunne få dig til at vælge om. Begrundelsen skal handle om adgangsmønster, konsistens eller drift og kunne forstås uden et produktlogo.
 
 Kilder: [EF Core: effektiv forespørgsel](https://learn.microsoft.com/en-us/ef/core/performance/efficient-querying) og [MongoDB-datamodellering](https://www.mongodb.com/docs/manual/data-modeling/).

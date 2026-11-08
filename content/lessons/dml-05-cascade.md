@@ -20,7 +20,11 @@ sandbox:
 
 # Sammenhængende data og komplekse DELETE
 
-En `DELETE` på én tabel er sjældent “bare én række”. I en relationel database hænger data sammen — og **fremmednøgler** bestemmer, hvad der må ske, når du forsøger at slette.
+Raymond vil fjerne en kunde fra caféens kundeliste, men kunden har stadig ordrer. Nu er spørgsmålet større end ét `DELETE`: **Hvad skal der ske med historikken?** Fremmednøglerne forbinder rækkerne, og deres regler hjælper dig med at gennemføre det valgte design.
+
+> [!RAYMOND:foreign-key] Følg forbindelserne
+>
+> Find en kunde med ordrer, og følg pilen fra `orders.customer_id`. Hvilken række ejer referencen? Det svar fortæller dig, hvor du skal undersøge konsekvensen af en sletning.
 
 ## Grafen i caféen
 
@@ -71,14 +75,18 @@ customer_id INT REFERENCES customers(id)
 | **`RESTRICT` / `NO ACTION`** | Sletning af forælder **fejler**, hvis børn findes | Standard “beskyt historik” — det du mærker i café-seed’et |
 | **`CASCADE`** | Slet forælder → **slet børnene automatisk** | Sjældent på kunder/ordrer; farligt uden bevidst design |
 | **`SET NULL`** | Slet forælder → børns FK sættes til **`NULL`** | Kræver at kolonnen må være `NULL` (som vores walk-in `customer_id`) |
-| **`SET DEFAULT`** | Slet forælder → FK sættes til kolonnens **DEFAULT** | Sjældnere; kræver meningsfuld default |
+| **`SET DEFAULT`** | Slet forælder → FK sættes til kolonnens **DEFAULT** | Default skal stadig overholde FK og øvrige constraints |
 
-Postgres’ standard uden angivelse er i praksis **“blokér sletning, når der er referencer”** (`NO ACTION`/`RESTRICT`-agtigt). Derfor fejler:
+Uden en angivet handling bruger PostgreSQL **`NO ACTION`**. I vores ikke-udskudte café-constraints blokerer den sletningen, når referencer bliver ugyldige. `RESTRICT` ligner her, men kan ikke udskyde kontrollen som en passende deferrable `NO ACTION`-constraint. Derfor fejler:
 
 ```sql
 DELETE FROM customers WHERE name = 'Anna Jensen';
 -- fejl: orders refererer stadig til Anna
 ```
+
+> [!RAYMOND:warning] To forskellige CASCADE
+>
+> `ON DELETE CASCADE` handler om **rækker**, når en forælder slettes. `DROP ... CASCADE` handler om **databaseobjekter**, eksempelvis afhængige views eller constraints. Forklar hvilket af de to, vi diskuterer, før du ændrer noget.
 
 ## Hvorfor CASCADE er kraftfuldt — og farligt
 
@@ -118,7 +126,7 @@ WHERE customer_id = (SELECT id FROM customers WHERE name = 'Anna Jensen');
 DELETE FROM customers WHERE name = 'Anna Jensen';
 ```
 
-Det er bevidst: du **bevarer ordrerne**, men fjerner personkoblingen (GDPR-agtigt mønster i forenklet form).
+Du **bevarer ordrerne** og fjerner netop denne kundereference. Raymond understreger, at det ikke i sig selv beviser fuld anonymisering: andre felter, logs eller kopier kan stadig identificere personen.
 
 ## Tre strategier du skal kunne vælge imellem
 
@@ -205,9 +213,9 @@ WHERE o.customer_id = (SELECT id FROM customers WHERE name = 'Anna Jensen');
 
 - Blindt sætte `ON DELETE CASCADE` uden at forstå konsekvensen
 - Slette uden preview (`SELECT` først)
-- Antage at “det virker som i MySQL med løse FK”
+- Antage at alle databaser eller alle relationer har samme `ON DELETE`-regel
 
-Du **skal** kunne forklare forskellen på strategierne til en eksamen eller en kollega.
+Raymond beder dig begrunde strategien ud fra caféens krav: Hvilke data skal bevares, og hvilke forbindelser må fjernes?
 
 ## Prøv selv
 
@@ -216,3 +224,7 @@ Du **skal** kunne forklare forskellen på strategierne til en eksamen eller en k
 3. **Nulstil data.** Gentag med strategi **anonymisér** (`UPDATE … SET customer_id = NULL`), og slet kunden. Sammenlign hvad der er tilbage i `orders`.
 
 Når du kan vælge mellem blokér / kaskade / anonymisér, forstår du hvorfor Delete er den mest “arkitektoniske” af CRUD-operationerne.
+
+> [!RAYMOND:idea-notes] Begrund det, der er tilbage
+>
+> Sammenlign de tre forsøg fra samme starttilstand. Beskriv både **kunden**, **ordrerne** og **referencerne** bagefter. En strategi er først tydelig, når du kan forklare de data, den bevarer, såvel som dem, den fjerner.
