@@ -1,0 +1,16 @@
+{
+  "orm": [
+    ".config/dotnet-tools.json", ".dockerignore", ".env.example", ".gitattributes", ".gitignore",
+    "CodeFirst/CodeFirst.csproj", "CodeFirst/GameHubContext.cs", "CodeFirst/Models.cs", "CodeFirst/Program.cs",
+    "DatabaseFirst/DatabaseFirst.csproj", "Dockerfile", "LegacyDemo/LegacyDemo.csproj", "LegacyDemo/Program.cs",
+    "README.md", "compose.yml", "database/init.sql", "tools/Tournament.Display.cs.template", "tools/scaffold.sh"
+  ],
+  "documents": [
+    ".env.example", ".gitignore", "README.md", "compose.yml", "mongo/plans.js", "mongo/seed.js",
+    "postgres/plans.sql", "postgres/seed.sql"
+  ],
+  "security-testing": [
+    ".dockerignore", ".env.example", ".gitignore", "Dockerfile", "GameHub.Guard.csproj", "Program.cs",
+    "README.md", "TEACHER.md", "compose.yaml", "instructor-solutions.sql"
+  ]
+}

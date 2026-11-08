@@ -169,5 +169,78 @@
       "Hente JOIN-rapporter og multi-mapping i enkle tilfælde",
       "Vælge bevidst mellem Dapper og rå ADO.NET i H1-projektet"
     ]
+  },
+  {
+    "slug": "orm",
+    "title": "ORM — fra C# til database",
+    "description": "GameHub åbner: byg en domænemodel med EF Core, generér databasen og hent en model ud af en eksisterende database.",
+    "order": 14,
+    "scaffoldOnly": false,
+    "goalNumbers": [18, 19, 20],
+    "objectives": [
+      "Forklare ORM og forskellen mellem EF Core, Dapper og rå SQL",
+      "Bygge en domænemodel med relationer og generere en PostgreSQL-database med migrationer",
+      "Skrive LINQ-forespørgsler og undersøge den genererede SQL",
+      "Generere en model fra en eksisterende database med scaffolding",
+      "Aflevere kørende C#-kode, databaseskema og forklaringer fra en Docker-lab"
+    ]
+  },
+  {
+    "slug": "documents",
+    "title": "Dokumentdatabaser — spillernes univers",
+    "description": "Profiler, badges og fleksible data: udforsk MongoDB, vælg mellem embedding og referencer, og byg bro til PostgreSQL JSONB.",
+    "order": 15,
+    "scaffoldOnly": false,
+    "goalNumbers": [21],
+    "objectives": [
+      "Forklare dokumenter, collections, BSON og skemavalidering",
+      "Begrunde embedding eller referencer ud fra adgangsmønstre og datavækst",
+      "Oprette, søge og opdatere dokumenter i en rigtig MongoDB-lab",
+      "Undersøge JSONB i PostgreSQL og forklare forskellen på en datatype og en dokumentdatabase"
+    ]
+  },
+  {
+    "slug": "database-choice",
+    "title": "Databasevalg — mål før du vælger",
+    "description": "Hvilken løsning passer til GameHub? Sammenlign relationelle data og dokumenter, mål en konkret arbejdsbelastning, og vælg et adgangslag.",
+    "order": 16,
+    "scaffoldOnly": false,
+    "goalNumbers": [22],
+    "objectives": [
+      "Skelne mellem databasetype og ORM som adgangslag",
+      "Vurdere konsistens, relationer, adgangsmønstre og performancebehov",
+      "Sammenligne målinger med samme datasæt og forklare målingernes begrænsninger",
+      "Begrunde et database- og ORM-valg med alternativer og målbare krav"
+    ]
+  },
+  {
+    "slug": "security",
+    "title": "Databasesikkerhed — luk hullerne",
+    "description": "Beskyt GameHub: parametre, mindst mulige rettigheder, kryptering, secrets og sikker identitet uden hjemmelavet login.",
+    "order": 17,
+    "scaffoldOnly": false,
+    "goalNumbers": [23],
+    "objectives": [
+      "Beskrive trusler og begrænse databaseadgang med roller, views og mindst mulige rettigheder",
+      "Afprøve parametriseret C#-kode med normale værdier og injection-input",
+      "Skelne hashing fra kryptering og forklare beskyttelse under transport og lagring",
+      "Holde secrets ude af git og bruge Mercantec Auth til brugerlogin",
+      "Aflevere en begrundet sikkerhedsvurdering og evidens for de valgte forsvar"
+    ]
+  },
+  {
+    "slug": "testing",
+    "title": "Databasetest — bevis at det holder",
+    "description": "GameHub skal kunne tåle fejl: design testcases, undersøg constraints og kør gentagelige integrationstests mod rigtig PostgreSQL.",
+    "order": 18,
+    "scaffoldOnly": false,
+    "goalNumbers": [24],
+    "objectives": [
+      "Lave en testplan med gyldige, ugyldige og grænseværdier",
+      "Teste nøgler, relationer, constraints og rollback med konkrete forventninger",
+      "Skelne enhedstest fra integrationstest mod den rigtige databaseprovider",
+      "Køre gentagelige tests med isolerede testdata og kontrollere gendannelse af backup",
+      "Dokumentere fund, rettelser og regressionstests før aflevering"
+    ]
   }
 ]

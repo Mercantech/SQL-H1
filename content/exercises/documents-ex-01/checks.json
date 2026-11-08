@@ -1,0 +1,10 @@
+{
+  "description": "GameHub JSONB: views, array, bevarende opdatering og GIN",
+  "assertions": [
+    { "type": "sql_equals", "sql": "SELECT handle, rating FROM v_ranked_players ORDER BY handle", "expected": [["Nova",1450],["Pixel",1280]], "message": "Invitationslisten indeholder de rigtige profiler og ratings" },
+    { "type": "sql_equals", "sql": "SELECT game, hours FROM v_game_hours ORDER BY game", "expected": [["minecraft",18],["rocket",36],["valorant",32]], "message": "Spiltimer er summeret korrekt på tværs af dokumenterne" },
+    { "type": "sql_equals", "sql": "SELECT profile = '{\"handle\":\"Nova\",\"region\":\"EU\",\"rating\":1450,\"settings\":{\"theme\":\"high-contrast\"},\"games\":[{\"slug\":\"rocket\",\"hours\":24},{\"slug\":\"valorant\",\"hours\":12}]}'::jsonb FROM player_profiles WHERE id=1", "expected": [[true]], "message": "Novas tema er ændret uden at miste profilens øvrige indhold" },
+    { "type": "sql_equals", "sql": "SELECT id, CASE id WHEN 2 THEN profile = '{\"handle\":\"Pixel\",\"region\":\"EU\",\"rating\":1280,\"settings\":{\"theme\":\"light\"},\"games\":[{\"slug\":\"rocket\",\"hours\":12},{\"slug\":\"minecraft\",\"hours\":18}]}'::jsonb WHEN 3 THEN profile = '{\"handle\":\"Rune\",\"region\":\"EU\",\"rating\":990,\"settings\":{\"theme\":\"dark\"},\"games\":[{\"slug\":\"valorant\",\"hours\":20}]}'::jsonb WHEN 4 THEN profile = '{\"handle\":\"Echo\",\"region\":\"NA\",\"rating\":1600,\"settings\":{\"theme\":\"dark\"},\"games\":[]}'::jsonb ELSE FALSE END FROM player_profiles WHERE id<>1 ORDER BY id", "expected": [[2,true],[3,true],[4,true]], "message": "De andre profiler er bevaret uden datatab" },
+    { "type": "sql_equals", "sql": "SELECT COUNT(*)::int FROM pg_indexes WHERE schemaname='public' AND tablename='player_profiles' AND indexname='ix_player_profiles_profile' AND indexdef ILIKE '%USING gin (profile)%'", "expected": [[1]], "message": "GIN-indekset på profildokumentet findes" }
+  ]
+}

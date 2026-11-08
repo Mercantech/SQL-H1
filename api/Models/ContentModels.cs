@@ -8,6 +8,7 @@ public class ModuleCatalogItem
     public int Order { get; set; }
     public bool ScaffoldOnly { get; set; }
     public string[] Objectives { get; set; } = [];
+    public int[] GoalNumbers { get; set; } = [];
 }
 
 public class ContentItem

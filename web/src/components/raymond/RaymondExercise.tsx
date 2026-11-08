@@ -11,7 +11,7 @@ function RaymondExerciseContent({ content }: { content: ContentDto }) {
   const hintId = useId();
   const [revealedCount, setRevealedCount] = useState(0);
   const hints = useMemo(
-    () => (content.kind === "exercise" ? getExerciseHints(content).slice(0, 3) : []),
+    () => (content.kind === "exercise" || content.kind === "project" ? getExerciseHints(content).slice(0, 3) : []),
     [content],
   );
 

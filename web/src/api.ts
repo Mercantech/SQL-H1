@@ -7,6 +7,7 @@ export type ModuleDto = {
   order: number;
   scaffoldOnly: boolean;
   objectives: string[];
+  goalNumbers?: number[];
   items: { slug: string; title: string; kind: string; order: number }[];
 };
 

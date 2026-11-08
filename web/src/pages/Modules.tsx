@@ -8,6 +8,7 @@ import {
 } from "../api";
 import { isLoggedIn } from "../auth";
 import { LearningObjectives } from "../components/LearningObjectives";
+import { GameHubInvitation } from "../components/CourseMission";
 import { RaymondNote } from "../components/raymond/Raymond";
 import { useRaymond } from "../components/raymond/RaymondContext";
 
@@ -73,11 +74,14 @@ export function Modules() {
             <>Tag <strong>{continueTarget.item.title}</strong> i {continueTarget.module.title} som det næste.
               {continueTarget.item.kind === "theory"
                 ? " Læs forklaringen og afprøv et eksempel, før du går videre."
-                : " Læs opgaven, afprøv din SQL, og brug opgavens tjek til at vurdere løsningen."}</>
+                : continueTarget.item.kind === "project"
+                  ? " Hent labben, byg løsningen, og gør din aflevering klar til gennemgang."
+                  : " Læs opgaven, afprøv din SQL, og brug opgavens tjek til at vurdere løsningen."}</>
           ) : "Alle lektioner er registreret som fuldført. Genbesøg et emne, eller afprøv din egen idé i Playground."}
         </p>
         <button type="button" className="btn ghost" onClick={openHelp}>Spørg Raymond</button>
       </RaymondNote>
+      <GameHubInvitation />
       <ol className="module-list">
         {modules.map((m) => {
           const done = m.items.filter(
@@ -100,6 +104,7 @@ export function Modules() {
                     )}
                   </h2>
                   <p>{m.description}</p>
+                  {!!m.goalNumbers?.length && <p className="course-goals">Målpind {m.goalNumbers.map((goal) => `#${goal}`).join(" · ")}</p>}
                   <LearningObjectives
                     objectives={m.objectives ?? []}
                     compact

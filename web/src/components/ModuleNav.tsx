@@ -153,8 +153,9 @@ export function ModuleNav({
     );
   }
 
-  const theory = mod.items.filter((i) => i.kind !== "exercise");
+  const theory = mod.items.filter((i) => i.kind === "theory");
   const exercises = mod.items.filter((i) => i.kind === "exercise");
+  const projects = mod.items.filter((i) => i.kind === "project");
   const currentIndex = mod.items.findIndex((i) => i.slug === currentSlug);
   const doneCount = moduleDoneCount(mod, statusBySlug);
   const onLastItem =
@@ -210,6 +211,9 @@ export function ModuleNav({
             />
           )}
 
+          {projects.length > 0 && (
+            <NavSection label="Projekter · arbejd lokalt" items={projects} currentSlug={currentSlug} statusBySlug={statusBySlug} onNavigate={onNavigate} />
+          )}
           {currentSlug && currentIndex >= 0 && (
             <p className="module-nav-step muted">
               Trin {currentIndex + 1} af {mod.items.length}

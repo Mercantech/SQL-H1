@@ -65,6 +65,9 @@ export function Markdown({ children, onInsertCode, onRunCode, keepLeadingH1 }: P
       remarkPlugins={[remarkGfm]}
       rehypePlugins={rehypePlugins}
       components={{
+        img: ({ src, alt }) => (
+          <img src={src} alt={alt ?? ""} loading="lazy" decoding="async" className={src?.startsWith("/raymond/course/") ? "lesson-raymond" : undefined} />
+        ),
         pre: ({ children: preChildren }) => {
           const lang = getFenceLang(preChildren);
           if (lang === "join-viz") {

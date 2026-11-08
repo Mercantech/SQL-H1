@@ -1381,6 +1381,42 @@ body.is-resizing-split .sql-result {
   gap: 0.65rem;
 }
 
+.gamehub-invitation,
+.course-mission {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2rem);
+  padding: clamp(1rem, 3vw, 2rem);
+  margin: 1.5rem 0;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--panel);
+}
+
+.gamehub-invitation > img,
+.course-mission > img {
+  flex: 0 0 auto;
+  width: clamp(88px, 15vw, 160px);
+  height: auto;
+  object-fit: contain;
+}
+
+.gamehub-invitation h2 { margin: 0.35rem 0 0.65rem; }
+.gamehub-invitation p,
+.course-mission p { margin: 0.4rem 0 0.85rem; }
+.course-goals { color: var(--accent); font-size: 0.85rem; font-weight: 650; }
+.project-brief { background: var(--panel); border-left: 4px solid var(--accent); border-radius: 8px; padding: 1rem 1.25rem; margin: 1.2rem 0; }
+.md img { max-width: 100%; height: auto; }
+.md a { color: var(--accent); text-decoration: underline; text-underline-offset: 0.18em; }
+.md img.lesson-raymond { display: block; width: min(220px, 55vw); margin: 1rem auto 1.5rem; }
+.present-slide .md img.lesson-raymond { width: min(180px, 28vh); }
+
+@media (max-width: 600px) {
+  .gamehub-invitation { align-items: flex-start; gap: 0.75rem; }
+  .gamehub-invitation > img { width: 76px; }
+  .course-mission { flex-wrap: wrap; }
+}
+
 .md pre,
 .md code {
   font-family: var(--font-mono);

@@ -14,7 +14,7 @@ test("every curriculum module resolves to its own guidance and official source",
     assert.equal(topic.id, module.slug, module.slug);
     assert.ok(topic.summary.length > 60);
     assert.ok(topic.steps.length >= 3);
-    assert.equal(new URL(topic.reference).hostname, "www.postgresql.org");
+    assert.ok(["www.postgresql.org", "learn.microsoft.com", "www.mongodb.com", "cheatsheetseries.owasp.org"].includes(new URL(topic.reference).hostname));
   }
   assert.equal(getRaymondTopic("/learn/joins-ex-01").id, "joins-subqueries");
   assert.equal(getRaymondTopic("/learn/ddl-ex-02").id, "ddl-er");

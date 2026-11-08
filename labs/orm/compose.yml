@@ -1,0 +1,35 @@
+name: raymond-orm
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: workshop
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Copy .env.example to .env and choose DB_PASSWORD}
+      POSTGRES_DB: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/00-gamehub.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U workshop -d gamehub_codefirst"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  workshop:
+    build: .
+    working_dir: /work
+    environment:
+      CODEFIRST_CONNECTION_STRING: Host=db;Database=gamehub_codefirst;Username=workshop;Password=${DB_PASSWORD}
+      LEGACY_CONNECTION_STRING: Host=db;Database=gamehub_legacy;Username=workshop;Password=${DB_PASSWORD}
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+    volumes:
+      - .:/work
+      - nuget:/root/.nuget/packages
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  nuget:

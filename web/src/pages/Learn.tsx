@@ -5,6 +5,7 @@ import {
   executeSql,
   fetchContent,
   fetchModules,
+  fetchProgress,
   putProgress,
   resetSandbox,
   type ContentDto,
@@ -14,6 +15,7 @@ import {
 import { beginLogin, isLoggedIn } from "../auth";
 import { ExerciseSchema } from "../components/ExerciseSchema";
 import { LearningObjectives } from "../components/LearningObjectives";
+import { contentKindLabel } from "../lib/course";
 import { appendCodeToEditor, Markdown } from "../components/Markdown";
 import { LearnPager, ModuleNav } from "../components/ModuleNav";
 import { SqlEditor } from "../components/SqlEditor";
@@ -33,6 +35,8 @@ export function Learn() {
   const [checkMessages, setCheckMessages] = useState<string[] | null>(null);
   const [checkPassed, setCheckPassed] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [projectStatus, setProjectStatus] = useState<string | null>(null);
+  const [savingProject, setSavingProject] = useState(false);
   const [navOpen, setNavOpen] = useModuleNavOpen();
   const [sandboxOpen, setSandboxOpen] = useSandboxOpen();
   const operationRef = useRef(0);
@@ -64,6 +68,16 @@ export function Learn() {
         setResult(null);
         setCheckMessages(null);
         setCheckPassed(null);
+        setProjectStatus(null);
+        setSavingProject(false);
+        if (c.kind === "project" && isLoggedIn()) {
+          setSavingProject(true);
+          fetchProgress().then((rows) => {
+            if (!cancelled) setProjectStatus(rows.find((row) => row.contentSlug === c.slug && row.partIndex === 0)?.status ?? null);
+          }).catch(() => undefined).finally(() => {
+            if (!cancelled) setSavingProject(false);
+          });
+        }
         if (c.kind === "theory" && isLoggedIn()) {
           putProgress(c.slug, "completed").catch(() => undefined);
         }
@@ -162,8 +176,24 @@ export function Learn() {
     }
   }
 
+  async function saveProjectStatus() {
+    if (!item || item.slug !== slug || item.kind !== "project" || !(await ensureReady())) return;
+    const operation = operationRef.current;
+    setSavingProject(true);
+    setError(null);
+    const status = projectStatus === "completed" ? "started" : "completed";
+    try {
+      await putProgress(item.slug, status);
+      if (operation === operationRef.current) setProjectStatus(status);
+    } catch (e) {
+      if (operation === operationRef.current) setError(e instanceof Error ? e.message : "Kunne ikke gemme projektstatus");
+    } finally {
+      if (operation === operationRef.current) setSavingProject(false);
+    }
+  }
+
   if (error && !item) return <p className="error-text">{error}</p>;
-  if (!item) return <p className="muted learn-loading">Henter lektion…</p>;
+  if (!item || item.slug !== slug) return <p className="muted learn-loading">Henter lektion…</p>;
 
   const showSandbox = Boolean(item.sandbox);
   const editorVisible = showSandbox && sandboxOpen;
@@ -220,7 +250,7 @@ export function Learn() {
               <p className="eyebrow">
                 <Link to={`/modules/${item.module}`}>Modul</Link>
                 {" · "}
-                {item.kind === "exercise" ? "Opgave" : "Teori"}
+                {contentKindLabel(item.kind)}
               </p>
               {item.kind === "theory" && (
                 <Link
@@ -233,6 +263,17 @@ export function Learn() {
               )}
             </div>
             <h1>{item.title}</h1>
+            {item.kind === "project" && (
+              <aside className="project-brief" aria-label="Sådan arbejder du med projektet">
+                <p className="eyebrow">Byg lokalt · vis hvad du kan</p>
+                <p>Hent labben i opgaven, kør den med Docker, og gem kode og resultater til din aflevering. Gennemgå kravene med en makker eller din underviser.</p>
+                <p className="muted">Din markering nedenfor gemmer kun, at du er klar til gennemgang. Den godkender ikke opgaven.</p>
+                <button className="btn" type="button" disabled={savingProject} onClick={() => void saveProjectStatus()}>
+                  {savingProject ? "Gemmer…" : projectStatus === "completed" ? "Arbejd videre på projektet" : "Min aflevering er klar til gennemgang"}
+                </button>
+                {projectStatus === "completed" && <p role="status">Klar til gennemgang · registreret af dig</p>}
+              </aside>
+            )}
             {moduleIntro && (
               <LearningObjectives objectives={moduleIntro.objectives} />
             )}

@@ -13,6 +13,7 @@ import {
 import { beginLogin, getUserProfile, isLoggedIn, logout } from "../auth";
 import { RaymondNote } from "../components/raymond/Raymond";
 import { useRaymond } from "../components/raymond/RaymondContext";
+import { progressLabel } from "../lib/course";
 
 function formatWhen(iso: string) {
   try {
@@ -26,12 +27,6 @@ function formatWhen(iso: string) {
   } catch {
     return iso;
   }
-}
-
-function statusLabel(status: string) {
-  if (status === "completed") return "Fuldført";
-  if (status === "started") return "I gang";
-  return status;
 }
 
 function sandboxLabel(status: string) {
@@ -249,7 +244,7 @@ export function Profile() {
                   {stats.recent.map((r) => (
                     <li key={`${r.contentSlug}-${r.partIndex}`}>
                       <Link to={`/learn/${r.contentSlug}`}>
-                        <span className={`pill ${r.status}`}>{statusLabel(r.status)}</span>
+                        <span className={`pill ${r.status}`}>{progressLabel(modules.flatMap((module) => module.items).find((item) => item.slug === r.contentSlug)?.kind, r.status)}</span>
                         <span className="profile-list-title">
                           {titleBySlug.get(r.contentSlug) || r.contentSlug}
                         </span>

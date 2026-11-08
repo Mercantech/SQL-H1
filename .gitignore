@@ -8,3 +8,4 @@ obj/
 .idea/
 *.log
 coverage/
+__pycache__/

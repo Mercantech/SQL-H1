@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { fetchModules, type ModuleDto } from "../api";
 import { LearningObjectives } from "../components/LearningObjectives";
+import { CourseMission } from "../components/CourseMission";
+import { contentKindLabel } from "../lib/course";
 import { ModuleNav } from "../components/ModuleNav";
 import { useModuleNavOpen } from "../hooks/useModuleNavOpen";
 
@@ -46,6 +48,7 @@ export function ModuleDetail() {
             </p>
             <h1>{mod.title}</h1>
             <p>{mod.description}</p>
+            <CourseMission moduleSlug={mod.slug} goals={mod.goalNumbers} />
             <LearningObjectives objectives={mod.objectives ?? []} />
             {first && (
               <p className="cta-row">
@@ -60,7 +63,7 @@ export function ModuleDetail() {
                 <li key={item.slug}>
                   <Link to={`/learn/${item.slug}`}>
                     <span className="pill">
-                      {item.kind === "exercise" ? "Opgave" : "Teori"}
+                      {contentKindLabel(item.kind)}
                     </span>
                     {item.title}
                   </Link>

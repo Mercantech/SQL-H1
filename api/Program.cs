@@ -232,6 +232,7 @@ api.MapGet("/modules", (ContentService content) =>
         m.Order,
         m.ScaffoldOnly,
         m.Objectives,
+        m.GoalNumbers,
         items = content.GetModuleContents(m.Slug).Select(i => new
         {
             i.Slug,

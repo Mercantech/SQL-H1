@@ -56,7 +56,7 @@ export function CodeBlock({ children, language, onInsert, onRun }: Props) {
   const body = trimFenceChildren(children);
   const code = getText(body).replace(/\n$/, "");
   const canRun = Boolean(onRun && isSql && code.trim());
-  const showActions = isSql;
+  const showActions = Boolean(code.trim());
 
   async function copy() {
     try {
@@ -69,13 +69,13 @@ export function CodeBlock({ children, language, onInsert, onRun }: Props) {
   }
 
   return (
-    <div className={`md-code ${showActions ? "md-code--sql" : "md-code--plain"}`}>
+    <div className={`md-code ${isSql ? "md-code--sql" : "md-code--plain"}`}>
       {showActions && (
         <div className="md-code-actions">
           <button type="button" className="md-code-btn" onClick={copy}>
             {copied ? "Kopieret" : "Kopiér"}
           </button>
-          {onInsert && (
+          {onInsert && isSql && (
             <button type="button" className="md-code-btn" onClick={() => onInsert(code)}>
               Indsæt i editor
             </button>

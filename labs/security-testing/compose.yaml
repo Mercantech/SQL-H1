@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: lab_admin
+      POSTGRES_DB: gamehub_lab
+      POSTGRES_PASSWORD: ${LAB_DB_PASSWORD:?Sæt LAB_DB_PASSWORD i en lokal .env-fil}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lab_admin -d gamehub_lab"]
+      interval: 2s
+      timeout: 3s
+      retries: 25
+    volumes:
+      - gamehub-data:/var/lib/postgresql/data
+    networks: [lab]
+  lab:
+    build: .
+    environment:
+      PGHOST: db
+      PGDATABASE: gamehub_lab
+      PGUSER: lab_admin
+      PGPASSWORD: ${LAB_DB_PASSWORD:?Sæt LAB_DB_PASSWORD i en lokal .env-fil}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [lab]
+networks:
+  lab:
+    internal: true
+volumes:
+  gamehub-data:

@@ -114,10 +114,10 @@ export function RaymondCompanion() {
             <div hidden={tab !== "page"}>
               <p className="raymond-eyebrow">Lad os tage det trin for trin</p><h3>{topic.title}</h3><p>{topic.summary}</p>
               <ol className="raymond-steps">{topic.steps.map((step) => <li key={step}>{step}</li>)}</ol>
-              {guideContent?.slug === guideSlug && guideContent?.kind === "exercise" && <RaymondExerciseHints content={guideContent} />}
+              {guideContent?.slug === guideSlug && (guideContent?.kind === "exercise" || guideContent?.kind === "project") && <RaymondExerciseHints content={guideContent} />}
               <div className="raymond-reflection"><strong>Prøv at forklare</strong><p>{topic.question}</p></div>
               <details className="raymond-example"><summary>Se et lille eksempel</summary><pre><code>{topic.example}</code></pre><p>Et eksempel du kan undersøge — sammenlign altid med din opgave.</p></details>
-              <a className="raymond-source" href={topic.reference} target="_blank" rel="noreferrer">Læs videre i PostgreSQLs dokumentation ↗</a>
+              <a className="raymond-source" href={topic.reference} target="_blank" rel="noreferrer">Læs videre i den officielle dokumentation ↗</a>
               <div className="raymond-faq"><h3>Ofte stillede spørgsmål</h3>{faq.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}</div>
               <div className="raymond-inline-actions"><Link className="btn" to="/modules" onClick={state.closeHelp}>Find et modul</Link><button type="button" className="btn ghost" onClick={state.openOnboarding}>Vis rundvisning</button></div>
             </div>

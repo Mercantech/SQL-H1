@@ -2,11 +2,13 @@ import { Link } from "react-router-dom";
 import { beginLogin, isLoggedIn } from "../auth";
 import { useRaymond } from "../components/raymond/RaymondContext";
 import "../components/raymond/onboarding.css";
+import { GameHubInvitation } from "../components/CourseMission";
 
 export function Home() {
   const { openOnboarding } = useRaymond();
 
   return (
+    <>
     <section className="hero home-raymond">
       <div className="hero-copy">
         <p className="home-raymond-eyebrow">SQL-H1 · Hovedforløb 1</p>
@@ -69,5 +71,7 @@ ORDER BY name;`}</code></pre>
         </div>
       </div>
     </section>
+    <GameHubInvitation />
+    </>
   );
 }

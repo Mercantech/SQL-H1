@@ -1,0 +1,39 @@
+name: sqlh1-documents
+
+services:
+  mongo:
+    image: ${MONGO_IMAGE:-mongo:8.0}
+    volumes:
+      - mongo-data:/data/db
+      - ./mongo:/lab:ro
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "quit(db.adminCommand({ping: 1}).ok ? 0 : 1)"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  postgres:
+    image: ${POSTGRES_IMAGE:-postgres:16}
+    environment:
+      POSTGRES_USER: gamehub
+      POSTGRES_DB: gamehub
+      # Only for this isolated, fictional-data lab; never expose this service.
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres:/lab:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gamehub -d gamehub"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+# No published ports, no shared Dokploy network and no external network route.
+# Access the lab through docker compose exec; authentication is intentionally
+# disabled within this disposable lab, and is mandatory for real deployments.
+networks:
+  default:
+    internal: true
+
+volumes:
+  mongo-data:
+  postgres-data:

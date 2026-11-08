@@ -1,0 +1,77 @@
+{
+  "description": "Adfærd og rettigheder testes mod elevens faktiske database.",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name='v_public_leaderboard' ORDER BY ordinal_position",
+      "expected": [
+        [
+          "display_name"
+        ],
+        [
+          "wins"
+        ]
+      ],
+      "message": "Viewet viser kun display_name og wins"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT display_name, wins FROM v_public_leaderboard ORDER BY display_name",
+      "expected": [
+        [
+          "Nova",
+          7
+        ],
+        [
+          "Pixel",
+          4
+        ],
+        [
+          "Snabel",
+          9
+        ]
+      ],
+      "message": "Leaderboardets data er korrekte"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT count(*)::int FROM pg_class c CROSS JOIN LATERAL aclexplode(COALESCE(c.relacl, acldefault('r',c.relowner))) a WHERE c.oid='public.player_profiles'::regclass AND a.grantee=0",
+      "expected": [
+        [
+          0
+        ]
+      ],
+      "message": "PUBLIC har ingen rettigheder på de private profiler"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT count(*)::int FROM pg_class c CROSS JOIN LATERAL aclexplode(COALESCE(c.relacl, acldefault('r',c.relowner))) a WHERE c.oid='public.v_public_leaderboard'::regclass AND a.grantee=0 AND a.privilege_type='SELECT'",
+      "expected": [
+        [
+          1
+        ]
+      ],
+      "message": "PUBLIC kan læse viewet"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT count(*)::int FROM pg_class c CROSS JOIN LATERAL aclexplode(COALESCE(c.relacl, acldefault('r',c.relowner))) a WHERE c.oid='public.v_public_leaderboard'::regclass AND a.grantee=0 AND a.privilege_type<>'SELECT'",
+      "expected": [
+        [
+          0
+        ]
+      ],
+      "message": "PUBLIC har ingen skriverettigheder på viewet"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT EXISTS (SELECT 1 FROM pg_rewrite r JOIN pg_depend d ON d.classid='pg_rewrite'::regclass AND d.objid=r.oid WHERE r.ev_class='public.v_public_leaderboard'::regclass AND d.refobjid='public.player_profiles'::regclass)",
+      "expected": [
+        [
+          true
+        ]
+      ],
+      "message": "Viewet læser fra profiltabellen"
+    }
+  ]
+}

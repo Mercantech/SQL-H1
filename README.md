@@ -22,7 +22,7 @@ Kør `npm test` fra `web/` for at kontrollere den entydige beviskæde mod rigtig
 
 - En firetrins rundvisning åbnes fra forsiden, Raymonds hjælp eller elevprofilen. Velkomstinvitationen huskes i denne browser.
 - Raymond-knappen følger siderne med en AI-samtale samt emneforklaringer, eksempler, refleksionsspørgsmål og links til PostgreSQLs dokumentation.
-- Alle 28 opgaver har tre gradvise hints under **Guide** i det flydende Raymond-panel. Teori- og modulindholdet vises uden en ekstra Raymond-boks.
+- Alle SQL-opgaver og GameHub-projekter har tre gradvise hints under **Guide** i det flydende Raymond-panel.
 - Editorens ansigtsudtryk følger den faktiske kørsel og opgavekontrol. En vellykket kørsel adskilles fra en bestået opgave.
 - Kendte Postgres-fejlkoder forklares med næste skridt. Den faste guide og SQL-hjælp er fortsat tilgængelige uden AI og uden login.
 
@@ -90,6 +90,23 @@ Markdown under [`content/`](content/):
 Fuldt indhold: **SELECT** → **DML** → **JOIN** → **relationer** → **constraints** → **DDL/E/R** → **views** → **rettigheder/transaktioner** → **procedures** → **triggers** → **drift** → **ADO.NET** → **Dapper**.
 
 C#-modulerne (ADO.NET/Dapper) har teori med Npgsql-eksempler; elever øver den tilhørende **SQL** i sandboxen (egen DB).
+
+### Raymonds GameHub — målpind 18–24
+
+Fem moduler udvider forløbet med ORM/EF Core, dokumentdatabaser, databasevalg,
+databasesikkerhed og testmetoder. Elever bygger en model med migrationer,
+scaffolder fra en eksisterende database, arbejder i rigtig MongoDB og afleverer
+målinger, sikkerhedsvurdering og gentagelige PostgreSQL-integrationstests.
+
+SQL-opgaver bruger platformens sandbox. Seks projektopgaver bruger selvstændige
+Docker-labs fra `labs/` med downloads under `/downloads/`. Projekter vises som
+**Klar til gennemgang**, når eleven selv markerer sin aflevering; det er ikke
+en automatisk faglig godkendelse. De nye Raymond-billeder genbruges fra LUP's
+karakterbibliotek i søsterrepoet `Mercantec.tech`.
+
+Se [lærervejledning og målpindskort](docs/gamehub-forloeb.md). Genskab elevpakker
+med `python scripts/package-labs.py` efter ændringer i labs; lokale secrets og
+build-output kommer ikke med i pakkerne.
 
 ## Deploy (Dokploy)
 

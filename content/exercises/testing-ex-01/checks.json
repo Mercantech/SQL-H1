@@ -1,0 +1,98 @@
+{
+  "description": "Adfærd og rettigheder testes mod elevens faktiske database.",
+  "assertions": [
+    {
+      "type": "sql_equals",
+      "sql": "SELECT gamehub_rejects('quantity_zero')",
+      "expected": [
+        [
+          true
+        ]
+      ],
+      "message": "Antal 0 afvises af CHECK"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT gamehub_rejects('quantity_five')",
+      "expected": [
+        [
+          true
+        ]
+      ],
+      "message": "Antal 5 afvises af CHECK"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT gamehub_rejects('quantity_null')",
+      "expected": [
+        [
+          true
+        ]
+      ],
+      "message": "NULL-antal afvises af NOT NULL"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT gamehub_rejects('player_missing')",
+      "expected": [
+        [
+          true
+        ]
+      ],
+      "message": "Ukendt spiller afvises af FK"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT gamehub_rejects('player_null')",
+      "expected": [
+        [
+          true
+        ]
+      ],
+      "message": "NULL-spiller afvises"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT gamehub_rejects('code_duplicate')",
+      "expected": [
+        [
+          true
+        ]
+      ],
+      "message": "Dubletkode afvises af UNIQUE"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT gamehub_rejects('code_null')",
+      "expected": [
+        [
+          true
+        ]
+      ],
+      "message": "NULL-kode afvises"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT gamehub_accepts(1), gamehub_accepts(4)",
+      "expected": [
+        [
+          true,
+          true
+        ]
+      ],
+      "message": "Begge gyldige grænser accepteres"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT player_id, ticket_code, quantity FROM tickets ORDER BY id",
+      "expected": [
+        [
+          1,
+          "FINAL-1",
+          2
+        ]
+      ],
+      "message": "Original billetrække er bevaret; prøver efterlader ingen data"
+    }
+  ]
+}

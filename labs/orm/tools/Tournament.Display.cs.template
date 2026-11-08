@@ -1,0 +1,10 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace GameHub.Legacy.Generated;
+
+// Egen fil uden for Generated: gentagen scaffolding må ikke overskrive den.
+public partial class Tournament
+{
+    [NotMapped]
+    public string DisplayName => $"{Title} · {GameTitle}";
+}

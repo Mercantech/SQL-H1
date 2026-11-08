@@ -4,6 +4,7 @@ import { fetchModules, fetchProgress, type ModuleDto, type ProgressRow } from ".
 import { beginLogin, isLoggedIn } from "../auth";
 import { RaymondNote } from "../components/raymond/Raymond";
 import { useRaymond } from "../components/raymond/RaymondContext";
+import { progressLabel } from "../lib/course";
 
 export function Progress() {
   const { openHelp } = useRaymond();
@@ -57,6 +58,7 @@ export function Progress() {
             {nextItem ? <><Link to={`/learn/${nextItem.slug}`}>{nextItem.title}</Link> er dit næste trin. </> : !rows.length ? <><Link to="/modules">Åbn det første modul</Link> og afprøv et eksempel. </> : "Genbesøg et emne, du vil være mere sikker i. "}
             Teori registreres som åbnet, når du besøger siden; det er ikke en test af din forståelse.
             En opgave markeres som bestået, når dens tjek er bestået.
+            {" "}Projekter markeres af dig som klar til gennemgang; det er ikke en faglig godkendelse.
           </p>
           <button type="button" className="btn ghost" onClick={openHelp}>Spørg Raymond</button>
         </RaymondNote>
@@ -68,9 +70,7 @@ export function Progress() {
           <li key={`${r.contentSlug}-${r.partIndex}`}>
             <Link to={`/learn/${r.contentSlug}`}>
               <span className={`pill ${r.status}`}>
-                {r.status === "completed"
-                  ? itemsBySlug.get(r.contentSlug)?.kind === "theory" ? "Teori åbnet" : itemsBySlug.get(r.contentSlug)?.kind === "exercise" ? "Bestået" : "Fuldført"
-                  : r.status === "started" ? "I gang" : r.status}
+                {progressLabel(itemsBySlug.get(r.contentSlug)?.kind, r.status)}
               </span>
               {itemsBySlug.get(r.contentSlug)?.title ?? r.contentSlug}
             </Link>

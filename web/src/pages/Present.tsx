@@ -103,11 +103,11 @@ export function Present() {
   /** I præsentation springer vi over opgaver, når vi står på teori. */
   const { prevLesson, nextLesson } = useMemo(() => {
     if (pathIdx < 0) return { prevLesson: null, nextLesson: null };
-    const skipExercises = currentStep?.item.kind !== "exercise";
+    const skipExercises = currentStep?.item.kind === "theory";
     const find = (dir: 1 | -1): FlatStep | null => {
       for (let i = pathIdx + dir; i >= 0 && i < flat.length; i += dir) {
         const step = flat[i];
-        if (skipExercises && step.item.kind === "exercise") continue;
+        if (skipExercises && step.item.kind !== "theory") continue;
         return step;
       }
       return null;
