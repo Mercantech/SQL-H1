@@ -1,0 +1,9 @@
+.reaction-teaser { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); align-items: center; gap: 2rem; padding: clamp(1rem, 3vw, 2rem); margin: 1.5rem 0; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; }
+.reaction-teaser h2 { font-family: var(--font-serif); margin: .35rem 0 .7rem; font-size: clamp(1.4rem, 2.6vw, 1.85rem); }
+.reaction-teaser-intro > p { color: var(--muted); }
+.reaction-teaser-examples { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); list-style: none; padding: 0; margin: 0; gap: .8rem; }
+.reaction-teaser-examples li { display: flex; flex-direction: column; align-items: center; text-align: center; gap: .3rem; }
+.reaction-teaser-examples strong { font-size: .86rem; }
+.reaction-teaser-examples li > span:not(.raymond-avatar) { font-size: .75rem; color: var(--muted); }
+@media (max-width: 780px) { .reaction-teaser { grid-template-columns: minmax(0, 1fr); gap: 1.4rem; } }
+@media (max-width: 420px) { .reaction-teaser-examples { gap: .4rem; } .reaction-teaser-examples strong { font-size: .78rem; } }

@@ -14,7 +14,8 @@ import {
 } from "../api";
 import { usePlaygroundLayout } from "../hooks/usePlaygroundLayout";
 import { explainPostgresError } from "../lib/raymond";
-import { RaymondNote } from "./raymond/Raymond";
+import { RaymondAvatar, RaymondNote } from "./raymond/Raymond";
+import { getSqlFeedbackReaction } from "../lib/raymondFeedback";
 import { useRaymond } from "./raymond/RaymondContext";
 
 hljs.registerLanguage("sql", sqlLang);
@@ -33,7 +34,7 @@ type Props = {
   result?: ExecuteResult | null;
   checkMessages?: string[] | null;
   checkPassed?: boolean | null;
-  /** `full` = Raymond-tips (standard). `errors` = kun fejl/opgave-feedback. */
+  /** `full` = Raymond-tips (standard). `errors` = kort kørselsstatus og udfoldelig fejl/opgave-feedback. */
   coach?: "full" | "errors";
   /** Playground: trækbar editor/resultat + layout-skift. */
   workspace?: boolean;
@@ -119,11 +120,12 @@ function SqlRaymondFeedback({
 }) {
   const { openHelp } = useRaymond();
   const quiet = coach === "errors";
+  const reaction = getSqlFeedbackReaction({ running, error, result, checkPassed });
 
   if (running) {
-    if (quiet) return null;
+    if (quiet) return <div className="raymond-editor-status" role="status"><RaymondAvatar reaction={reaction} size={32} /><span>Databasen arbejder…</span></div>;
     return (
-      <RaymondNote mood="thinking" title="Et øjeblik…" compact className="raymond-editor-note">
+      <RaymondNote mood="thinking" reaction={reaction} title="Et øjeblik…" compact className="raymond-editor-note">
         <p>Databasen arbejder. Din SQL bliver stående i editoren.</p>
       </RaymondNote>
     );
@@ -133,7 +135,7 @@ function SqlRaymondFeedback({
   if (sqlError) {
     const guidance = explainPostgresError(sqlError);
     return (
-      <RaymondNote mood="error" title={guidance.title} compact className="raymond-editor-note">
+      <RaymondNote mood="error" reaction={reaction} title={guidance.title} compact className="raymond-editor-note">
         <p>{guidance.explanation}</p>
         <details>
           <summary>Sådan kommer du videre</summary>
@@ -145,7 +147,7 @@ function SqlRaymondFeedback({
 
   if (checkPassed === true) {
     return (
-      <RaymondNote mood="celebration" title="Flot arbejde!" compact className="raymond-editor-note">
+      <RaymondNote mood="celebration" reaction={reaction} title="Flot arbejde!" compact className="raymond-editor-note">
         <p>Opgavens kontroller er bestået. Prøv at forklare med egne ord, hvorfor din løsning virker.</p>
       </RaymondNote>
     );
@@ -153,17 +155,17 @@ function SqlRaymondFeedback({
 
   if (checkPassed === false) {
     return (
-      <RaymondNote mood="help" title="Prøv igen – ét krav ad gangen" compact className="raymond-editor-note">
+      <RaymondNote mood="help" reaction={reaction} title="Prøv igen – ét krav ad gangen" compact className="raymond-editor-note">
         <p>Se kontrollens punkter nedenfor, og sammenlign dem med din SQL. Opgavens hints kan hjælpe dig videre.</p>
       </RaymondNote>
     );
   }
 
-  if (quiet) return null;
+  if (quiet) return result?.ok ? <div className="raymond-editor-status" role="status"><RaymondAvatar reaction={reaction} size={32} /><span>SQL kørt · kontrollér resultatet</span></div> : null;
 
   if (result?.ok) {
     return (
-      <RaymondNote mood="success" title="Din SQL blev kørt" compact className="raymond-editor-note">
+      <RaymondNote mood="success" reaction={reaction} title="Din SQL blev kørt" compact className="raymond-editor-note">
         <p>
           {canCheck
             ? "Sammenlign resultatet med opgavens krav. Brug Tjek svar, når du er klar."
@@ -174,7 +176,7 @@ function SqlRaymondFeedback({
   }
 
   return (
-    <RaymondNote mood="neutral" title="Raymond er klar" compact className="raymond-editor-note">
+    <RaymondNote mood="neutral" reaction={reaction} title="Raymond er klar" compact className="raymond-editor-note">
       <p>{needsLogin ? "Log ind for at afprøve SQL i din egen database." : "Kør hele din SQL eller markér en del og brug Ctrl+Enter."}</p>
       <button type="button" className="btn ghost" onClick={openHelp}>Spørg Raymond</button>
     </RaymondNote>

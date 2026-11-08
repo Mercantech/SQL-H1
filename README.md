@@ -24,6 +24,8 @@ Kør `npm test` fra `web/` for at kontrollere den entydige beviskæde mod rigtig
 - Raymond-knappen følger siderne med en AI-samtale samt emneforklaringer, eksempler, refleksionsspørgsmål og links til PostgreSQLs dokumentation.
 - Alle SQL-opgaver og GameHub-projekter har tre gradvise hints under **Guide** i det flydende Raymond-panel.
 - Editorens ansigtsudtryk følger den faktiske kørsel og opgavekontrol. En vellykket kørsel adskilles fra en bestået opgave.
+- 48 lokale Raymond-reaktioner fra LUP giver emneikoner i modulerne, gradvis opmuntring ved hints og feedback i editoren. Billederne bevares hele, er dekorative ved siden af tekst og indlæses efter behov.
+- **[Raymonds reaktioner](/raymond)** er et åbent galleri med danske forklaringer, søgning, kategorier og tastaturbetjening. Det åbnes fra forsiden eller Raymonds **Om**-fane. Valg i galleriet er en lokal udforskning og gemmes ikke som elevreaktioner.
 - Kendte Postgres-fejlkoder forklares med næste skridt. Den faste guide og SQL-hjælp er fortsat tilgængelige uden AI og uden login.
 
 ### Raymond AI
@@ -39,6 +41,12 @@ Samtalen ligger kun i den aktuelle browserfane, adskilt efter bruger. Serveren s
 Backendregressioner med falsk OpenAI-transport køres med `dotnet run --project api.tests/SqlH1.Api.Tests.csproj`; ingen rigtig nøgle kræves. OpenAI-kontrakten følger [Responses API og function calling](https://developers.openai.com/api/docs/guides/function-calling).
 
 De oprindelige illustrationer og navnets historie findes i [maskotpakken](assets/mascot/professor-pack/README.md). Optimerede WebP-filer ligger i `web/public/raymond/` og indgår direkte i Docker-buildet. De kan genskabes med `python web/scripts/prepare-raymond-assets.py` (Pillow).
+
+De 48 nye reaktionsfiler under `web/public/raymond/reactions/` er genbrugt uændret
+fra søsterrepoet `Mercantec.tech/web/wwwroot/images/characters/raymond/reactions/`.
+Det danske katalog og billedmapping ligger i `web/src/lib/raymondReactions.ts`;
+editorens tilstande styres af `raymondFeedback.ts`. Kørsel viser en arbejdsreaktion,
+SQL-succes en tommel op, fejl en hjælpsom fejlsøger, og et bestået opgavetjek applaus.
 
 Validering fra `web/`: `npm test`, `npm run build` og `npm run lint`. Testene kontrollerer emnedækning, hints til alle opgaver, fejlkoder og runtime-billeder.
 

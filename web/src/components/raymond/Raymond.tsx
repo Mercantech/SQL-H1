@@ -87,23 +87,24 @@ export function RaymondCompanion() {
 
   if (!state || pathname.startsWith("/auth/")) return null;
   const welcomeVisible = !state.welcomed && !state.helpOpen && !state.tourOpen && (pathname === "/" || pathname === "/modules");
+  const launcherReaction = helpOpen ? "listening" : state.workContext?.lastError ? "debugging" : state.workContext?.checkPassed === true ? "applause" : state.workContext?.checkPassed === false ? "patient" : pathname === "/" ? "wave" : "query-ready";
 
   return (
     <>
       {welcomeVisible && (
         <aside className="raymond-welcome" aria-label="Velkommen fra Raymond">
-          <RaymondAvatar size={80} mood="help" />
+          <RaymondAvatar size={80} reaction="wave" />
           <div><strong>Ny her? Jeg viser dig rundt.</strong><p>Fra teori til din første SQL-opgave.</p>
             <div className="raymond-inline-actions"><button type="button" className="btn primary" onClick={state.openOnboarding}>Vis mig rundt</button><button type="button" className="btn ghost" onClick={state.dismissWelcome}>Senere</button></div>
           </div>
         </aside>
       )}
       <button type="button" className={`raymond-launcher${helpOpen ? " is-open" : ""}`} onClick={helpOpen ? state.closeHelp : state.openHelp} aria-expanded={helpOpen} aria-controls={panelId} aria-label={helpOpen ? "Luk Raymonds hjælp" : "Åbn Raymonds hjælp"}>
-        <RaymondAvatar mood={helpOpen ? "help" : "neutral"} size={50} /><span>Raymond<span className="raymond-launcher-sub">{helpOpen ? "Luk hjælp" : "Spørg om hjælp"}</span></span>
+        <RaymondAvatar reaction={launcherReaction} size={50} /><span>Raymond<span className="raymond-launcher-sub">{helpOpen ? "Luk hjælp" : "Spørg om hjælp"}</span></span>
         <span className="raymond-launcher-symbol" aria-hidden="true">{helpOpen ? "×" : "?"}</span>
       </button>
         <aside id={panelId} className={`raymond-panel${tab === "chat" ? " raymond-panel--chat" : ""}`} hidden={!helpOpen} role="dialog" aria-modal="false" aria-labelledby={headingId}>
-          <header className="raymond-panel-head"><RaymondAvatar mood="help" size={40} /><h2 id={headingId}>Raymond</h2><button ref={closeRef} type="button" className="raymond-close" onClick={state.closeHelp} aria-label="Luk Raymonds hjælp">×</button></header>
+          <header className="raymond-panel-head"><RaymondAvatar reaction="listening" size={40} /><h2 id={headingId}>Raymond</h2><button ref={closeRef} type="button" className="raymond-close" onClick={state.closeHelp} aria-label="Luk Raymonds hjælp">×</button></header>
           <div className="raymond-tabs" role="group" aria-label="Vælg hjælp">
             {([ ["chat", "Chat"], ["page", "Guide"], ["errors", "SQL-hjælp"], ["about", "Om"] ] as const).map(([id, label]) => <button key={id} type="button" aria-pressed={tab === id} className={tab === id ? "active" : ""} onClick={() => setSelection({ path: pathname, tab: id })}>{label}</button>)}
           </div>
@@ -128,12 +129,13 @@ export function RaymondCompanion() {
                 <button type="submit" className="btn primary" disabled={!errorText.trim()}>Forklar fejlen</button>
               </form>
               <p className="raymond-footnote">Forklaringen bygger på faste vejledninger til fejlkoder. Beskeden behandles kun her i din browser.</p>
-              {explanation && <div className="raymond-error-explanation" aria-live="polite"><RaymondAvatar mood="thinking" size={90} /><h3>{explanation.title}</h3><p>{explanation.explanation}</p><ol className="raymond-steps">{explanation.steps.map((step) => <li key={step}>{step}</li>)}</ol></div>}
+              {explanation && <div className="raymond-error-explanation" aria-live="polite"><RaymondAvatar reaction="debugging" size={90} /><h3>{explanation.title}</h3><p>{explanation.explanation}</p><ol className="raymond-steps">{explanation.steps.map((step) => <li key={step}>{step}</li>)}</ol></div>}
             </>}
             {tab === "about" && <>
               <img className="raymond-about-portrait" src="/raymond/professor.webp" alt="Raymond, den blå elefantprofessor med bog og pegepind" width={224} height={224} loading="lazy" />
               <h3>Raymond Stonebraker Codd</h3><p className="raymond-introduction">Jeg er Professor Codd, men I kan kalde mig Raymond.</p>
               <p>Jeg er din faste guide til SQL-H1. Jeg hjælper med forklaringer, hints og fejlbeskeder, mens du selv bygger forståelsen og løsningen.</p>
+              <Link className="btn" to="/raymond" onClick={state.closeHelp}>Se Raymonds 48 reaktioner</Link>
               <h3>Tre navne fra databasehistorien</h3>
               <ul className="raymond-tributes"><li><a href="https://www.ibm.com/history/relational-database" target="_blank" rel="noreferrer">Raymond Boyce</a> udviklede SQL sammen med Donald Chamberlin.</li><li><a href="https://www.postgresql.org/docs/16/history.html" target="_blank" rel="noreferrer">Michael Stonebraker</a> ledede det oprindelige POSTGRES-projekt.</li><li><a href="https://doi.org/10.1145/362384.362685" target="_blank" rel="noreferrer">Edgar F. Codd</a> fremlagde den relationelle datamodel i 1970.</li></ul>
               <button type="button" className="btn primary" onClick={state.openOnboarding}>Vis mig rundt på platformen</button>

@@ -14,6 +14,7 @@ import { Progress } from "./pages/Progress";
 import { RaymondCompanion, RaymondProvider } from "./components/raymond/Raymond";
 
 const Murder = lazy(() => import("./pages/Murder").then((module) => ({ default: module.Murder })));
+const RaymondReactions = lazy(() => import("./pages/RaymondReactions").then((module) => ({ default: module.RaymondReactions })));
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="learn/:slug" element={<Learn />} />
           <Route path="playground" element={<Playground />} />
           <Route path="murder" element={<Suspense fallback={<p role="status">Åbner sagsmappen…</p>}><Murder /></Suspense>} />
+          <Route path="raymond" element={<Suspense fallback={<p role="status">Henter Raymonds reaktioner…</p>}><RaymondReactions /></Suspense>} />
           <Route path="database" element={<Database />} />
           <Route path="progress" element={<Progress />} />
           <Route path="profile" element={<Profile />} />

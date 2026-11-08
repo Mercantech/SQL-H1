@@ -88,7 +88,7 @@ function OnboardingDialog({ onClose }: { onClose: () => void }) {
             <img src="/raymond/professor.webp" width="200" height="200" alt="" />
           ) : (
             <RaymondAvatar
-              mood={step === 2 ? "thinking" : step === 3 ? "success" : "help"}
+              reaction={step === 2 ? "query-ready" : step === 3 ? "thumbs-up" : "reading"}
               size={152}
             />
           )}

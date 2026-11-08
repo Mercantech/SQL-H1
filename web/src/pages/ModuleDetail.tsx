@@ -3,9 +3,12 @@ import { Link, useParams } from "react-router-dom";
 import { fetchModules, type ModuleDto } from "../api";
 import { LearningObjectives } from "../components/LearningObjectives";
 import { CourseMission } from "../components/CourseMission";
-import { contentKindLabel } from "../lib/course";
+import { contentKindLabel, courseMissions } from "../lib/course";
 import { ModuleNav } from "../components/ModuleNav";
 import { useModuleNavOpen } from "../hooks/useModuleNavOpen";
+import { RaymondAvatar } from "../components/raymond/RaymondUI";
+import { getModuleReaction } from "../lib/moduleReactions";
+import "../components/raymond/learning-reactions.css";
 
 export function ModuleDetail() {
   const { slug } = useParams();
@@ -46,8 +49,13 @@ export function ModuleDetail() {
             <p className="eyebrow">
               <Link to="/modules">Moduler</Link> / {mod.title}
             </p>
-            <h1>{mod.title}</h1>
-            <p>{mod.description}</p>
+            <div className="module-reaction-heading">
+              {!courseMissions[mod.slug] && <RaymondAvatar reaction={getModuleReaction(mod.slug)} size={88} />}
+              <div>
+                <h1>{mod.title}</h1>
+                <p>{mod.description}</p>
+              </div>
+            </div>
             <CourseMission moduleSlug={mod.slug} goals={mod.goalNumbers} />
             <LearningObjectives objectives={mod.objectives ?? []} />
             {first && (

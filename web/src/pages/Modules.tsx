@@ -9,8 +9,10 @@ import {
 import { isLoggedIn } from "../auth";
 import { LearningObjectives } from "../components/LearningObjectives";
 import { GameHubInvitation } from "../components/CourseMission";
-import { RaymondNote } from "../components/raymond/Raymond";
+import { RaymondAvatar, RaymondNote } from "../components/raymond/Raymond";
 import { useRaymond } from "../components/raymond/RaymondContext";
+import { getModuleReaction } from "../lib/moduleReactions";
+import "../components/raymond/learning-reactions.css";
 
 export function Modules() {
   const { openHelp } = useRaymond();
@@ -91,7 +93,10 @@ export function Modules() {
           return (
             <li key={m.slug} className={m.scaffoldOnly ? "scaffold" : ""}>
               <Link to={first ? `/learn/${first.slug}` : `/modules/${m.slug}`}>
-                <span className="ord">{String(m.order).padStart(2, "0")}</span>
+                <span className="module-reaction-marker">
+                  <RaymondAvatar reaction={getModuleReaction(m.slug)} size={64} className="module-reaction-avatar" />
+                  <span className="ord">{String(m.order).padStart(2, "0")}</span>
+                </span>
                 <div>
                   <h2>
                     {m.title}

@@ -3,6 +3,7 @@ import { beginLogin, isLoggedIn } from "../auth";
 import { useRaymond } from "../components/raymond/RaymondContext";
 import "../components/raymond/onboarding.css";
 import { GameHubInvitation } from "../components/CourseMission";
+import { ReactionTeaser } from "../components/raymond/ReactionTeaser";
 
 export function Home() {
   const { openOnboarding } = useRaymond();
@@ -72,6 +73,7 @@ ORDER BY name;`}</code></pre>
       </div>
     </section>
     <GameHubInvitation />
+    <ReactionTeaser />
     </>
   );
 }

@@ -1,5 +1,5 @@
 .raymond-avatar { display: inline-block; position: relative; overflow: hidden; flex: 0 0 auto; vertical-align: middle; }
-.raymond-avatar img { position: absolute; width: 100%; height: auto; top: 50%; left: 0; transform: translateY(-50%); }
+.raymond-avatar img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .raymond-note { display: flex; align-items: flex-start; gap: 1rem; border: 1px solid var(--line); border-left: 3px solid #537e9d; border-radius: 12px; padding: 1.1rem; margin: 1.1rem 0; background: rgba(247,250,245,.9); }
 .raymond-note--compact { padding: .8rem 1rem; gap: .85rem; font-size: .88rem; }
 .raymond-note-copy { min-width: 0; flex: 1; }
@@ -14,6 +14,7 @@
 .raymond-editor-note { flex: 0 0 auto; margin: .35rem 0; max-height: min(220px, 26vh); overflow: auto; }
 .raymond-editor-note.raymond-note--compact { font-size: .78rem; padding: .5rem .65rem; gap: .65rem; }
 .raymond-editor-note .raymond-note-title { font-size: .8rem; }
+.raymond-editor-status { display: flex; align-items: center; gap: .5rem; flex: 0 0 auto; min-height: 32px; color: var(--muted); font-size: .76rem; }
 .raymond-editor-note p { line-height: 1.4; }
 .raymond-editor-note details { margin-top: .3rem; }
 .raymond-launcher { position: fixed; right: 1.25rem; bottom: max(1rem, env(safe-area-inset-bottom)); z-index: 50; display: flex; align-items: center; gap: .6rem; border: 1px solid #a6beb0; border-radius: 999px; background: #f9fcf7; color: var(--ink); padding: .6rem .9rem .6rem .65rem; box-shadow: 0 4px 22px #15201818; cursor: pointer; font-size: .85rem; font-weight: 700; text-align: left; }
@@ -70,7 +71,8 @@
   .raymond-panel { right: .5rem; bottom: 4.3rem; width: calc(100% - 1rem); max-height: calc(100dvh - 5rem); }
   .raymond-welcome { right: .65rem; bottom: 4.3rem; }
   .raymond-note { gap: .6rem; padding: .8rem; }
-  .raymond-note > .raymond-avatar { width: 50px !important; height: 33px !important; }
+  .raymond-note > .raymond-avatar { width: 50px !important; height: 50px !important; }
+  .raymond-launcher > .raymond-avatar { width: 40px !important; height: 40px !important; }
   .raymond-panel-content { padding: 1rem; }
 }
 @media (prefers-reduced-motion: reduce) { .raymond-panel, .raymond-launcher { scroll-behavior: auto; transition: none; } }
