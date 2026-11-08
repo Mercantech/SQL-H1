@@ -2,6 +2,20 @@
 
 SQL-læringsplatform til H1: teori, praktiske opgaver og egen Postgres-database pr. elev.
 
+## Indlogget læringsforside
+
+Forsiden giver indloggede elever en personlig velkomst fra Raymond, genoptagelse
+af seneste igangværende arbejde, direkte adgang til arbejdsrum, seneste trin og en
+kompakt emneoversigt. GameHub- og reaktionspræsentationerne vises kun på gæsteforsiden.
+Den automatiske »Ny her?«-popup vises kun for gæster; hjælp og rundvisning kan
+stadig åbnes manuelt.
+
+Fortsættelsen bruger faktiske fremgangsposter: først seneste igangværende trin,
+derefter næste trin efter seneste aktivitet. Åbnet teori, beståede SQL-opgaver og
+projekter klar til gennemgang vises med hver deres status. Ved hentefejl vises en
+rolig fejltilstand med genforsøg frem for en opdigtet nybegynderstatus. Forsiden
+opretter ikke en elevdatabase og skriver ikke fremgang ved åbning.
+
 ## SQL Murder Mystery — `/murder`
 
 **Mordet på Datatopmødet** er en selvstændig dansk kriminalgåde inspireret af [Knight Labs SQL Murder Mystery](https://mystery.knightlab.com/), med egen historie og egne data. Elever følger sagsrapporter, vidneudsagn, adgangslogs, workshoptilmeldinger, betalinger og beskeder gennem ni relaterede tabeller for at finde både gerningspersonen og bagmanden.

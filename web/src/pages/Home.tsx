@@ -1,12 +1,17 @@
 import { Link } from "react-router-dom";
-import { beginLogin, isLoggedIn } from "../auth";
+import { beginLogin, getUserProfile, isLoggedIn } from "../auth";
 import { useRaymond } from "../components/raymond/RaymondContext";
 import "../components/raymond/onboarding.css";
 import { GameHubInvitation } from "../components/CourseMission";
 import { ReactionTeaser } from "../components/raymond/ReactionTeaser";
+import { LearningHome } from "../components/LearningHome";
 
 export function Home() {
   const { openOnboarding } = useRaymond();
+  if (isLoggedIn()) {
+    const profile = getUserProfile();
+    return <LearningHome key={profile?.sub ?? "signed-in"} name={profile?.name ?? null} />;
+  }
 
   return (
     <>

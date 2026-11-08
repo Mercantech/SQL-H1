@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { fetchContent, type ContentDto } from "../../api";
+import { isLoggedIn } from "../../auth";
 import { explainPostgresError, getRaymondTopic } from "../../lib/raymond";
 import { RaymondContext, type RaymondWorkContext } from "./RaymondContext";
 import { RaymondAvatar } from "./RaymondUI";
@@ -86,7 +87,7 @@ export function RaymondCompanion() {
   }, [helpOpen, closeHelp]);
 
   if (!state || pathname.startsWith("/auth/")) return null;
-  const welcomeVisible = !state.welcomed && !state.helpOpen && !state.tourOpen && (pathname === "/" || pathname === "/modules");
+  const welcomeVisible = !isLoggedIn() && !state.welcomed && !state.helpOpen && !state.tourOpen && (pathname === "/" || pathname === "/modules");
   const launcherReaction = helpOpen ? "listening" : state.workContext?.lastError ? "debugging" : state.workContext?.checkPassed === true ? "applause" : state.workContext?.checkPassed === false ? "patient" : pathname === "/" ? "wave" : "query-ready";
 
   return (
