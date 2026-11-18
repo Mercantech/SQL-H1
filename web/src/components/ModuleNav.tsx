@@ -10,9 +10,6 @@ import {
 import { isLoggedIn } from "../auth";
 import postgresLogo from "../assets/postgresql.svg";
 import { buildFlatPath } from "../lib/contentPath";
-import type { RaymondReactionId } from "../lib/raymondReactions";
-import { RaymondAvatar } from "./raymond/RaymondUI";
-import "./raymond/learning-reactions.css";
 
 type Props = {
   moduleSlug: string;
@@ -198,7 +195,6 @@ export function ModuleNav({
           {theory.length > 0 && (
             <NavSection
               label="Teori"
-              reaction="reading"
               items={theory}
               currentSlug={currentSlug}
               statusBySlug={statusBySlug}
@@ -208,7 +204,6 @@ export function ModuleNav({
           {exercises.length > 0 && (
             <NavSection
               label="Opgaver"
-              reaction="query-ready"
               items={exercises}
               currentSlug={currentSlug}
               statusBySlug={statusBySlug}
@@ -217,7 +212,7 @@ export function ModuleNav({
           )}
 
           {projects.length > 0 && (
-            <NavSection label="Projekter · arbejd lokalt" reaction="typing" items={projects} currentSlug={currentSlug} statusBySlug={statusBySlug} onNavigate={onNavigate} />
+            <NavSection label="Projekter · arbejd lokalt" items={projects} currentSlug={currentSlug} statusBySlug={statusBySlug} onNavigate={onNavigate} />
           )}
           {currentSlug && currentIndex >= 0 && (
             <p className="module-nav-step muted">
@@ -248,14 +243,12 @@ export function ModuleNav({
 
 function NavSection({
   label,
-  reaction,
   items,
   currentSlug,
   statusBySlug,
   onNavigate,
 }: {
   label: string;
-  reaction: RaymondReactionId;
   items: ModuleDto["items"];
   currentSlug?: string;
   statusBySlug: Map<string, string>;
@@ -264,7 +257,7 @@ function NavSection({
 }) {
   return (
     <div className="module-nav-section">
-      <p className="module-nav-label module-nav-reaction-label"><RaymondAvatar reaction={reaction} size={30} />{label}</p>
+      <p className="module-nav-label">{label}</p>
       <ol className="module-nav-list">
         {items.map((item) => {
           const status = statusBySlug.get(item.slug);

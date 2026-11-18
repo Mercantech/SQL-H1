@@ -5,6 +5,7 @@ import rehypeHighlight from "rehype-highlight";
 import csharp from "highlight.js/lib/languages/csharp";
 import sql from "highlight.js/lib/languages/sql";
 import yaml from "highlight.js/lib/languages/yaml";
+import type { Element, ElementContent, Root } from "hast";
 import type { PluggableList } from "unified";
 import { CodeBlock } from "./CodeBlock";
 import { JoinViz, parseJoinVizFence } from "./join/JoinViz";
@@ -17,6 +18,7 @@ type Props = {
   onRunCode?: (code: string) => void;
   /** Behold ledende H1 (fx titel-slide i præsentation). */
   keepLeadingH1?: boolean;
+  showRaymondArt?: boolean;
 };
 
 const rehypePlugins: PluggableList = [
@@ -35,6 +37,38 @@ const rehypePlugins: PluggableList = [
     },
   ],
 ];
+
+function isCourseIllustration(src: unknown) {
+  return typeof src === "string" && src.startsWith("/raymond/course/");
+}
+
+function getElementText(node: ElementContent): string {
+  if (node.type === "text") return node.value;
+  if (node.type === "element") return node.children.map(getElementText).join("");
+  return "";
+}
+
+function rehypeRaymondIllustration() {
+  return (tree: Root) => {
+    let firstNote: Element | undefined;
+
+    function findCourseIllustration(nodes: Root["children"]): Element | undefined {
+      for (const node of nodes) {
+        if (node.type !== "element") continue;
+        if (node.tagName === "img" && isCourseIllustration(node.properties.src)) return node;
+        if (!firstNote && node.tagName === "blockquote") {
+          const header = node.children.find((child) => child.type === "element");
+          if (header && parseRaymondLessonHeader(getElementText(header))) firstNote = node;
+        }
+        const illustration = findCourseIllustration(node.children);
+        if (illustration) return illustration;
+      }
+    }
+
+    const selected = findCourseIllustration(tree.children) ?? firstNote;
+    if (selected) selected.properties.dataRaymondIllustration = "selected";
+  };
+}
 
 function getText(node: ReactNode): string {
   if (node == null || typeof node === "boolean") return "";
@@ -60,23 +94,37 @@ export function stripLeadingH1(markdown: string) {
   return markdown.replace(/^\uFEFF?\s*#\s+[^\n]+\n+/, "");
 }
 
-export function Markdown({ children, onInsertCode, onRunCode, keepLeadingH1 }: Props) {
+export function Markdown({ children, onInsertCode, onRunCode, keepLeadingH1, showRaymondArt = true }: Props) {
   const source = keepLeadingH1 ? children : stripLeadingH1(children);
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
-      rehypePlugins={rehypePlugins}
+      rehypePlugins={showRaymondArt ? [rehypeRaymondIllustration, ...rehypePlugins] : rehypePlugins}
       components={{
-        blockquote: ({ children: quoteChildren }) => {
+        blockquote: ({ children: quoteChildren, node }) => {
           const nodes = Children.toArray(quoteChildren);
           const headerIndex = nodes.findIndex((node) => isValidElement(node));
           const header = headerIndex >= 0 ? parseRaymondLessonHeader(getText(nodes[headerIndex])) : null;
           if (!header) return <blockquote>{quoteChildren}</blockquote>;
-          return <RaymondLessonNote {...header}>{nodes.slice(headerIndex + 1)}</RaymondLessonNote>;
+          return (
+            <RaymondLessonNote {...header} illustrated={node?.properties.dataRaymondIllustration === "selected"}>
+              {nodes.slice(headerIndex + 1)}
+            </RaymondLessonNote>
+          );
         },
-        img: ({ src, alt }) => (
-          <img src={src} alt={alt ?? ""} loading="lazy" decoding="async" className={src?.startsWith("/raymond/course/") ? "lesson-raymond" : undefined} />
-        ),
+        img: ({ src, alt, node }) => {
+          const courseArt = isCourseIllustration(src);
+          if (courseArt && node?.properties.dataRaymondIllustration !== "selected") return null;
+          return (
+            <img
+              src={src}
+              alt={alt ?? ""}
+              loading="lazy"
+              decoding="async"
+              className={courseArt ? "lesson-raymond raymond-page-art" : undefined}
+            />
+          );
+        },
         pre: ({ children: preChildren }) => {
           const lang = getFenceLang(preChildren);
           if (lang === "join-viz") {

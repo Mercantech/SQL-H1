@@ -3,11 +3,9 @@ import { Link } from "react-router-dom";
 import { fetchModules, fetchProgress, type ModuleDto, type ProgressRow } from "../api";
 import { beginLogin, isLoggedIn } from "../auth";
 import { RaymondNote } from "../components/raymond/Raymond";
-import { useRaymond } from "../components/raymond/RaymondContext";
 import { progressLabel } from "../lib/course";
 
 export function Progress() {
-  const { openHelp } = useRaymond();
   const [rows, setRows] = useState<ProgressRow[]>([]);
   const [modules, setModules] = useState<ModuleDto[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -60,7 +58,6 @@ export function Progress() {
             En opgave markeres som bestået, når dens tjek er bestået.
             {" "}Projekter markeres af dig som klar til gennemgang; det er ikke en faglig godkendelse.
           </p>
-          <button type="button" className="btn ghost" onClick={openHelp}>Spørg Raymond</button>
         </RaymondNote>
       )}
       {error && <p className="error-text">{error}</p>}

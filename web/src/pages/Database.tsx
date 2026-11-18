@@ -10,7 +10,6 @@ import { beginLogin, isLoggedIn } from "../auth";
 import { ErDiagram } from "../components/ErDiagram";
 import { WhyPostgres } from "../components/WhyPostgres";
 import { RaymondNote } from "../components/raymond/Raymond";
-import { useRaymond } from "../components/raymond/RaymondContext";
 import postgresLogo from "../assets/postgresql.svg";
 
 function DiffBadge({ status }: { status: string }) {
@@ -134,7 +133,6 @@ function TableDetail({ table }: { table: InspectTable }) {
 }
 
 export function Database() {
-  const { openHelp } = useRaymond();
   const [data, setData] = useState<InspectResult | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -242,7 +240,6 @@ export function Database() {
           En ændret række kan stå både som fjernet og tilføjet.
           {" "}<strong>Nulstilling sletter dine egne tabeller og dataændringer.</strong>
         </p>
-        <button type="button" className="btn ghost" onClick={openHelp}>Spørg Raymond</button>
       </RaymondNote>
 
       {error && <p className="error-text">{error}</p>}

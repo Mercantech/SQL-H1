@@ -1,5 +1,7 @@
 .raymond-avatar { display: inline-block; position: relative; overflow: hidden; flex: 0 0 auto; vertical-align: middle; }
 .raymond-avatar img { display: block; width: 100%; height: 100%; object-fit: contain; }
+/* Give the open help or tour the illustration without moving the page underneath. */
+#root:has(.raymond-panel:not([hidden]), .raymond-onboarding[open]) .raymond-page-art:not(.raymond-panel *, .raymond-onboarding *) { visibility: hidden; }
 .raymond-note { display: flex; align-items: flex-start; gap: 1rem; border: 1px solid var(--line); border-left: 3px solid #537e9d; border-radius: 12px; padding: 1.1rem; margin: 1.1rem 0; background: rgba(247,250,245,.9); }
 .raymond-note--compact { padding: .8rem 1rem; gap: .85rem; font-size: .88rem; }
 .raymond-note-copy { min-width: 0; flex: 1; }
@@ -12,22 +14,22 @@
 .raymond-note--warning { border-left-color: #b17a26; }
 .raymond-note--success, .raymond-note--celebration { border-left-color: var(--ok); }
 .raymond-editor-note { flex: 0 0 auto; margin: .35rem 0; max-height: min(220px, 26vh); overflow: auto; }
+.app-shell--locked .raymond-editor-note { margin-bottom: 3rem; }
 .raymond-editor-note.raymond-note--compact { font-size: .78rem; padding: .5rem .65rem; gap: .65rem; }
 .raymond-editor-note .raymond-note-title { font-size: .8rem; }
-.raymond-editor-status { display: flex; align-items: center; gap: .5rem; flex: 0 0 auto; min-height: 32px; color: var(--muted); font-size: .76rem; }
+.raymond-editor-status { flex: 0 0 auto; margin: .35rem 0; color: var(--muted); font-size: .76rem; }
 .raymond-editor-note p { line-height: 1.4; }
 .raymond-editor-note details { margin-top: .3rem; }
-.raymond-launcher { position: fixed; right: 1.25rem; bottom: max(1rem, env(safe-area-inset-bottom)); z-index: 50; display: flex; align-items: center; gap: .6rem; border: 1px solid #a6beb0; border-radius: 999px; background: #f9fcf7; color: var(--ink); padding: .6rem .9rem .6rem .65rem; box-shadow: 0 4px 22px #15201818; cursor: pointer; font-size: .85rem; font-weight: 700; text-align: left; }
-.raymond-launcher:hover, .raymond-launcher.is-open { border-color: var(--accent); background: #f0f7ed; }
-.raymond-launcher-sub { display: block; font-size: .68rem; font-weight: 400; color: var(--muted); }
-.raymond-launcher-symbol { border: 1px solid var(--line); width: 1.45rem; height: 1.45rem; border-radius: 50%; display: grid; place-items: center; margin-left: .3rem; font-size: .9rem; }
-.raymond-panel { position: fixed; z-index: 49; right: 1.25rem; bottom: 5.8rem; width: min(420px, calc(100vw - 2rem)); max-height: min(720px, calc(100dvh - 7rem)); display: flex; flex-direction: column; background: #f9fbf7; border: 1px solid #b4c6b4; border-radius: 18px; box-shadow: 0 15px 65px #15201828; overflow: hidden; }
+.raymond-launcher { position: fixed; right: 1.25rem; bottom: max(1rem, env(safe-area-inset-bottom)); z-index: 50; display: flex; align-items: center; gap: .4rem; min-height: 44px; border: 1px solid #a6beb0; border-radius: 999px; background: #f9fcf7; color: var(--ink); padding: .4rem .8rem; box-shadow: 0 4px 18px #15201816; cursor: pointer; font-size: .85rem; font-weight: 700; }
+.raymond-launcher:hover, .raymond-launcher[aria-expanded="true"] { border-color: var(--accent); background: #f0f7ed; }
+.raymond-launcher-symbol { border: 1px solid var(--line); width: 1.25rem; height: 1.25rem; border-radius: 50%; display: grid; place-items: center; font-size: .85rem; }
+.raymond-panel { position: fixed; z-index: 49; right: 1.25rem; bottom: max(4.25rem, calc(env(safe-area-inset-bottom) + 3.25rem)); width: min(420px, calc(100vw - 2rem)); max-height: min(720px, calc(100dvh - 5.25rem)); display: flex; flex-direction: column; background: #f9fbf7; border: 1px solid #b4c6b4; border-radius: 18px; box-shadow: 0 15px 65px #15201828; overflow: hidden; }
 .raymond-panel-head { display: flex; align-items: center; gap: .55rem; padding: .4rem .8rem; flex: 0 0 auto; }
 .raymond-panel-head h2 { font: 700 1.05rem/1.25 var(--font-serif); margin: 0; }
-.raymond-close { margin-left: auto; width: 2rem; height: 2rem; border: 1px solid transparent; background: none; font-size: 1.6rem; line-height: 1; color: var(--muted); cursor: pointer; border-radius: 50%; }
+.raymond-close { margin-left: auto; width: 44px; height: 44px; border: 1px solid transparent; background: none; font-size: 1.6rem; line-height: 1; color: var(--muted); cursor: pointer; border-radius: 50%; }
 .raymond-close:hover { background: #e5eee0; }
 .raymond-tabs { display: flex; gap: .2rem; padding: 0 .8rem .4rem; border-bottom: 1px solid var(--line); flex: 0 0 auto; }
-.raymond-tabs button { flex: 1; min-width: 0; padding: .3rem .25rem; font: inherit; font-size: .72rem; line-height: 1.3; white-space: nowrap; color: var(--muted); background: transparent; border: 1px solid transparent; border-radius: 6px; cursor: pointer; }
+.raymond-tabs button { flex: 1; min-width: 0; min-height: 36px; padding: .3rem .25rem; font: inherit; font-size: .78rem; line-height: 1.3; white-space: nowrap; color: var(--muted); background: transparent; border: 1px solid transparent; border-radius: 6px; cursor: pointer; }
 .raymond-tabs button.active { color: var(--accent); background: #e5efdf; border-color: #cbd9c5; font-weight: 600; }
 .raymond-panel-content { padding: 1.2rem; overflow-y: auto; overscroll-behavior: contain; min-height: 0; font-size: .88rem; line-height: 1.65; }
 .raymond-panel-content h3 { font-family: var(--font-serif); font-size: 1.25rem; line-height: 1.3; margin: .2rem 0 .7rem; }
@@ -55,24 +57,16 @@
 .raymond-footnote { color: var(--muted); font-size: .72rem; margin-top: 1rem !important; }
 .raymond-error-explanation { margin-top: 1.4rem; border-top: 1px solid var(--line); padding-top: 1.2rem; }
 .raymond-error-explanation h3 { margin-top: .8rem; }
-.raymond-about-portrait { display: block; max-width: 100%; width: 200px; height: auto; margin: -.7rem auto .8rem; border-radius: 14px; }
 .raymond-introduction { color: #365c76; font-family: var(--font-serif); font-size: 1.1rem; }
 .raymond-tributes { padding-left: 1.2rem; }
 .raymond-tributes li { margin-bottom: .7rem; }
 .raymond-tributes a { color: var(--accent); text-decoration: underline; }
-.raymond-welcome { position: fixed; z-index: 48; bottom: 5.8rem; right: 1.25rem; display: flex; align-items: flex-start; gap: .85rem; width: min(365px, calc(100vw - 2rem)); padding: 1.1rem; background: #fbfcf7; border: 1px solid #b7cbb4; border-radius: 14px; box-shadow: 0 8px 35px #15201818; font-size: .84rem; }
-.raymond-welcome p { font-size: .76rem; color: var(--muted); margin: .3rem 0; }
-.raymond-welcome .btn { font-size: .73rem; }
 .raymond-launcher:focus-visible, .raymond-panel button:focus-visible, .raymond-panel summary:focus-visible, .raymond-panel textarea:focus-visible { outline: 3px solid #537e9d; outline-offset: 3px; }
 @media (max-width: 600px) {
-  .raymond-launcher { right: .65rem; bottom: max(.6rem, env(safe-area-inset-bottom)); padding: .5rem .7rem; }
-  .raymond-launcher-sub { display: none; }
-  .raymond-launcher-symbol { display: none; }
-  .raymond-panel { right: .5rem; bottom: 4.3rem; width: calc(100% - 1rem); max-height: calc(100dvh - 5rem); }
-  .raymond-welcome { right: .65rem; bottom: 4.3rem; }
+  .raymond-launcher { right: .65rem; bottom: max(.6rem, env(safe-area-inset-bottom)); }
+  .raymond-panel { right: .5rem; bottom: max(3.85rem, calc(env(safe-area-inset-bottom) + 3.25rem)); width: calc(100% - 1rem); max-height: calc(100dvh - 4.45rem); }
   .raymond-note { gap: .6rem; padding: .8rem; }
   .raymond-note > .raymond-avatar { width: 50px !important; height: 50px !important; }
-  .raymond-launcher > .raymond-avatar { width: 40px !important; height: 40px !important; }
   .raymond-panel-content { padding: 1rem; }
 }
 @media (prefers-reduced-motion: reduce) { .raymond-panel, .raymond-launcher { scroll-behavior: auto; transition: none; } }

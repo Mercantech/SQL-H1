@@ -36,7 +36,7 @@ function sandboxLabel(status: string) {
 }
 
 export function Profile() {
-  const { openHelp, openOnboarding } = useRaymond();
+  const { openOnboarding } = useRaymond();
   const jwt = getUserProfile();
   const [me, setMe] = useState<MeDto | null>(null);
   const [progress, setProgress] = useState<ProgressRow[]>([]);
@@ -149,7 +149,6 @@ export function Profile() {
                 ? <>Fortsæt med <Link to={`/learn/${nextItem.slug}`}>{nextItem.title}</Link>. Dine seneste fremskridt og SQL-kørsler nedenfor hjælper dig med at finde tilbage.</>
                 : "Brug modulerne til at genbesøge et emne, eller øv dig frit i Playground."}
             </p>
-            <button type="button" className="btn ghost" onClick={openHelp}>Spørg Raymond</button>
           </RaymondNote>
           <div className="profile-stats" aria-label="Overblik">
             <div className="profile-stat">

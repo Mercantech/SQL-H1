@@ -1393,7 +1393,6 @@ body.is-resizing-split .sql-result {
   background: var(--panel);
 }
 
-.gamehub-invitation > img,
 .course-mission > img {
   flex: 0 0 auto;
   width: clamp(88px, 15vw, 160px);
@@ -1404,6 +1403,8 @@ body.is-resizing-split .sql-result {
 .gamehub-invitation h2 { margin: 0.35rem 0 0.65rem; }
 .gamehub-invitation p,
 .course-mission p { margin: 0.4rem 0 0.85rem; }
+.module-gamehub-link { margin: 1rem 0; color: var(--muted); font-size: 0.9rem; }
+.module-gamehub-link a { color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 0.18em; }
 .course-goals { color: var(--accent); font-size: 0.85rem; font-weight: 650; }
 .project-brief { background: var(--panel); border-left: 4px solid var(--accent); border-radius: 8px; padding: 1rem 1.25rem; margin: 1.2rem 0; }
 .md img { max-width: 100%; height: auto; }
@@ -1412,8 +1413,6 @@ body.is-resizing-split .sql-result {
 .present-slide .md img.lesson-raymond { width: min(180px, 28vh); }
 
 @media (max-width: 600px) {
-  .gamehub-invitation { align-items: flex-start; gap: 0.75rem; }
-  .gamehub-invitation > img { width: 76px; }
   .course-mission { flex-wrap: wrap; }
 }
 
@@ -1804,10 +1803,6 @@ body.is-resizing-split .sql-result {
   line-height: 1.45;
 }
 
-.sandbox .check-box {
-  flex: 0 0 auto;
-}
-
 .sql-result {
   flex: 1 1 35%;
   min-height: 120px;
@@ -1873,28 +1868,6 @@ body.is-resizing-split .sql-result {
 
 .error-text {
   color: var(--danger);
-}
-
-.check-box {
-  margin-top: 0.75rem;
-  padding: 0.75rem 1rem;
-  border-radius: 12px;
-  border: 1px solid var(--line);
-}
-
-.check-box.pass {
-  border-color: var(--ok);
-  background: rgba(27, 107, 58, 0.08);
-}
-
-.check-box.fail {
-  border-color: var(--accent-2);
-  background: rgba(196, 92, 38, 0.08);
-}
-
-.check-box ul {
-  margin: 0.4rem 0 0;
-  padding-left: 1.1rem;
 }
 
 @keyframes rise {

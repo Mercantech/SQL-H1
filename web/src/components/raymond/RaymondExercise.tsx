@@ -1,8 +1,6 @@
 import { useId, useMemo, useState } from "react";
 import type { ContentDto } from "../../api";
 import { getExerciseHints } from "../../lib/raymond";
-import type { RaymondReactionId } from "../../lib/raymondReactions";
-import { RaymondAvatar } from "./RaymondUI";
 import "./exercise.css";
 import "./learning-reactions.css";
 
@@ -17,7 +15,6 @@ function RaymondExerciseContent({ content }: { content: ContentDto }) {
     () => (content.kind === "exercise" || content.kind === "project" ? getExerciseHints(content).slice(0, 3) : []),
     [content],
   );
-  const hintReactions: RaymondReactionId[] = ["curious", "idea-notes", "eureka", "determined"];
   const encouragement = [
     "Lad os finde dit næste skridt.",
     "Prøv idéen på en lille del af opgaven.",
@@ -28,8 +25,8 @@ function RaymondExerciseContent({ content }: { content: ContentDto }) {
   return (
     <section className="raymond-exercise" aria-label="Hints til opgaven">
       <div className="raymond-hint-heading">
-        <RaymondAvatar reaction={hintReactions[Math.min(revealedCount, 3)]} size={68} />
-        <div><h3>Hints til opgaven</h3><p className="raymond-hint-encouragement" aria-live="polite">{encouragement[Math.min(revealedCount, 3)]}</p></div>
+        <h3>Hints til opgaven</h3>
+        <p className="raymond-hint-encouragement" aria-live="polite">{encouragement[revealedCount]}</p>
       </div>
       <p>Åbn ét hint ad gangen, når du har brug for et lille skub.</p>
       <div className="raymond-exercise-actions">

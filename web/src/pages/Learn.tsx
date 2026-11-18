@@ -280,6 +280,7 @@ export function Learn() {
             {item.kind === "exercise" && item.schema && <ExerciseSchema schema={item.schema} />}
             <div className="md">
               <Markdown
+                showRaymondArt={item.kind !== "exercise"}
                 onInsertCode={
                   showSandbox
                     ? (code) => {
@@ -321,6 +322,7 @@ export function Learn() {
               />
               <aside id="learn-sandbox" className="sandbox">
                 <SqlEditor
+                  showCoachAvatar={item.kind === "exercise"}
                   value={sql}
                   onChange={setSql}
                   onRun={onRun}

@@ -3,7 +3,6 @@ import { beginLogin, getUserProfile, isLoggedIn } from "../auth";
 import { useRaymond } from "../components/raymond/RaymondContext";
 import "../components/raymond/onboarding.css";
 import { GameHubInvitation } from "../components/CourseMission";
-import { ReactionTeaser } from "../components/raymond/ReactionTeaser";
 import { LearningHome } from "../components/LearningHome";
 
 export function Home() {
@@ -30,15 +29,9 @@ export function Home() {
           <Link className="btn" to="/murder">
             Løs SQL-mysteriet
           </Link>
-          {!isLoggedIn() ? (
-            <button type="button" className="btn" onClick={() => beginLogin()}>
-              Log ind for at øve
-            </button>
-          ) : (
-            <Link className="btn" to="/playground">
-              Åbn playground
-            </Link>
-          )}
+          <button type="button" className="btn" onClick={() => beginLogin()}>
+            Log ind for at øve
+          </button>
         </div>
         <div className="home-raymond-intro">
           <p>
@@ -60,13 +53,18 @@ export function Home() {
       <div className="home-raymond-visual">
         <figure className="home-raymond-professor">
           <img
+            className="raymond-page-art"
             src="/raymond/professor.webp"
             alt="Professor Codd, kaldet Raymond, den blå elefant med briller, bog og pegepind."
             width="480"
             height="480"
             fetchPriority="high"
           />
-          <figcaption>Professor Codd · kald mig Raymond</figcaption>
+          <figcaption>
+            <Link className="home-raymond-tour" to="/raymond">
+              Se Raymonds reaktioner <span aria-hidden="true">→</span>
+            </Link>
+          </figcaption>
         </figure>
         <div className="home-raymond-query" aria-label="Et eksempel på SQL">
           <span className="home-raymond-query-label">Det begynder med en forespørgsel</span>
@@ -78,7 +76,6 @@ ORDER BY name;`}</code></pre>
       </div>
     </section>
     <GameHubInvitation />
-    <ReactionTeaser />
     </>
   );
 }

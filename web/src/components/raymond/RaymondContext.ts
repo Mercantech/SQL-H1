@@ -19,8 +19,6 @@ export type RaymondState = RaymondControls & {
   tourOpen: boolean;
   closeHelp: () => void;
   closeTour: () => void;
-  welcomed: boolean;
-  dismissWelcome: () => void;
   workContext: RaymondWorkContext | null;
 };
 export const RaymondContext = createContext<RaymondState | null>(null);

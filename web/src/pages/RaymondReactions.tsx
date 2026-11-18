@@ -1,7 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  getRaymondReaction,
   raymondReactionCategories,
   raymondReactions,
 } from "../lib/raymondReactions";
@@ -11,8 +10,7 @@ export function RaymondReactions() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [selectedId, setSelectedId] = useState("eureka");
-  const selected = getRaymondReaction(selectedId);
-  const selectedCategory = raymondReactionCategories.find((item) => item.id === selected.category);
+  const searchRef = useRef<HTMLInputElement>(null);
   const filtered = useMemo(() => {
     const words = query.toLocaleLowerCase("da-DK").trim().split(/\s+/).filter(Boolean);
     return raymondReactions.filter((reaction) => {
@@ -20,10 +18,19 @@ export function RaymondReactions() {
       return (category === "all" || reaction.category === category) && words.every((word) => haystack.includes(word));
     });
   }, [category, query]);
+  const selectedIndex = Math.max(0, filtered.findIndex((reaction) => reaction.id === selectedId));
+  const selected = filtered.at(selectedIndex);
+  const selectedCategory = raymondReactionCategories.find((item) => item.id === selected?.category);
+
+  function browse(offset: number) {
+    const next = filtered[(selectedIndex + offset + filtered.length) % filtered.length];
+    setSelectedId(next.id);
+  }
 
   function clearFilters() {
     setCategory("all");
     setQuery("");
+    searchRef.current?.focus();
   }
 
   return (
@@ -35,27 +42,44 @@ export function RaymondReactions() {
       </header>
 
       <div className="raymond-reaction-layout">
-        <aside className="raymond-reaction-preview" aria-label="Den valgte reaktion">
-          <img src={selected.src} alt="" width={512} height={512} decoding="async" />
-          <div aria-live="polite" aria-atomic="true">
-            <p className="eyebrow">{selectedCategory?.label} · Valgt reaktion</p>
-            <h2>{selected.label}</h2>
-            <p><strong>Det betyder:</strong> {selected.description}</p>
+        <section className="raymond-reaction-preview" aria-labelledby="raymond-reaction-title">
+          {selected && <img className="raymond-page-art" src={selected.src} alt="" width={512} height={512} decoding="async" />}
+          <div className="raymond-reaction-preview-copy" aria-live="polite" aria-atomic="true">
+            {selected ? (
+              <>
+                <p className="eyebrow">{selectedCategory?.label}</p>
+                <h2 id="raymond-reaction-title">{selected.label}</h2>
+                <p>{selected.description}</p>
+              </>
+            ) : (
+              <>
+                <h2 id="raymond-reaction-title">Ingen reaktioner fundet</h2>
+                <p>Prøv et andet søgeord, eller vis hele samlingen.</p>
+              </>
+            )}
           </div>
-          <p className="raymond-reaction-preview-tip">Vælg et billede og lær hans reaktioner at kende.</p>
-        </aside>
+          {selected && (
+            <div className="raymond-reaction-pagination" role="group" aria-label="Bladr mellem reaktioner">
+              <button type="button" className="btn" disabled={filtered.length < 2} onClick={() => browse(-1)} aria-label="Forrige reaktion"><span aria-hidden="true">←</span></button>
+              <span>{selectedIndex + 1} af {filtered.length}</span>
+              <button type="button" className="btn" disabled={filtered.length < 2} onClick={() => browse(1)} aria-label="Næste reaktion"><span aria-hidden="true">→</span></button>
+            </div>
+          )}
+        </section>
 
-        <div className="raymond-reaction-library">
-          <div className="raymond-reaction-search">
-            <label htmlFor="raymond-reaction-search">Find en reaktion</label>
+        <section className="raymond-reaction-library" aria-labelledby="raymond-reaction-library-title">
+          <h2 id="raymond-reaction-library-title">Find en reaktion</h2>
+          <div className="raymond-reaction-field">
+            <label htmlFor="raymond-reaction-search">Søg efter navn eller emne</label>
             <input
+              ref={searchRef}
               id="raymond-reaction-search"
               type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Fx aha, JOIN eller pause"
               autoComplete="off"
-              aria-controls="raymond-reaction-grid"
+              aria-controls="raymond-reaction-select"
             />
           </div>
 
@@ -67,44 +91,26 @@ export function RaymondReactions() {
             ))}
           </fieldset>
 
-          <p className="raymond-reaction-count" role="status">{filtered.length} af {raymondReactions.length} reaktioner</p>
-
-          {filtered.length > 0 ? (
-            <ul className="raymond-reaction-grid" id="raymond-reaction-grid" aria-label="Vælg en Raymond-reaktion">
-              {filtered.map((reaction) => (
-                <li key={reaction.id}>
-                  <button
-                    type="button"
-                    aria-pressed={selected.id === reaction.id}
-                    onClick={() => setSelectedId(reaction.id)}
-                    className="raymond-reaction-card"
-                  >
-                    <img src={reaction.src} alt="" width={512} height={512} loading="lazy" decoding="async" />
-                    <span>{reaction.label}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="raymond-reaction-empty" id="raymond-reaction-grid">
-              <img src="/raymond/reactions/curious.webp" alt="" width={88} height={88} loading="lazy" />
-              <p>Ingen reaktioner passer til din søgning. Prøv et andet ord eller se hele samlingen.</p>
-              <button type="button" className="btn" onClick={clearFilters}>Vis alle reaktioner</button>
-            </div>
+          <div className="raymond-reaction-field">
+            <label htmlFor="raymond-reaction-select">Vælg reaktion</label>
+            <select id="raymond-reaction-select" value={selected?.id ?? ""} disabled={!selected} onChange={(event) => setSelectedId(event.target.value)}>
+              {selected ? filtered.map((reaction) => <option key={reaction.id} value={reaction.id}>{reaction.label}</option>) : <option value="">Ingen reaktioner</option>}
+            </select>
+          </div>
+          {(category !== "all" || query) && (
+            <button type="button" className="btn ghost raymond-reaction-clear" onClick={clearFilters}>Vis alle reaktioner</button>
           )}
-        </div>
+        </section>
       </div>
 
       <section className="raymond-reaction-meaning" aria-labelledby="raymond-feedback-heading">
         <h2 id="raymond-feedback-heading">Hvad fejrer Raymond?</h2>
         <div className="raymond-reaction-meaning-grid">
           <div>
-            <img src="/raymond/reactions/success.webp" alt="" width={84} height={84} loading="lazy" />
-            <div><h3>Din SQL blev kørt</h3><p>Databasen kunne udføre din forespørgsel. Undersøg stadig, om resultatet svarer på spørgsmålet.</p></div>
+            <h3>Din SQL blev kørt</h3><p>Databasen kunne udføre din forespørgsel. Undersøg stadig, om resultatet svarer på spørgsmålet.</p>
           </div>
           <div>
-            <img src="/raymond/reactions/applause.webp" alt="" width={84} height={84} loading="lazy" />
-            <div><h3>Opgavens tjek bestod</h3><p>De automatiske kontroller af opgaven bestod. Prøv nu at forklare en makker, hvorfor din løsning virker.</p></div>
+            <h3>Opgavens tjek bestod</h3><p>De automatiske kontroller af opgaven bestod. Prøv nu at forklare en makker, hvorfor din løsning virker.</p>
           </div>
         </div>
         <p className="raymond-reaction-outro">Når noget driller, undersøger I det sammen. <Link to="/playground">Prøv en idé i Playground</Link> eller <Link to="/modules">find dit næste modul</Link>.</p>

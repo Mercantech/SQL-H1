@@ -14,9 +14,8 @@ import {
 } from "../api";
 import { usePlaygroundLayout } from "../hooks/usePlaygroundLayout";
 import { explainPostgresError } from "../lib/raymond";
-import { RaymondAvatar, RaymondNote } from "./raymond/Raymond";
+import { RaymondNote } from "./raymond/RaymondUI";
 import { getSqlFeedbackReaction } from "../lib/raymondFeedback";
-import { useRaymond } from "./raymond/RaymondContext";
 
 hljs.registerLanguage("sql", sqlLang);
 
@@ -36,6 +35,7 @@ type Props = {
   checkPassed?: boolean | null;
   /** `full` = Raymond-tips (standard). `errors` = kort kørselsstatus og udfoldelig fejl/opgave-feedback. */
   coach?: "full" | "errors";
+  showCoachAvatar?: boolean;
   /** Playground: trækbar editor/resultat + layout-skift. */
   workspace?: boolean;
 };
@@ -111,31 +111,25 @@ function SqlRaymondFeedback({
   error,
   result,
   checkPassed,
+  checkMessages,
   canCheck,
-  needsLogin,
   coach = "full",
-}: Pick<Props, "running" | "error" | "result" | "checkPassed" | "coach"> & {
+  showCoachAvatar,
+}: Pick<Props, "running" | "error" | "result" | "checkPassed" | "checkMessages" | "coach" | "showCoachAvatar"> & {
   canCheck: boolean;
-  needsLogin: boolean;
 }) {
-  const { openHelp } = useRaymond();
   const quiet = coach === "errors";
   const reaction = getSqlFeedbackReaction({ running, error, result, checkPassed });
 
   if (running) {
-    if (quiet) return <div className="raymond-editor-status" role="status"><RaymondAvatar reaction={reaction} size={32} /><span>Databasen arbejder…</span></div>;
-    return (
-      <RaymondNote mood="thinking" reaction={reaction} title="Et øjeblik…" compact className="raymond-editor-note">
-        <p>Databasen arbejder. Din SQL bliver stående i editoren.</p>
-      </RaymondNote>
-    );
+    return <p className="raymond-editor-status" role="status">Databasen arbejder…</p>;
   }
 
   const sqlError = error || (result && !result.ok ? result.error || "SQL-kørslen kunne ikke gennemføres." : null);
   if (sqlError) {
     const guidance = explainPostgresError(sqlError);
     return (
-      <RaymondNote mood="error" reaction={reaction} title={guidance.title} compact className="raymond-editor-note">
+      <RaymondNote mood="error" reaction={reaction} title={guidance.title} compact showAvatar={showCoachAvatar} className="raymond-editor-note">
         <p>{guidance.explanation}</p>
         <details>
           <summary>Sådan kommer du videre</summary>
@@ -145,27 +139,29 @@ function SqlRaymondFeedback({
     );
   }
 
-  if (checkPassed === true) {
+  if (checkPassed != null) {
     return (
-      <RaymondNote mood="celebration" reaction={reaction} title="Flot arbejde!" compact className="raymond-editor-note">
-        <p>Opgavens kontroller er bestået. Prøv at forklare med egne ord, hvorfor din løsning virker.</p>
+      <RaymondNote
+        mood={checkPassed ? "celebration" : "warning"}
+        reaction={reaction}
+        title={checkPassed ? "Bestået" : "Ikke bestået endnu"}
+        compact
+        showAvatar={showCoachAvatar}
+        className="raymond-editor-note"
+      >
+        {!!checkMessages?.length && <ul>{checkMessages.map((message) => <li key={message}>{message}</li>)}</ul>}
+        <p>{checkPassed
+          ? "Prøv at forklare med egne ord, hvorfor din løsning virker."
+          : "Sammenlign ét krav ad gangen med din SQL. Åbn Hjælp og vælg Guide for at se opgavens hints."}</p>
       </RaymondNote>
     );
   }
 
-  if (checkPassed === false) {
-    return (
-      <RaymondNote mood="help" reaction={reaction} title="Prøv igen – ét krav ad gangen" compact className="raymond-editor-note">
-        <p>Se kontrollens punkter nedenfor, og sammenlign dem med din SQL. Opgavens hints kan hjælpe dig videre.</p>
-      </RaymondNote>
-    );
-  }
-
-  if (quiet) return result?.ok ? <div className="raymond-editor-status" role="status"><RaymondAvatar reaction={reaction} size={32} /><span>SQL kørt · kontrollér resultatet</span></div> : null;
+  if (quiet) return result?.ok ? <p className="raymond-editor-status" role="status">SQL kørt · kontrollér resultatet</p> : null;
 
   if (result?.ok) {
     return (
-      <RaymondNote mood="success" reaction={reaction} title="Din SQL blev kørt" compact className="raymond-editor-note">
+      <RaymondNote mood="success" reaction={reaction} title="Din SQL blev kørt" compact showAvatar={showCoachAvatar} className="raymond-editor-note">
         <p>
           {canCheck
             ? "Sammenlign resultatet med opgavens krav. Brug Tjek svar, når du er klar."
@@ -175,12 +171,7 @@ function SqlRaymondFeedback({
     );
   }
 
-  return (
-    <RaymondNote mood="neutral" reaction={reaction} title="Raymond er klar" compact className="raymond-editor-note">
-      <p>{needsLogin ? "Log ind for at afprøve SQL i din egen database." : "Kør hele din SQL eller markér en del og brug Ctrl+Enter."}</p>
-      <button type="button" className="btn ghost" onClick={openHelp}>Spørg Raymond</button>
-    </RaymondNote>
-  );
+  return null;
 }
 
 function readZoom() {
@@ -272,6 +263,7 @@ export function SqlEditor({
   checkMessages,
   checkPassed,
   coach = "full",
+  showCoachAvatar = true,
   workspace = false,
 }: Props) {
   const [tab, setTab] = useState(0);
@@ -669,20 +661,11 @@ export function SqlEditor({
         error={error}
         result={result}
         checkPassed={checkPassed}
+        checkMessages={checkMessages}
         canCheck={Boolean(onCheck)}
-        needsLogin={Boolean(onLogin)}
         coach={coach}
+        showCoachAvatar={showCoachAvatar}
       />
-      {checkMessages && (
-        <div className={`check-box ${checkPassed ? "pass" : "fail"}`}>
-          <strong>{checkPassed ? "Bestået" : "Ikke bestået endnu"}</strong>
-          <ul>
-            {checkMessages.map((m) => (
-              <li key={m}>{m}</li>
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   );
 }

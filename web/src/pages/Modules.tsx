@@ -8,14 +8,9 @@ import {
 } from "../api";
 import { isLoggedIn } from "../auth";
 import { LearningObjectives } from "../components/LearningObjectives";
-import { GameHubInvitation } from "../components/CourseMission";
-import { RaymondAvatar, RaymondNote } from "../components/raymond/Raymond";
-import { useRaymond } from "../components/raymond/RaymondContext";
-import { getModuleReaction } from "../lib/moduleReactions";
-import "../components/raymond/learning-reactions.css";
+import { RaymondNote } from "../components/raymond/Raymond";
 
 export function Modules() {
-  const { openHelp } = useRaymond();
   const [modules, setModules] = useState<ModuleDto[]>([]);
   const [progress, setProgress] = useState<ProgressRow[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -62,13 +57,6 @@ export function Modules() {
       <header className="page-head">
         <h1>Moduler</h1>
         <p>Følg pensummet i rækkefølge — når et modul er færdigt, går du videre til næste.</p>
-        {continueTarget && (
-          <p className="cta-row">
-            <Link className="btn primary" to={`/learn/${continueTarget.item.slug}`}>
-              Fortsæt: {continueTarget.item.title}
-            </Link>
-          </p>
-        )}
       </header>
       <RaymondNote compact mood={continueTarget ? "help" : "celebration"} title={continueTarget ? "Dit næste skridt" : "Godt arbejde"}>
         <p>
@@ -81,9 +69,17 @@ export function Modules() {
                   : " Læs opgaven, afprøv din SQL, og brug opgavens tjek til at vurdere løsningen."}</>
           ) : "Alle lektioner er registreret som fuldført. Genbesøg et emne, eller afprøv din egen idé i Playground."}
         </p>
-        <button type="button" className="btn ghost" onClick={openHelp}>Spørg Raymond</button>
+        {continueTarget && (
+          <div className="raymond-inline-actions">
+            <Link className="btn primary" to={`/learn/${continueTarget.item.slug}`}>
+              Fortsæt
+            </Link>
+          </div>
+        )}
       </RaymondNote>
-      <GameHubInvitation />
+      <p className="module-gamehub-link">
+        Målpind 18–24 · <Link to="/learn/orm-01-intro">Start GameHub-projektet <span aria-hidden="true">→</span></Link>
+      </p>
       <ol className="module-list">
         {modules.map((m) => {
           const done = m.items.filter(
@@ -93,10 +89,7 @@ export function Modules() {
           return (
             <li key={m.slug} className={m.scaffoldOnly ? "scaffold" : ""}>
               <Link to={first ? `/learn/${first.slug}` : `/modules/${m.slug}`}>
-                <span className="module-reaction-marker">
-                  <RaymondAvatar reaction={getModuleReaction(m.slug)} size={64} className="module-reaction-avatar" />
-                  <span className="ord">{String(m.order).padStart(2, "0")}</span>
-                </span>
+                <span className="ord" aria-hidden="true">{String(m.order).padStart(2, "0")}</span>
                 <div>
                   <h2>
                     {m.title}

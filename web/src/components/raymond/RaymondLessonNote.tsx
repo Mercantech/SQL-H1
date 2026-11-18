@@ -3,12 +3,14 @@ import type { RaymondLessonHeader } from "../../lib/raymondLesson";
 import { RaymondAvatar } from "./RaymondUI";
 import "./lesson-note.css";
 
-export function RaymondLessonNote({ reaction, title, children }: RaymondLessonHeader & { children: ReactNode }) {
+type Props = RaymondLessonHeader & { illustrated: boolean; children: ReactNode };
+
+export function RaymondLessonNote({ reaction, title, illustrated, children }: Props) {
   return (
-    <div className="raymond-lesson-note" role="note" aria-label={`Raymond: ${title}`} data-reaction={reaction}>
-      <RaymondAvatar reaction={reaction} size={56} />
+    <div className={`raymond-lesson-note${illustrated ? " raymond-lesson-note--illustrated" : ""}`} role="note" data-reaction={reaction}>
+      {illustrated && <RaymondAvatar reaction={reaction} size={56} />}
       <div className="raymond-lesson-note-copy">
-        <p className="raymond-lesson-speaker">Raymond</p>
+        {illustrated && <p className="raymond-lesson-speaker">Raymond</p>}
         <strong className="raymond-lesson-note-title">{title}</strong>
         <div className="raymond-lesson-note-body">{children}</div>
       </div>

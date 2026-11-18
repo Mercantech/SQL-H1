@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   executeSql,
@@ -15,6 +15,7 @@ import { SqlEditor } from "../components/SqlEditor";
 import { useLearnSplit } from "../hooks/useLearnSplit";
 import { buildFlatPath, type FlatStep } from "../lib/contentPath";
 import { isHeadingOnlySlide, splitMarkdownToSlides } from "../lib/splitSlides";
+import { RaymondContext } from "../components/raymond/RaymondContext";
 import { useRaymondWork } from "../components/raymond/useRaymondWork";
 import { describeSqlResult } from "../lib/raymondWork";
 
@@ -43,6 +44,8 @@ export function Present() {
   const [editorOpen, setEditorOpen] = useState(false);
   const [flash, setFlash] = useState<string | null>(null);
   const split = useLearnSplit();
+  const raymond = useContext(RaymondContext);
+  const overlayOpen = Boolean(raymond?.helpOpen || raymond?.tourOpen);
   useRaymondWork({ contentSlug: item?.slug, currentSql: sql, lastError: error || result?.error || undefined, resultSummary: describeSqlResult(result) }, item?.slug === slug);
 
   useEffect(() => {
@@ -166,10 +169,11 @@ export function Present() {
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      const tag = (e.target as HTMLElement | null)?.tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA" || (e.target as HTMLElement)?.isContentEditable) {
-        return;
-      }
+      if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || overlayOpen) return;
+      const target = e.target instanceof HTMLElement ? e.target : null;
+      if (target?.isContentEditable || target?.closest("input, textarea, select, dialog, [role='dialog'], .raymond-launcher")) return;
+      if (e.key === " " && target?.closest("button, a[href], summary, [role='button']")) return;
+
       if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
         e.preventDefault();
         goForward();
@@ -201,7 +205,7 @@ export function Present() {
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [goBack, goForward, navigate, showSandbox, slides.length, slug]);
+  }, [goBack, goForward, navigate, overlayOpen, showSandbox, slides.length, slug]);
 
   async function ensureReady() {
     if (!isLoggedIn()) {
@@ -432,6 +436,7 @@ export function Present() {
             />
             <aside className="sandbox present-sandbox">
               <SqlEditor
+                showCoachAvatar={false}
                 value={sql}
                 onChange={setSql}
                 onRun={onRun}

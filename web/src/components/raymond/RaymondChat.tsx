@@ -11,7 +11,6 @@ import {
   type RaymondChatSource,
 } from "../../lib/raymondChat";
 import { RaymondContext, type RaymondWorkContext } from "./RaymondContext";
-import { RaymondAvatar } from "./RaymondUI";
 import "./chat.css";
 
 type Message = {
@@ -39,7 +38,6 @@ type FailedRequest = {
 function LoginPrompt() {
   return (
     <div className="raymond-chat-login">
-      <RaymondAvatar reaction="question" size={96} />
       <h3>Hvad vil du gerne forstå?</h3>
       <p>Spørg Raymond om SQL, en opgave eller en fejl, du arbejder med.</p>
       <button type="button" className="btn primary" onClick={() => beginLogin()}>
@@ -227,7 +225,6 @@ function StudentChat({ owner, active, pathname, workContext }: {
       >
         {!messages.length && (
           <div className="raymond-chat-empty">
-            <RaymondAvatar mood="help" size={88} />
             <h3>Lad os undersøge det sammen</h3>
             <p>Hvad prøver du at finde ud af? Fortæl gerne, hvad du allerede har forsøgt.</p>
             <button type="button" onClick={() => {
@@ -266,7 +263,6 @@ function StudentChat({ owner, active, pathname, workContext }: {
         ))}
         {sending && (
           <div className="raymond-chat-pending" role="status">
-            <RaymondAvatar reaction="thinking" size={62} />
             <span>Raymond tænker<span className="raymond-chat-dots" aria-hidden="true">…</span></span>
             <button type="button" onClick={() => {
               flightRef.current?.controller.abort();

@@ -3,9 +3,6 @@ import { Link } from "react-router-dom";
 import { fetchMe, fetchModules, fetchProgress, type ModuleDto, type ProgressRow } from "../api";
 import { contentKindLabel, progressLabel } from "../lib/course";
 import { buildLearningHome } from "../lib/learningHome";
-import { getModuleReaction } from "../lib/moduleReactions";
-import { useRaymond } from "./raymond/RaymondContext";
-import { RaymondAvatar } from "./raymond/RaymondUI";
 import "./learning-home.css";
 
 type LoadState = "loading" | "ready" | "error";
@@ -22,7 +19,6 @@ function moduleSummary(module: ModuleDto) {
 }
 
 export function LearningHome({ name }: { name: string | null }) {
-  const { openHelp } = useRaymond();
   const [displayName, setDisplayName] = useState(name);
   const [modules, setModules] = useState<ModuleDto[]>([]);
   const [progress, setProgress] = useState<ProgressRow[]>([]);
@@ -68,10 +64,8 @@ export function LearningHome({ name }: { name: string | null }) {
           <p className="learning-home-greeting">{ready && !model.returning
             ? "Vi starter stille og roligt. Åbn den første lektion, og prøv én forespørgsel ad gangen."
             : "Tag tråden op, hvor du slap, eller vælg et emne, du vil øve. Vi tager det ét skridt ad gangen."}</p>
-          <p className="learning-home-raymond"><strong>Raymond:</strong> Jeg er her, hvis noget driller.</p>
-          <button type="button" className="learning-home-help" onClick={openHelp}>Spørg Raymond <span aria-hidden="true">→</span></button>
         </div>
-        <img src="/raymond/reactions/wave.webp" alt="Raymond byder dig varmt velkommen med et smil og en vinkende hånd" width={512} height={512} fetchPriority="high" />
+        <img className="raymond-page-art" src="/raymond/reactions/wave.webp" alt="Raymond vinker" width={512} height={512} fetchPriority="high" />
       </header>
 
       <div className="learning-home-workspace">
@@ -90,7 +84,7 @@ export function LearningHome({ name }: { name: string | null }) {
             </>
           ) : resume ? (
             <>
-              <div className="learning-home-module-label"><RaymondAvatar reaction={getModuleReaction(resume.moduleSlug)} size={44} /><span>{resume.moduleTitle} · {contentKindLabel(resume.item.kind)}</span></div>
+              <div className="learning-home-module-label">{resume.moduleTitle} · {contentKindLabel(resume.item.kind)}</div>
               <h2 id="learning-resume-title">{resume.item.title}</h2>
               <p>{model.resumeReason === "new" ? "Begynd med forklaringen, og afprøv det første eksempel."
                 : model.resumeReason === "started" ? "Her var du i gang. Find dit arbejde frem, og byg videre i dit eget tempo."
@@ -105,10 +99,10 @@ export function LearningHome({ name }: { name: string | null }) {
 
         <nav className="learning-home-tools" aria-labelledby="learning-tools-title">
           <h2 id="learning-tools-title">Dine arbejdsrum</h2>
-          <Link to="/modules"><RaymondAvatar reaction="reading" size={42} /><span><strong>Moduler</strong><small>Teori, SQL-opgaver og projekter</small></span><span aria-hidden="true">→</span></Link>
-          <Link to="/playground"><RaymondAvatar reaction="query-ready" size={42} /><span><strong>Playground</strong><small>Prøv din egen SQL</small></span><span aria-hidden="true">→</span></Link>
-          <Link to="/database"><RaymondAvatar reaction="foreign-key" size={42} /><span><strong>Din database</strong><small>Se tabeller og relationer</small></span><span aria-hidden="true">→</span></Link>
-          <Link to="/progress"><RaymondAvatar reaction="proud" size={42} /><span><strong>Din fremgang</strong><small>Find tilbage til dit arbejde</small></span><span aria-hidden="true">→</span></Link>
+          <Link to="/modules"><span><strong>Moduler</strong><small>Teori, SQL-opgaver og projekter</small></span><span aria-hidden="true">→</span></Link>
+          <Link to="/playground"><span><strong>Playground</strong><small>Prøv din egen SQL</small></span><span aria-hidden="true">→</span></Link>
+          <Link to="/database"><span><strong>Din database</strong><small>Se tabeller og relationer</small></span><span aria-hidden="true">→</span></Link>
+          <Link to="/progress"><span><strong>Din fremgang</strong><small>Find tilbage til dit arbejde</small></span><span aria-hidden="true">→</span></Link>
         </nav>
       </div>
 
@@ -116,7 +110,7 @@ export function LearningHome({ name }: { name: string | null }) {
         <section className="learning-home-recent" aria-labelledby="learning-recent-title">
           <div className="learning-home-section-head"><h2 id="learning-recent-title">Dine seneste trin</h2><Link to="/progress">Se din fremgang <span aria-hidden="true">→</span></Link></div>
           <ul>{model.recent.slice(0, 3).map(({ step, status }) => (
-            <li key={step.item.slug}><Link to={`/learn/${step.item.slug}`}><RaymondAvatar reaction={getModuleReaction(step.moduleSlug)} size={36} /><span><strong>{step.item.title}</strong><small>{step.moduleTitle}</small></span><span className="learning-home-status">{progressLabel(step.item.kind, status)}</span></Link></li>
+            <li key={step.item.slug}><Link to={`/learn/${step.item.slug}`}><span><strong>{step.item.title}</strong><small>{step.moduleTitle}</small></span><span className="learning-home-status">{progressLabel(step.item.kind, status)}</span></Link></li>
           ))}</ul>
         </section>
       )}
@@ -125,7 +119,7 @@ export function LearningHome({ name }: { name: string | null }) {
         <section aria-labelledby="learning-subjects-title">
           <div className="learning-home-section-head"><h2 id="learning-subjects-title">Find et emne</h2><Link to="/modules">Se hele forløbet <span aria-hidden="true">→</span></Link></div>
           <ul className="learning-home-subjects">{[...modules].sort((a, b) => a.order - b.order).map((module) => (
-            <li key={module.slug}><Link to={`/modules/${module.slug}`}><RaymondAvatar reaction={getModuleReaction(module.slug)} size={42} /><span><strong>{module.title}</strong><small>{moduleSummary(module)}</small></span></Link></li>
+            <li key={module.slug}><Link to={`/modules/${module.slug}`}><span><strong>{module.title}</strong><small>{moduleSummary(module)}</small></span><span aria-hidden="true">→</span></Link></li>
           ))}</ul>
         </section>
       )}

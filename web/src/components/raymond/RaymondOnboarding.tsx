@@ -26,8 +26,7 @@ function OnboardingDialog({ onClose }: { onClose: () => void }) {
     const dialog = dialogRef.current;
     if (!dialog) return;
     const active = document.activeElement;
-    // Welcome cards and help-panel buttons can disappear when the tour opens.
-    // The persistent launcher is a useful return target in those cases.
+    // The persistent launcher remains a return target when the tour replaces help.
     const opener = active instanceof HTMLElement && active !== document.body
       ? active
       : document.querySelector<HTMLButtonElement>(".raymond-launcher");
@@ -36,7 +35,7 @@ function OnboardingDialog({ onClose }: { onClose: () => void }) {
     headingRef.current?.focus({ preventScroll: true });
     return () => {
       if (dialog.open) dialog.close();
-      const returnTarget = opener?.isConnected
+      const returnTarget = opener?.isConnected && !opener.closest("[hidden]")
         ? opener
         : document.querySelector<HTMLButtonElement>(".raymond-launcher");
       returnTarget?.focus({ preventScroll: true });
@@ -165,7 +164,7 @@ function OnboardingDialog({ onClose }: { onClose: () => void }) {
           {step === 3 && (
             <>
               <p id={descriptionId}>
-                Åbn Raymond, når du har brug for et hint eller en forklaring.
+            Åbn <strong>Hjælp</strong>, når du har brug for et hint eller en forklaring.
                 Vælg <strong>Tjek svar</strong> i en opgave, når du vil kontrollere
                 din løsning.
               </p>

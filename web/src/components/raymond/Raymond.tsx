@@ -11,29 +11,18 @@ import { RaymondChat } from "./RaymondChat";
 import { RaymondExerciseHints } from "./RaymondExercise";
 import "./raymond.css";
 
-const welcomeKey = "sqlh1_raymond_welcome_v1";
-
-function readWelcomed() {
-  try { return localStorage.getItem(welcomeKey) === "seen"; } catch { return false; }
-}
-
 export function RaymondProvider({ children }: { children: ReactNode }) {
   const [helpOpen, setHelpOpen] = useState(false);
   const [tourOpen, setTourOpen] = useState(false);
-  const [welcomed, setWelcomed] = useState(readWelcomed);
   const [workContext, setWorkContextState] = useState<RaymondWorkContext | null>(null);
   const setWorkContext = useCallback((context: RaymondWorkContext | null) => {
     setWorkContextState(context);
   }, []);
-  const dismissWelcome = useCallback(() => {
-    setWelcomed(true);
-    try { localStorage.setItem(welcomeKey, "seen"); } catch { /* Preferences are optional. */ }
-  }, []);
-  const openHelp = useCallback(() => { setHelpOpen(true); dismissWelcome(); }, [dismissWelcome]);
+  const openHelp = useCallback(() => setHelpOpen(true), []);
   const closeHelp = useCallback(() => setHelpOpen(false), []);
-  const openOnboarding = useCallback(() => { setHelpOpen(false); setTourOpen(true); dismissWelcome(); }, [dismissWelcome]);
-  const closeTour = useCallback(() => { setTourOpen(false); dismissWelcome(); }, [dismissWelcome]);
-  const value = useMemo(() => ({ helpOpen, tourOpen, welcomed, workContext, setWorkContext, openHelp, closeHelp, openOnboarding, closeTour, dismissWelcome }), [helpOpen, tourOpen, welcomed, workContext, setWorkContext, openHelp, closeHelp, openOnboarding, closeTour, dismissWelcome]);
+  const openOnboarding = useCallback(() => { setHelpOpen(false); setTourOpen(true); }, []);
+  const closeTour = useCallback(() => setTourOpen(false), []);
+  const value = useMemo(() => ({ helpOpen, tourOpen, workContext, setWorkContext, openHelp, closeHelp, openOnboarding, closeTour }), [helpOpen, tourOpen, workContext, setWorkContext, openHelp, closeHelp, openOnboarding, closeTour]);
   return <RaymondContext.Provider value={value}>{children}</RaymondContext.Provider>;
 }
 
@@ -47,8 +36,8 @@ const faq = [
 export function RaymondCompanion() {
   const state = useContext(RaymondContext);
   const { pathname } = useLocation();
-  const [selection, setSelection] = useState<{ path: string; tab: "chat" | "page" | "errors" | "about" }>({ path: pathname, tab: "chat" });
-  const tab = selection.path === pathname ? selection.tab : "chat";
+  const [selection, setSelection] = useState<{ path: string; tab: "chat" | "page" | "errors" | "about" } | null>(null);
+  const tab = selection?.path === pathname ? selection.tab : isLoggedIn() ? "chat" : "page";
   const [errorText, setErrorText] = useState("");
   const [submittedError, setSubmittedError] = useState("");
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -87,22 +76,12 @@ export function RaymondCompanion() {
   }, [helpOpen, closeHelp]);
 
   if (!state || pathname.startsWith("/auth/")) return null;
-  const welcomeVisible = !isLoggedIn() && !state.welcomed && !state.helpOpen && !state.tourOpen && (pathname === "/" || pathname === "/modules");
-  const launcherReaction = helpOpen ? "listening" : state.workContext?.lastError ? "debugging" : state.workContext?.checkPassed === true ? "applause" : state.workContext?.checkPassed === false ? "patient" : pathname === "/" ? "wave" : "query-ready";
 
   return (
     <>
-      {welcomeVisible && (
-        <aside className="raymond-welcome" aria-label="Velkommen fra Raymond">
-          <RaymondAvatar size={80} reaction="wave" />
-          <div><strong>Ny her? Jeg viser dig rundt.</strong><p>Fra teori til din første SQL-opgave.</p>
-            <div className="raymond-inline-actions"><button type="button" className="btn primary" onClick={state.openOnboarding}>Vis mig rundt</button><button type="button" className="btn ghost" onClick={state.dismissWelcome}>Senere</button></div>
-          </div>
-        </aside>
-      )}
-      <button type="button" className={`raymond-launcher${helpOpen ? " is-open" : ""}`} onClick={helpOpen ? state.closeHelp : state.openHelp} aria-expanded={helpOpen} aria-controls={panelId} aria-label={helpOpen ? "Luk Raymonds hjælp" : "Åbn Raymonds hjælp"}>
-        <RaymondAvatar reaction={launcherReaction} size={50} /><span>Raymond<span className="raymond-launcher-sub">{helpOpen ? "Luk hjælp" : "Spørg om hjælp"}</span></span>
+      <button type="button" className="raymond-launcher" onClick={helpOpen ? state.closeHelp : state.openHelp} aria-haspopup="dialog" aria-expanded={helpOpen} aria-controls={panelId} aria-label={helpOpen ? "Luk hjælp fra Raymond" : "Åbn hjælp fra Raymond"}>
         <span className="raymond-launcher-symbol" aria-hidden="true">{helpOpen ? "×" : "?"}</span>
+        Hjælp
       </button>
         <aside id={panelId} className={`raymond-panel${tab === "chat" ? " raymond-panel--chat" : ""}`} hidden={!helpOpen} role="dialog" aria-modal="false" aria-labelledby={headingId}>
           <header className="raymond-panel-head"><RaymondAvatar reaction="listening" size={40} /><h2 id={headingId}>Raymond</h2><button ref={closeRef} type="button" className="raymond-close" onClick={state.closeHelp} aria-label="Luk Raymonds hjælp">×</button></header>
@@ -130,10 +109,9 @@ export function RaymondCompanion() {
                 <button type="submit" className="btn primary" disabled={!errorText.trim()}>Forklar fejlen</button>
               </form>
               <p className="raymond-footnote">Forklaringen bygger på faste vejledninger til fejlkoder. Beskeden behandles kun her i din browser.</p>
-              {explanation && <div className="raymond-error-explanation" aria-live="polite"><RaymondAvatar reaction="debugging" size={90} /><h3>{explanation.title}</h3><p>{explanation.explanation}</p><ol className="raymond-steps">{explanation.steps.map((step) => <li key={step}>{step}</li>)}</ol></div>}
+              {explanation && <div className="raymond-error-explanation" aria-live="polite"><h3>{explanation.title}</h3><p>{explanation.explanation}</p><ol className="raymond-steps">{explanation.steps.map((step) => <li key={step}>{step}</li>)}</ol></div>}
             </>}
             {tab === "about" && <>
-              <img className="raymond-about-portrait" src="/raymond/professor.webp" alt="Raymond, den blå elefantprofessor med bog og pegepind" width={224} height={224} loading="lazy" />
               <h3>Raymond Stonebraker Codd</h3><p className="raymond-introduction">Jeg er Professor Codd, men I kan kalde mig Raymond.</p>
               <p>Jeg er din faste guide til SQL-H1. Jeg hjælper med forklaringer, hints og fejlbeskeder, mens du selv bygger forståelsen og løsningen.</p>
               <Link className="btn" to="/raymond" onClick={state.closeHelp}>Se Raymonds 48 reaktioner</Link>
