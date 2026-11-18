@@ -58,7 +58,7 @@ Kardinalitet i undervisningsmodellen: én kunde kan have nul eller flere ordrer;
 
 Det er samme historie som i *Relationstyper og database-design* — nu ejer du knapperne (`CREATE`/`ALTER`).
 
-## Levende dokumentation i SQL-H1
+## Levende dokumentation i elevdatabasen
 
 Gå til **Database** i menuen: der ser du tabeller, kolonner og relationer fra **din** database (inkl. tabeller du selv opretter).
 
@@ -103,7 +103,7 @@ Når det virker, lader Raymond dig sammenligne din håndtegnede model, `CREATE T
 
 ## Hvorfor det betyder noget i projektet
 
-I H1-projektet skal I kunne:
+I jeres projekt skal I kunne:
 - forklare skemaet til hinanden og underviseren
 - ændre struktur uden at “gætte” i blinde
 - pege på hvor applikationen (C#/API) mapper til tabeller

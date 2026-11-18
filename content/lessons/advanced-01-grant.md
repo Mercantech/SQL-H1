@@ -22,7 +22,7 @@ sandbox:
 
 Raymond skal give caféens menuskærm læseadgang, mens en anden rolle vedligeholder data. **DCL** (*Data Control Language*) hjælper ham med at give de nødvendige rettigheder. At kunne vise menuen kræver ikke ejerskab over tabellerne.
 
-I SQL-H1 ejer **du** din database. Du kan øve `GRANT`/`REVOKE` på egne objekter. Du må **ikke** oprette cluster-roller (`CREATE ROLE`) her — det er en server-admin-ting.
+Her på platformen ejer **du** din database. Du kan øve `GRANT`/`REVOKE` på egne objekter. Du må **ikke** oprette cluster-roller (`CREATE ROLE`) her — det er en server-admin-ting.
 
 > [!RAYMOND:safe-lock] Hvem skal kunne hvad?
 >
@@ -98,7 +98,7 @@ GRANT SELECT ON v_menu TO PUBLIC;
 -- I produktion: GRANT SELECT ON v_menu TO app_readonly;
 ```
 
-Kombinér med `REVOKE` på basistabeller for rigtig least privilege (kræver separate roller — **cluster-roller** opretter I ikke i SQL-H1-sandboxen; det viser underviseren / I gør det i jeres Compose-setup).
+Kombinér med `REVOKE` på basistabeller for rigtig least privilege (kræver separate roller — **cluster-roller** opretter I ikke i jeres elevdatabase; det viser underviseren / I gør det i jeres Compose-setup).
 
 ## Hvad I *ikke* kan i elev-sandboxen
 

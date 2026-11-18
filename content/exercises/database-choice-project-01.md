@@ -64,4 +64,4 @@ Aflevér højst to sider plus målebilag:
 
 Hold en pitch på to minutter. Et andet hold udfordrer én antagelse; ret kortet, hvis indvendingen holder.
 
-Underviseren vurderer præcisionen i jeres argumenter og målinger. Ingen bestemt database er facit, og projektet bliver ikke automatisk bestået i SQL-H1.
+Underviseren vurderer præcisionen i jeres argumenter og målinger. Ingen bestemt database er facit, og projektet bliver ikke automatisk bestået på platformen.

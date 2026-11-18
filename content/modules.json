@@ -141,7 +141,7 @@
       "Orientere dig i RDBMS-metadata (roller, skemaer, objekter)",
       "Tage og genskabe backup (dump/restore) i en udviklingskontekst",
       "Bruge EXPLAIN til at snakke om forespørgselsplaner på et grundniveau",
-      "Koble Postgres til Docker Compose i H1-projektet og følge en drift-checkliste"
+      "Koble Postgres til Docker Compose i jeres projekt og følge en drift-checkliste"
     ]
   },
   {
@@ -167,7 +167,7 @@
       "Forespørge og mappe til DTO’er med Dapper Query/QueryAsync",
       "Køre DML med ExecuteAsync og navngivne parametre",
       "Hente JOIN-rapporter og multi-mapping i enkle tilfælde",
-      "Vælge bevidst mellem Dapper og rå ADO.NET i H1-projektet"
+      "Vælge bevidst mellem Dapper og rå ADO.NET i jeres projekt"
     ]
   },
   {

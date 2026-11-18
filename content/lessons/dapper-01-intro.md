@@ -51,9 +51,9 @@ var customers = await conn.QueryAsync<Customer>(
     """);
 ```
 
-Dapper matcher resultatets kolonnenavne og typer med objektet. For denne `record` sker det gennem dens konstruktør. Aliaserne gør kontrakten mellem SQL-resultat og C#-model synlig. C#-eksemplerne køres lokalt med Dapper og Npgsql; SQL-H1's editor bruges til SQL'en.
+Dapper matcher resultatets kolonnenavne og typer med objektet. For denne `record` sker det gennem dens konstruktør. Aliaserne gør kontrakten mellem SQL-resultat og C#-model synlig. C#-eksemplerne køres lokalt med Dapper og Npgsql. Her i editoren kører I selve SQL’en.
 
-## Samme SQL i SQL-H1
+## Samme forespørgsel i editoren
 
 ```sql
 SELECT id, name, city, email
@@ -91,7 +91,7 @@ Raymond vælger ud fra, hvem der skal formulere SQL og vedligeholde datamodellen
 
 ## Prøv selv
 
-1. Kør kundelisten i SQL-H1.  
+1. Kør kundelisten i editoren.
 2. Skriv `Customer`-record og `QueryAsync`-kaldet.  
 3. Sammenlign linjetal med rå ADO.NET-reader-løkke.
 

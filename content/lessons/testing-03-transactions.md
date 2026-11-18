@@ -54,7 +54,7 @@ Til sidst beder Raymond et andet hold om at få GameHub op at køre fra backup. 
 - Kontrollere schema, rækkeantal og en forretningsregel.
 - Dokumentere kommando, tidspunkt og resultat samt håndtering af krypteringsnøgle, hvis dumpet krypteres.
 
-Slet aldrig originaldatabasen for at afprøve restore. En SQL-H1-nulstilling genindlæser et seed; den er ikke en backup af jeres arbejde.
+Slet aldrig originaldatabasen for at afprøve restore. Når I nulstiller elevdatabasen, genindlæser platformen et seed; den er ikke en backup af jeres arbejde.
 
 > [!RAYMOND:restore] Gentag en regel efter gendannelsen
 >

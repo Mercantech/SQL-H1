@@ -68,6 +68,6 @@ Aflevér `solution.js`, `mission.md` med outputs/planudsnit og én tegning. I sk
 | Begrundet model | Embedding/reference og konsistensgrænse |
 | Teknisk refleksion | Planudsnit og en forklaring af indeksarbejde |
 
-Projektet gennemføres lokalt og vurderes med underviseren; SQL-H1 kører ikke MongoDB-kommandoerne eller godkender projektet automatisk.
+Kør MongoDB-kommandoerne lokalt i laboratoriet. Underviseren vurderer projektet ved gennemgangen.
 
 Stop uden at fjerne data med `docker compose down`. **Kun når I vil slette labdata:** `docker compose down -v`.

@@ -17,13 +17,13 @@ sandbox:
 
 # ADO.NET — connection og Npgsql
 
-Raymond har læst caféens tabeller i SQL-H1. Nu skal en lokal C#-applikation læse de samme data. Første opgave er at åbne den rigtige database med den rigtige rolle og frigive forbindelsen efter brug.
+Raymond har læst caféens tabeller i elevdatabasen. Nu skal en lokal C#-applikation læse de samme data. Første opgave er at åbne den rigtige database med den rigtige rolle og frigive forbindelsen efter brug.
 
 **ADO.NET** giver .NET fælles begreber som connections, commands og readers. **Npgsql** er provideren, der forbinder dem med PostgreSQL.
 
 > [!RAYMOND:reading] To arbejdssteder
 >
-> Kør **SQL** i SQL-H1. Kør **C#** i en lokal console eller jeres API med Npgsql installeret og en egnet projekt-database. Hvilken del af C#-eksemplet åbner forbindelsen, og hvilken del sender senere SQL til serveren?
+> Kør **SQL** i editoren her. Kør **C#** i en lokal console eller jeres API med Npgsql installeret og en egnet projekt-database. Hvilken del af C#-eksemplet åbner forbindelsen, og hvilken del sender senere SQL til serveren?
 
 ## Lagene
 
@@ -66,7 +66,7 @@ Npgsql **pooler** connections automatisk. Derfor:
 - Undgå én global åben connection i hele appens levetid
 - Undgå at åbne hundredvis samtidigt uden grund
 
-## Bro til SQL-H1
+## Afprøv SQL i editoren
 
 I har allerede en elev-DB. Tænk: *hvis min API skulle læse caféen, hvilken connection string og hvilket SQL?*
 
@@ -96,7 +96,7 @@ Npgsql bruger formatet **`nøgle=værdi;…`** ovenfor. Hvis hosting leverer en 
 
 ## Prøv selv
 
-1. Kør SQL’en øverst i SQL-H1.  
+1. Kør SQL’en øverst i editoren.
 2. Skriv (lokalt) en minimal console der åbner Npgsql og kører samme SQL.  
 3. Luk med `await using` — ingen lækket connection.
 

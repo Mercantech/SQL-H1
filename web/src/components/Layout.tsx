@@ -14,7 +14,7 @@ export function Layout() {
     <div className={`app-shell raymond-platform${flushLearn ? " app-shell--locked" : ""}`}>
       <header className="topbar">
         <Link to="/" className="brand">
-          SQL-H1
+          SQL
         </Link>
         <nav>
           <NavLink to="/modules">Moduler</NavLink>

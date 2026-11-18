@@ -78,7 +78,7 @@ Hvis andre views afhænger af dette view, kan du få brug for `CASCADE` — tæn
 
 ## Updatable views?
 
-Simple views (én tabel, ingen aggregation) kan nogle gange `INSERT`/`UPDATE` direkte. I praksis opdaterer man ofte **basistabellerne** og lader view’et være read-model. Til H1: **læs via views**, skriv via tabeller.
+Simple views (én tabel, ingen aggregation) kan nogle gange `INSERT`/`UPDATE` direkte. I praksis opdaterer man ofte **basistabellerne** og lader view’et være read-model. I jeres projekt kan I **læse via views** og skrive via tabeller.
 
 ## View vs. tabel vs. CTE
 

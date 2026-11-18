@@ -87,7 +87,7 @@ DROP PROCEDURE IF EXISTS restock_product(TEXT);
 | Batch/admin (“kør natjob”) | Ren beregning / tabel-retur |
 | I vil `CALL` eksplicit | Indlejring i SQL-udtryk |
 
-I mange kodebaser lever det meste stadig som **FUNCTION** + app-orchestration. Procedures er nyttige at kende til H1-pensum og Postgres-dokumentation.
+I mange kodebaser lever det meste stadig som **FUNCTION** + app-orchestration. Procedures er nyttige at kende, når I læser Postgres-dokumentationen.
 
 ## Rettigheder
 

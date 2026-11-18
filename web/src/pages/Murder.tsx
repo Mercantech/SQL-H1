@@ -84,7 +84,7 @@ export function Murder() {
 
   useEffect(() => {
     const previousTitle = document.title;
-    document.title = "SQL Murder Mystery · Mordet på Datatopmødet · SQL-H1";
+    document.title = "Mordet på Datatopmødet · SQL";
     return () => { document.title = previousTitle; };
   }, []);
 
@@ -216,9 +216,9 @@ export function Murder() {
               <pre><code>{"SELECT p.navn, a.udskrift\nFROM personer AS p\nJOIN afhoeringer AS a\n  ON a.person_id = p.id\nWHERE p.navn = 'Anders Hejlsberg';"}</code></pre>
               <p>Et <code>JOIN</code> forbinder tabeller via deres nøgler. I tabeloversigten viser ↳, hvilken kolonne en fremmednøgle peger på.</p>
               <p><code>GROUP BY</code> og <code>HAVING</code> finder mønstre. <code>ORDER BY</code> sorterer. <code>LIMIT</code> begrænser antallet af rækker.</p>
-              <p>Her bruger du <strong>SQLite</strong>. Resten af SQL-H1 bruger PostgreSQL. Grundlæggende SELECT og JOIN fungerer ens; fx datoer og specialfunktioner kan variere.</p>
+              <p>Her bruger du <strong>SQLite</strong>. Resten af platformen bruger PostgreSQL. Grundlæggende SELECT og JOIN fungerer ens. Datoer og specialfunktioner kan variere.</p>
               <a href="https://www.sqlite.org/lang_select.html" target="_blank" rel="noreferrer">SQLite: SELECT-dokumentation ↗</a>
-              <Link to="/modules/select">Lær mere om SELECT på SQL-H1 →</Link>
+              <Link to="/modules/select">Lær mere om SELECT →</Link>
             </div>
           </div>
         </aside>

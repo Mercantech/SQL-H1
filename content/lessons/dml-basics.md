@@ -113,7 +113,7 @@ Derfor er den vigtigste vane i hele modulet:
 
 I produktion pakkes flere DML-sætninger ofte i en **transaktion**: enten lykkes *alt*, eller *intet* gemmes. Tænk “bestilling = indsæt ordre + opdater lager” — begge eller ingen.
 
-I SQL-H1 bruger hver kørsel en ny forbindelse. Skal flere trin dele en eksplicit transaktion, skal hele `BEGIN` … `COMMIT` eller `ROLLBACK` sendes i samme kørsel. Raymond vender tilbage til den arbejdsgang i transaktionslektionen.
+Hver kørsel i editoren bruger en ny forbindelse. Skal flere trin dele en eksplicit transaktion, skal hele `BEGIN` … `COMMIT` eller `ROLLBACK` sendes i samme kørsel. Raymond vender tilbage til den arbejdsgang i transaktionslektionen.
 
 ## Hvad du mestrer i dette modul
 

@@ -87,7 +87,7 @@ Bemærk: `approx_omsaetning` bruger **nutidens** pris — det er præcis trade-o
 | Belastning | mange små skrivninger | tunge aggregeringer |
 | Café-seed | her | kunne spejles i et view senere |
 
-## Til H1-projektet
+## Til jeres projekt
 
 Afleveringen bør kunne pege på:
 

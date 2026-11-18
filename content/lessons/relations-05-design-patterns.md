@@ -168,7 +168,7 @@ Et kassesystem skal normalt kunne dokumentere den aftalte stykpris ved købet. D
 | **Star** | faktatabel + denormaliserede dimensioner | BI, data warehouse |
 | **Snowflake** | dimensioner normaliseret yderligere | mere 3NF i warehouse |
 
-OLTP (det du bygger i SQL-H1) ≈ normaliserede 3NF-tabeller.  
+OLTP (det du bygger i elevdatabasen) ≈ normaliserede 3NF-tabeller.\
 OLAP/rapporter ≈ stjerne med færre JOIN.
 
 ## 10) Walk-in / valgfri FK
@@ -239,7 +239,7 @@ PostgreSQL understøtter arrays og JSONB som rigtige datatyper. Vælg dem efter 
 1. Foreslå en `categories`-tabel (kolonner + FK fra `products`) — skriv den som skitse i en kommentar eller på papir.
 2. Skitsér `order_lines` adskilt fra `orders` (hvilke kolonner flytter hvorhen?).
 3. Argumentér: hvornår vil du gemme `unit_price` på ordren i stedet for kun at joine `products.price`?
-4. Peg på ét anti-mønster, I bevidst *ikke* vil bruge i H1-projektet.
+4. Peg på ét anti-mønster, I bevidst *ikke* vil bruge i jeres projekt.
 
 Raymonds afsluttende makkercheck: Kan din makker følge dit valg fra forretningskrav til skema og videre til en konkret kontrol? Så har du mere end blot et navn på et mønster.
 

@@ -33,7 +33,7 @@ Raymond overtager caféprojektet i morgen. Han beder om en kort driftsbeskrivels
 
 - [ ] I kan genskabe skema (migration eller SQL-script)
 - [ ] I har start-data (seed) til demo
-- [ ] I ved forskel på *elev-sandbox i SQL-H1* og *jeres projekt-DB*
+- [ ] I ved forskel på *jeres elevdatabase på platformen* og *jeres projekt-DB*
 
 ## 3) Performance-minimum
 
@@ -83,7 +83,7 @@ Kopiér og udfyld:
 
 ## Prøv selv
 
-1. Udfyld skabelonen for SQL-H1 *eller* jeres projekt.  
+1. Udfyld skabelonen for SQL-platformen *eller* jeres projekt.
 2. Kør status-SQL’en her.  
 3. Ret én gul ting til grøn i denne uge.
 

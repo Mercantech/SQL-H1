@@ -67,7 +67,7 @@ Brug det til oprydning, udløbne kladder, test-data — og **dokumentér intenti
 
 ## Soft delete vs hård delete (teori)
 
-| Strategi | Idé | I SQL-H1 |
+| Strategi | Idé | I elevdatabasen |
 |----------|-----|----------|
 | **Hård delete** | `DELETE` fjerner rækken | det du øver nu |
 | **Soft delete** | `UPDATE … SET deleted_at = now()` | ofte i apps; rækken bliver |

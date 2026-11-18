@@ -473,7 +473,7 @@ internal static class Program
             var candidate = Path.Combine(directory.FullName, "content");
             if (File.Exists(Path.Combine(candidate, "modules.json"))) return candidate;
         }
-        throw new InvalidOperationException("Run tests from the SQL-H1 checkout with its public content folder.");
+        throw new InvalidOperationException("Run tests from the repository checkout with its public content folder.");
     }
 
     private sealed class Fixture : IDisposable

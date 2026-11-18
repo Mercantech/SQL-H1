@@ -99,7 +99,7 @@ Det kan gøre en oprettelse genkørbar, men det kontrollerer ikke, at den eksist
 ## Navngivning og schema
 
 - Brug **snake_case** til tabeller/kolonner (`order_date`, ikke `OrderDate` i SQL).  
-- Ét schema (`public`) er nok i H1; i større systemer ses `app`, `staging`, …  
+- Ét schema (`public`) er nok i jeres projekt. Større systemer kan bruge fx `app` og `staging`.
 - Undgå reserved words som kolonnenavne (`user`, `order` → `orders`).
 
 ```sql
@@ -111,7 +111,7 @@ ORDER BY table_schema, table_name;
 
 ## DDL er en kontrakt
 
-Når I `CREATE TABLE`, lover I API’en og hinanden en struktur. Ændringer senere = **migration** (`ALTER`), ikke “ret det stille i prod”. I SQL-H1 må I eksperimentere frit — i projektet: script + review.
+Når I `CREATE TABLE`, lover I API’en og hinanden en struktur. Ændringer senere = **migration** (`ALTER`), ikke “ret det stille i prod”. I jeres elevdatabase må I eksperimentere frit — i projektet: script + review.
 
 ## Fejl du møder tidligt
 

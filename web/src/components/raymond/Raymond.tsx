@@ -113,7 +113,7 @@ export function RaymondCompanion() {
             </>}
             {tab === "about" && <>
               <h3>Raymond Stonebraker Codd</h3><p className="raymond-introduction">Jeg er Professor Codd, men I kan kalde mig Raymond.</p>
-              <p>Jeg er din faste guide til SQL-H1. Jeg hjælper med forklaringer, hints og fejlbeskeder, mens du selv bygger forståelsen og løsningen.</p>
+              <p>Jeg er din guide til SQL. Jeg hjælper med forklaringer, hints og fejlbeskeder, mens du selv bygger forståelsen og løsningen.</p>
               <Link className="btn" to="/raymond" onClick={state.closeHelp}>Se Raymonds 48 reaktioner</Link>
               <h3>Tre navne fra databasehistorien</h3>
               <ul className="raymond-tributes"><li><a href="https://www.ibm.com/history/relational-database" target="_blank" rel="noreferrer">Raymond Boyce</a> udviklede SQL sammen med Donald Chamberlin.</li><li><a href="https://www.postgresql.org/docs/16/history.html" target="_blank" rel="noreferrer">Michael Stonebraker</a> ledede det oprindelige POSTGRES-projekt.</li><li><a href="https://doi.org/10.1145/362384.362685" target="_blank" rel="noreferrer">Edgar F. Codd</a> fremlagde den relationelle datamodel i 1970.</li></ul>

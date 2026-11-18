@@ -18,7 +18,7 @@ objectives:
 
 **Tid:** 2–3 lektioner. Arbejd alene eller i par, men begge skal kunne forklare koden. **Målpinde:** #18 og #19.
 
-Hent [GameHub-laboratoriet](/downloads/orm-lab.zip), og følg README. Arbejdet foregår i dit lokale C#-/Docker-projekt. SQL-H1-editoren bygger eller afprøver ikke denne opgave.
+Hent [GameHub-laboratoriet](/downloads/orm-lab.zip), og følg README. Arbejdet foregår i dit lokale C#-/Docker-projekt. SQL-editoren bygger eller afprøver ikke denne opgave.
 
 ## Niveau 1 — få motoren til at starte
 

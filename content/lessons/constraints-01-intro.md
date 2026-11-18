@@ -85,7 +85,7 @@ Constraints er **ikke** erstatning for forretningslogik (rabatter, workflow) —
 
 ## Fejltyper du skal genkende
 
-Når I debugger API eller SQL-H1, kig efter:
+Når I fejlsøger i jeres API eller i SQL-editoren, kig efter:
 
 | Situation | Typisk signal |
 |-----------|----------------|

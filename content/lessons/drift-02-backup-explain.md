@@ -37,7 +37,7 @@ pg_dump -h localhost -U sqlh1 -d min_db -f backup.sql
 psql -h localhost -U sqlh1 -d min_db -f backup.sql
 ```
 
-I SQL-H1 er **Nulstil database** jeres “genindlæs seed” — ikke en erstatning for rigtig backup, men samme idé: kendt starttilstand.
+På SQL-platformen er **Nulstil database** jeres “genindlæs seed” — ikke en erstatning for rigtig backup, men samme idé: kendt starttilstand.
 
 `COPY ... TO/FROM` fil er **blokeret** i sandboxen (filadgang på serveren). I Docker/admin kan I stadig bruge `pg_dump`.
 
@@ -88,7 +88,7 @@ ANALYZE products;
 | Volume-snapshot | disk-kopi af datafilerne |
 | PITR | point-in-time med WAL (avanceret) |
 
-Til H1: kunne tage et `pg_dump` og genskabe er nok til aflevering.
+Til afleveringen er det nok at kunne tage et `pg_dump` og genskabe databasen.
 
 ## EXPLAIN ANALYZE-etikette
 

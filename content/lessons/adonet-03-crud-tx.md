@@ -114,7 +114,7 @@ I dette parameter-API repræsenterer `DBNull.Value` SQL `NULL`. Den eksplicitte 
 Hold SQL i repository/DAL — ikke i controllers. Så kan I:
 
 - genbruge queries  
-- teste dem i SQL-H1 først  
+- teste dem i editoren først
 - skifte til Dapper senere uden at røre endpoints  
 
 ## Fejl → HTTP
@@ -128,7 +128,7 @@ Hold SQL i repository/DAL — ikke i controllers. Så kan I:
 
 ## Prøv selv
 
-1. Kør `INSERT … RETURNING` for en ordre i SQL-H1.  
+1. Kør `INSERT … RETURNING` for en ordre i editoren.
 2. Skitsér `CreateOrderAsync` med transaktion.  
 3. List tre ting fra checklisten I vil kræve i code review.
 

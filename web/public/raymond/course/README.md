@@ -14,4 +14,4 @@ Den ældre mappe `../LUP` indeholder ikke disse Raymond-assets.
 
 Illustrationerne viser den eksisterende Raymond-identitet. Ingen logoer er tegnet,
 og ingen nye billeder er genereret. Oprindelses- og promptdokumentation findes i
-LUP-karakterbiblioteket og SQL-H1's `assets/mascot/`.
+LUP-karakterbiblioteket og dette repos `assets/mascot/`.

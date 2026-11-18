@@ -57,7 +57,7 @@ WHERE city = 'Viborg';
 | Opdatering | Beregnes fra data, der er synlige for forespørgslens snapshot | En separat materialiseret kopi kan kræve synkronisering |
 | Performance | Kører underliggende SQL hver gang | Kan være hurtigere (trade-off) |
 
-Postgres har også **materialized views** (`CREATE MATERIALIZED VIEW` + `REFRESH`) — nyttigt til tunge rapporter. Til H1 er almindelige views nok.
+Postgres har også **materialized views** (`CREATE MATERIALIZED VIEW` + `REFRESH`) — nyttigt til tunge rapporter. Almindelige views er nok til øvelserne her.
 
 ## Café-scenarie
 
@@ -91,7 +91,7 @@ I streng opsætning:
 
 En korrekt begrænset rolle kan reducere, hvilke data en sårbar forespørgsel kan nå. Det gør ikke SQL injection ufarlig: andre rettigheder, kald af funktioner og adgang gennem API’et skal stadig undersøges, og værdier skal fortsat sendes som parametre.
 
-I SQL-H1 ejer du dine egne objekter og kan undersøge viewets resultat. En reel rettighedstest kræver en anden, begrænset rolle, eksempelvis i [sikkerhedslabben](/learn/security-project-01). Et almindeligt view kontrollerer normalt basistabellernes rettigheder med viewejerens rettigheder; indstillingen `security_invoker` ændrer dette. Vælg opsætningen bevidst.
+Her på platformen ejer du dine egne objekter og kan undersøge viewets resultat. En reel rettighedstest kræver en anden, begrænset rolle, eksempelvis i [sikkerhedslabben](/learn/security-project-01). Et almindeligt view kontrollerer normalt basistabellernes rettigheder med viewejerens rettigheder; indstillingen `security_invoker` ændrer dette. Vælg opsætningen bevidst.
 
 ## Column-level vs. view
 
@@ -100,7 +100,7 @@ I SQL-H1 ejer du dine egne objekter og kan undersøge viewets resultat. En reel 
 | `GRANT SELECT (col1, col2) ON t` | simpelt |
 | View `v_…` | klarere API, kan joine/filtrere, lettere at versionere |
 
-Til H1-projekter anbefales **views som læse-API** + Dapper `QueryAsync` mod viewet.
+Til jeres projekt anbefales **views som læse-API** + Dapper `QueryAsync` mod viewet.
 
 ## Prøv selv
 

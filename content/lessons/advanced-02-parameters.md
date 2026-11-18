@@ -51,7 +51,7 @@ cmd.Parameters.AddWithValue("name", userInput);
 
 Værdien sendes **separat** fra SQL-teksten og behandles som data. Raymond lader også navne med apostroffer blive hele; han ændrer måden forespørgslen bygges på, ikke gæstens navn.
 
-I SQL-H1-editoren skriver du SQL direkte (du *er* eleven). I projektet skal I **altid** bruge parametre fra C#.
+I SQL-editoren skriver du SQL direkte (du *er* eleven). I projektet skal I **altid** bruge parametre fra C#.
 
 En værdiparameter kan ikke erstatte et tabelnavn, kolonnenavn eller `ASC`/`DESC`. Skal brugeren vælge sortering, vælger programmet mellem faste tilladte SQL-fragmenter. Se den konkrete allowlist i [sikkerhedsforløbet](/learn/security-01-threats).
 

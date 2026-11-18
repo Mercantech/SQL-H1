@@ -16,7 +16,6 @@ export function Home() {
     <>
     <section className="hero home-raymond">
       <div className="hero-copy">
-        <p className="home-raymond-eyebrow">SQL-H1 · Hovedforløb 1</p>
         <h1>Lær SQL med teori og egen Postgres</h1>
         <p className="lede">
           Fra din første SELECT til at ændre og forbinde data. Læs teorien,

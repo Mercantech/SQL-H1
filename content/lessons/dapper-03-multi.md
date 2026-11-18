@@ -104,7 +104,7 @@ Vælg en tydelig hovedstil i DAL'en, og forklar eventuelle undtagelser. Raymond 
 
 ## Multi-mapping (kort kendskab)
 
-Dapper kan splitte en JOIN-række ud i flere objekter (`QueryAsync<Order, Customer, Order>(…)`). Det er kraftfuldt — og nemt at gøre ulæseligt. Til H1: **flade DTO’er** først; multi-mapping kun hvis I har brug for nestede objekter.
+Dapper kan splitte en JOIN-række ud i flere objekter (`QueryAsync<Order, Customer, Order>(…)`). Det er kraftfuldt — og nemt at gøre ulæseligt. Start med **flade DTO’er**, og brug kun multi-mapping, hvis I har brug for nestede objekter.
 
 ## Buffered
 
@@ -112,7 +112,7 @@ Dapper kan splitte en JOIN-række ud i flere objekter (`QueryAsync<Order, Custom
 
 ## Prøv selv
 
-1. Kør Viborg-JOIN’en i SQL-H1.  
+1. Kør Viborg-JOIN’en i editoren.
 2. Definér `OrderLineDto` og skitsér `QueryAsync`.  
 3. Skriv i README: “Vi bruger Dapper til X; rå Npgsql til Y (hvis noget).”
 

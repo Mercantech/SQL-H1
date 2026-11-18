@@ -128,7 +128,7 @@ DROP FUNCTION IF EXISTS log_product_price_change();
 
 ## Transition tables (kendskab)
 
-Nyere Postgres kan give `REFERENCING NEW TABLE AS …` til statement-triggers — nyttigt til bulk, men uden for H1-kerne.
+Nyere Postgres kan give `REFERENCING NEW TABLE AS …` til statement-triggers — nyttigt til bulk, men uden for kursets grundstof.
 
 ## Prøv selv
 

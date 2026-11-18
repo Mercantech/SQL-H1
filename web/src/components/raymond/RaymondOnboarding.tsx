@@ -111,7 +111,7 @@ function OnboardingDialog({ onClose }: { onClose: () => void }) {
               </p>
               <p>
                 Mit fulde navn er Raymond Stonebraker Codd. Jeg følger dig
-                gennem SQL-H1 med forklaringer og hjælp, når du øver. Lad os
+                gennem platformen med forklaringer og hjælp, når du øver. Lad os
                 finde teorien, editoren og dit næste skridt.
               </p>
               <p className="raymond-onboarding-aside">

@@ -1,6 +1,6 @@
-# SQL-H1
+# SQL
 
-SQL-læringsplatform til H1: teori, praktiske opgaver og egen Postgres-database pr. elev.
+Læringsplatform til SQL med teori, praktiske opgaver og en Postgres-database pr. elev.
 
 ## Indlogget læringsforside
 
@@ -105,7 +105,7 @@ OAuth-klient `sqlh1` er oprettet med følgende redirect-URI'er i [Auth Admin →
 - `http://localhost:3000/auth/callback`
 - `https://sql.mercantec.tech/auth/callback`
 
-Prod: https://sql.mercantec.tech (Dokploy compose `SQL-H1` under Hovedforløb Repos).
+Produktion kører i Dokploy-kompositionen **SQL** under **Hovedforløb Repos**. [Åbn platformen](https://sql.mercantec.tech/)
 
 ## Indhold
 

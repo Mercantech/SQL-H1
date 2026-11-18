@@ -64,13 +64,13 @@ ROLLBACK;
 
 Det skal være **én transaktion** — ellers kan I få ordre uden lager-opdatering ved crash.
 
-## I SQL-H1
+## Kør transaktionen i editoren
 
-Kør hele `BEGIN` … `COMMIT` eller `ROLLBACK` **i samme SQL-H1-kørsel**. Editorens næste kørsel får en ny forbindelse. Ved en fejl stopper den aktuelle batch, og de resterende sætninger udføres ikke; en åben transaktion fortrydes, når forbindelsen lukkes. I C# kan du styre forløbet med `BeginTransactionAsync` og fejlhåndtering.
+Kør hele `BEGIN` … `COMMIT` eller `ROLLBACK` **i samme kørsel i editoren**. Editorens næste kørsel får en ny forbindelse. Ved en fejl stopper den aktuelle batch, og de resterende sætninger udføres ikke; en åben transaktion fortrydes, når forbindelsen lukkes. I C# kan du styre forløbet med `BeginTransactionAsync` og fejlhåndtering.
 
 ## Isolation (smagsprøve)
 
-Postgres’ default er typisk **READ COMMITTED**. Til eksamen/H1: kend ordet *isolation* og at højere niveauer (`REPEATABLE READ`, `SERIALIZABLE`) findes, når samtidighed bliver kritisk.
+Postgres’ default er typisk **READ COMMITTED**. Til eksamen: kend ordet *isolation* og at højere niveauer (`REPEATABLE READ`, `SERIALIZABLE`) findes, når samtidighed bliver kritisk.
 
 ### Hvad kan gå galt uden transaktion?
 

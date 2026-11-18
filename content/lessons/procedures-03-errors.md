@@ -62,7 +62,7 @@ Brug det i funktioner der kaldes fra triggers eller API-nære flows, når constr
 | Rettigheder | kører med **kalderens** rettigheder | kører med **ejerens** rettigheder |
 | Risiko | sikrere default | kan utilsigtet eskalere rettigheder |
 
-Til H1: husk at **DEFINER** er kraftfuldt og skal bruges bevidst (sjældent i elevopgaver).
+Husk at **DEFINER** er kraftfuldt og skal bruges bevidst (sjældent i elevopgaver).
 
 ## Volatilitet (kort)
 

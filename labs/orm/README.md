@@ -123,7 +123,7 @@ Aflever kildetekst og migrationer, et lille E/R-diagram samt `beviser.md` med:
 4. Database-first-klasser før/efter `platform` og bevis på bevaret partial-klasse.
 5. En kort forklaring af, hvem der ejer skemaet i de to arbejdsgange.
 
-Underviseren vurderer projektet. SQL-H1-editoren kører ikke C#, og åbning af en lektion er ikke dokumentation for en fungerende ORM-løsning.
+Underviseren vurderer projektet. SQL-editoren kører ikke C#, og åbning af en lektion er ikke dokumentation for en fungerende ORM-løsning.
 
 ## Stop og fejlsøgning
 

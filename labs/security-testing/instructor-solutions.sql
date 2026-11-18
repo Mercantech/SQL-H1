@@ -1,4 +1,4 @@
--- Underviserfacit til SQL-H1-opgaverne, ikke mod labprogrammets midlertidige schemaer.
+-- Underviserfacit til opgaverne på SQL-platformen, ikke mod labprogrammets midlertidige schemaer.
 -- Kør hvert afsnit efter at den tilsvarende seed er indlæst i en separat øvelsesdatabase.
 
 -- security-ex-01

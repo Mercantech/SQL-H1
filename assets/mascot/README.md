@@ -1,6 +1,6 @@
-# Raymond Stonebraker Codd — elefantmaskot til SQL-H1
+# Raymond Stonebraker Codd — elefantmaskot til SQL
 
-Elefantmaskot til SQL-H1, lavet med den indbyggede ImageGen-funktion. Brugeren har valgt den oprindelige SQL-underviser fra første runde som grundfigur. Raymond er integreret i forsiden, rundvisningen, emnehjælpen, opgaverne og editorens feedback.
+Elefantmaskot til læringsplatformen SQL, lavet med den indbyggede ImageGen-funktion. Brugeren har valgt den oprindelige SQL-underviser fra første runde som grundfigur. Raymond er integreret i forsiden, rundvisningen, emnehjælpen, opgaverne og editorens feedback.
 
 Hans navn er **Raymond Stonebraker Codd**. Han præsenterer sig sådan:
 
@@ -42,4 +42,4 @@ Den officielle originalfil er gemt uændret som [postgresql-elephant-official.pn
 - Identitet: https://wiki.postgresql.org/wiki/Identity_Guidelines
 - Vilkår for det officielle navn og logo: https://www.postgresql.org/about/policies/trademarks/
 
-Det officielle logo er et varemærke tilhørende PostgreSQL Community Association of Canada. Referencefilen er ikke en af SQL-H1-maskotterne.
+Det officielle logo er et varemærke tilhørende PostgreSQL Community Association of Canada.

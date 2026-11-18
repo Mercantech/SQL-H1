@@ -25,7 +25,7 @@ Raymond ser tabellen `orders` i to forbindelser. Er det samme database? Før han
 
 En Postgres-instans kan indeholde mange **databaser**. Hver database indeholder **schemas** og objekter som tabeller og views. **Roller** hører til hele instansen og får rettigheder til de relevante databaser og objekter.
 
-I SQL-H1:
+På SQL-platformen:
 
 | Lag | Hvad |
 |-----|------|

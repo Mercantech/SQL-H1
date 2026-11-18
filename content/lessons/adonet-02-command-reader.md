@@ -46,7 +46,7 @@ while (await reader.ReadAsync())
 }
 ```
 
-Øv SQL’en her i SQL-H1:
+Øv SQL’en i editoren:
 
 ```sql
 SELECT id, name, city
@@ -114,7 +114,7 @@ Undgå at hænge request-tråde på tunge queries — sæt timeout bevidst.
 
 ## Prøv selv
 
-1. Kør Viborg-SQL’en i SQL-H1.  
+1. Kør Viborg-SQL’en i editoren.
 2. Skriv C#-skitsen der mapper til `record Customer(int Id, string Name, string City)`.  
 3. Håndter `email` som nullable.
 

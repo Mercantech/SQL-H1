@@ -5,15 +5,6 @@
   padding: 1.5rem 0;
 }
 
-.home-raymond-eyebrow {
-  margin: 0 0 1rem;
-  color: var(--accent);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
 .hero.home-raymond h1 {
   max-width: 17ch;
   font-size: clamp(2.1rem, 4.3vw, 3.65rem);

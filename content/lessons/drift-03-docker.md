@@ -1,11 +1,11 @@
 ---
-title: 3. Postgres i Docker Compose (H1)
+title: 3. Postgres i Docker Compose
 slug: drift-03-docker
 module: drift
 order: 3
 kind: theory
 objectives:
-  - Koble SQL-H1 til Docker Compose-tænkning
+  - Forklare, hvordan SQL-platformen bruger Docker Compose
   - Kende service, volume, env og porte
   - Skelne app-DB, elev-DB og seed
 sandbox:
@@ -15,7 +15,7 @@ sandbox:
     SELECT current_database(), current_user;
 ---
 
-# Postgres i Docker Compose (H1)
+# Postgres i Docker Compose
 
 “Det virker på min maskine” er ikke nok til Raymonds overdragelse. Han skal kunne starte caféprojektet på en anden maskine og forstå, hvor data og konfiguration ligger. Docker Compose beskriver tjenesterne og forbindelserne mellem dem.
 
@@ -40,7 +40,7 @@ postgres://bruger:kode@db:5432/databasenavn
 - Host **`db`** = servicenavn på Docker-netværket
 - Fra din PC (hvis port er mapped): `localhost:5432`
 
-## SQL-H1’s model
+## Sådan kører SQL-platformen
 
 > [!RAYMOND:question] Hvilken maskine er localhost?
 >

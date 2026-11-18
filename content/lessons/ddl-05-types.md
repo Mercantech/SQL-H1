@@ -32,7 +32,7 @@ Raymond vil give caféen rabatkoder. En kode er tekst, en rabat er et præcist t
 >
 > Sammenlign `id`, `code` og `created_at` i startereksemplet. Hvad skal eleven eller appen levere, og hvad kan databasen generere? En default skal være en bevidst regel, ikke et gæt på manglende information.
 
-## Hyppige typer i H1
+## Almindelige datatyper
 
 | Type | Brug |
 |------|------|

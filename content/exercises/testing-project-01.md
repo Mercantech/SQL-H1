@@ -16,7 +16,7 @@ objectives:
 
 **Mission · Målpind 24 · 75–120 minutter · Makkerpar.** GameHubs sidste billet må kun sælges én gang. I skal aflevere beviser på både de almindelige regler og de fejl, som en glad demo overser.
 
-Arbejd lokalt fra [labpakken](/downloads/security-testing-lab.zip). Følg README'ens Docker-kommandoer. Opgaven er en projektopgave med underviserbedømmelse; SQL-H1 kan ikke se eller godkende jeres lokale C#-tests.
+Arbejd lokalt fra [labpakken](/downloads/security-testing-lab.zip). Følg README'ens Docker-kommandoer. Vis jeres lokale C#-tests til underviseren som en del af projektbedømmelsen.
 
 ## 1. Kør, læs og udfordr
 

@@ -81,7 +81,7 @@ const ARGUMENTS = [
     id: "students",
     title: "Én database pr. elev",
     teaser: "Ingen licensmur i klasselokalet.",
-    body: "Open source + Docker betyder, at hver elev kan få sin egen Postgres uden Windows-licenser eller server-cal’er. Det er derfor SQL-H1 kan give dig en personlig sandbox.",
+    body: "Open source og Docker gør det muligt at give hver elev sin egen Postgres-sandbox uden Windows-licenser eller server-CAL’er.",
   },
   {
     id: "integrity",
@@ -151,7 +151,7 @@ export function WhyPostgres() {
     <section className="db-why" aria-labelledby="why-postgres-title">
       <header className="db-why-hero">
         <div className="db-why-hero-text">
-          <p className="db-why-kicker">Motoren bag SQL-H1</p>
+          <p className="db-why-kicker">Databasen på platformen</p>
           <h2 id="why-postgres-title">Hvorfor PostgreSQL?</h2>
           <p>
             Ikke fordi andre databaser er “forkerte” — men fordi Postgres rammer undervisning, cloud og
@@ -212,7 +212,7 @@ export function WhyPostgres() {
               {formatPct(focused.percent)} af respondenterne · {focused.kind}
             </span>
             {focused.highlight && (
-              <span className="db-why-rank-tag">Vores valg til SQL-H1</span>
+              <span className="db-why-rank-tag">Vores valg</span>
             )}
           </div>
 

@@ -52,4 +52,4 @@ Aflever koden uden `.env`, dit E/R-diagram og `beviser.md` med:
 | Anden generation | `Platform` findes efter databaseændringen; din egen partial-klasse er bevaret |
 | Arbejdsgang | En kort sammenligning med code-first og en forklaring af skemaejerskabet |
 
-**Færdig til gennemgang:** En anden elev kan følge dine kommandoer og få en model fra databasen. Du kan forklare, hvad EF genererer, og hvad du selv skal vedligeholde. Underviseren vurderer løsningen; SQL-H1 udfører ikke C#-projektet for dig.
+**Færdig til gennemgang:** En anden elev kan følge dine kommandoer og få en model fra databasen. Du kan forklare, hvad EF genererer, og hvad du selv skal vedligeholde. Du udfører C#-projektet lokalt, og underviseren vurderer løsningen.
