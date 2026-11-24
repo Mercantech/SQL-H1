@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Find et match med INNER JOIN · SQL</title>
+  <link rel="stylesheet" href="../assets/kursus.css">
+  <link rel="stylesheet" href="../assets/diagrammer.css">
+  <script defer src="../assets/diagrammer.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a href="../index.html">SQL / Læringsplan</a>
+    <a href="../reference/joins.html">Huskeark</a>
+  </header>
+  <main class="lesson">
+    <header class="lesson-head">
+      <p class="meta">Lektion 1 af 3 · 15 minutter</p>
+      <h1>Find navnet på kvitteringen</h1>
+      <p class="lead">Caféen gemmer et kundenummer på hver navngiven ordre. Find kunden med et <code>INNER JOIN</code>, og forklar, hvorfor ét navn kan optræde flere gange.</p>
+    </header>
+    <aside class="raymond-note">
+      <img src="../../../raymond/reactions/foreign-key.webp" width="96" height="96" alt="">
+      <div><strong>Raymond ved kassen</strong>
+        <p>“På ordre 12 står der <code>customer_id = 1</code>. Hvilket navn skal jeg skrive på koppen?”</p>
+      </div>
+    </aside>
+    <section>
+      <h2>Sæt navn på fire ordrer</h2>
+      <p>Kunderne er <strong>1 Anna</strong>, <strong>2 Bo</strong> og <strong>3 Clara</strong>. På ordrerne 10, 11, 12 og 13 står henholdsvis kundenummer <strong>1</strong>, <strong>2</strong>, <strong>1</strong> og <code>NULL</code>. Den sidste blev solgt ved disken uden en registreret kunde.</p>
+      <p>Skriv et navn ud for hver ordre, hvor du kan finde et match. Hvor mange rækker kan du danne? Sammenlign med din makker, før I åbner diagrammet.</p>
+      <details>
+        <summary>Tjek jeres match i diagrammet</summary>
+        <div data-join-map data-start="inner">
+          <p>Med INNER JOIN bliver parrene Anna og 10, Bo og 11 samt Anna og 12. Clara og ordre 13 mangler hver en partner.</p>
+        </div>
+      </details>
+    </section>
+    <section>
+      <h2>Skriv forbindelsen i SQL</h2>
+      <p><code>customers.id</code> identificerer én kunde. Fremmednøglen <code>orders.customer_id</code> henviser til den kunde. <code>c</code> og <code>o</code> er korte navne for tabellerne. Betingelsen efter <code>ON</code> afgør, hvilke rækker der danner et par.</p>
+      <p>Kør først <a href="../assets/minicafe.sql" download>minicaféens SQL-fil</a> i en PostgreSQL-session. Kør så forespørgslen i samme session.</p>
+      <pre><code>SELECT c.name AS kunde, o.id AS ordre
+FROM customers AS c
+INNER JOIN orders AS o ON o.customer_id = c.id
+ORDER BY o.id;</code></pre>
+      <p>Forestil dig, at Anna lægger ordre 14. Forudsig det nye antal rækker, og forklar, hvad <code>ON</code> gør med hendes tidligere ordrer.</p>
+      <details>
+        <summary>Tjek din forklaring</summary>
+        <p>Fire rækker. Den nye ordre danner sit eget par med Anna. Ordre 10 og 12 matcher stadig samme kunde, så Anna står nu tre gange, og Bo én gang.</p>
+      </details>
+    </section>
+    <section>
+      <h2>Prøv på caféens fulde data</h2>
+      <p>Åbn editoren, og kør forespørgslen ovenfor. Find en kunde, som optræder flere gange, og vis din makker de tilhørende ordrenumre. Editoren bruger et større datasæt. <a href="https://sql.mercantec.tech/learn/joins-02-inner">Åbn INNER JOIN i SQL</a>.</p>
+      <p>Hvis et par overrasker dig, så giv Raymond i SQL-editoren den konkrete ordre og dit forventede navn. Se også <a href="https://www.postgresql.org/docs/current/tutorial-join.html">PostgreSQLs introduktion til JOIN</a>.</p>
+    </section>
+    <nav class="lesson-nav" aria-label="Lektionsnavigation">
+      <a href="../index.html">Til læringsplanen</a>
+      <a href="0002-behold-raekker.html">Næste lektion · Behold rækker</a>
+    </nav>
+  </main>
+</body>
+</html>

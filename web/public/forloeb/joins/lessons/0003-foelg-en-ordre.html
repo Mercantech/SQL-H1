@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Følg en ordre gennem tre tabeller · SQL</title>
+  <link rel="stylesheet" href="../assets/kursus.css">
+  <link rel="stylesheet" href="../assets/diagrammer.css">
+  <script defer src="../assets/diagrammer.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a href="../index.html">SQL / Læringsplan</a>
+    <a href="../reference/joins.html">Huskeark</a>
+  </header>
+  <main class="lesson">
+    <header class="lesson-head">
+      <p class="meta">Lektion 3 af 3 · 20 minutter</p>
+      <h1>Følg en ordre gennem tre tabeller</h1>
+      <p class="lead">Saml kunde, produkt og antal på én bon. Bevar også salget, når kunden køber anonymt.</p>
+    </header>
+    <aside class="raymond-note">
+      <img src="../../../raymond/reactions/coffee.webp" width="96" height="96" alt="">
+      <div><strong>Raymond gør kassen op</strong>
+        <p>“Jeg vil have én linje for hver ordre. Hvordan får jeg både kundens navn og det rigtige produkt på bonen?”</p>
+      </div>
+    </aside>
+    <section>
+      <h2>Læs ordre 10 højt</h2>
+      <p>Begynd i <code>orders</code>. Følg <code>customer_id</code> til kundens navn og <code>product_id</code> til varens navn. Læs antallet direkte fra ordren.</p>
+      <div data-join-trace>
+        <p>Ordre 10 har customer_id 1, product_id 1 og quantity 2. Kunde 1 er Anna, og produkt 1 er Espresso. Bonen viser derfor Anna, Espresso, 2.</p>
+      </div>
+    </section>
+    <section>
+      <h2>Byg de fire bonlinjer</h2>
+      <p>Brug <a href="../assets/minicafe.sql" download>minicaféens data</a> i din egen PostgreSQL-session. Skriv en forespørgsel fra <code>orders</code> med to JOIN. Hver ordre har et produkt. Ordre 13 er anonym. Vis ordrenummer, kundenavn, produktnavn og antal, sorteret efter ordrenummer.</p>
+      <p>Inden du kører den, så forudsig bonen for ordre 12. Dens kundenummer er 1, dens produktnummer er 2, og antallet er 1. Produkt 2 er Latte.</p>
+      <details>
+        <summary>Sammenlign SQL og bonlinjer</summary>
+        <pre><code>SELECT o.id AS ordre, c.name AS kunde,
+       p.name AS produkt, o.quantity AS antal
+FROM orders AS o
+LEFT JOIN customers AS c ON c.id = o.customer_id
+INNER JOIN products AS p ON p.id = o.product_id
+ORDER BY o.id;</code></pre>
+        <table>
+          <caption>Boner fra minicaféen</caption>
+          <thead><tr><th scope="col">Ordre</th><th scope="col">Kunde</th><th scope="col">Produkt</th><th scope="col">Antal</th></tr></thead>
+          <tbody>
+            <tr><td>10</td><td>Anna</td><td>Espresso</td><td>2</td></tr>
+            <tr><td>11</td><td>Bo</td><td>Latte</td><td>1</td></tr>
+            <tr><td>12</td><td>Anna</td><td>Latte</td><td>1</td></tr>
+            <tr><td>13</td><td><code>NULL</code></td><td>Espresso</td><td>1</td></tr>
+          </tbody>
+        </table>
+        <p>Ordre 13 har stadig et produktnummer. Opslaget i <code>products</code> virker derfor også, når kundenavnet er <code>NULL</code>.</p>
+      </details>
+    </section>
+    <section>
+      <h2>Find fejlen ved at vælge en ordre</h2>
+      <p>En kollega har skrevet <code>p.id = o.customer_id</code> i produktets JOIN. Ordre 10 ser rigtig ud. Vælg en anden ordre, som afslører fejlen, og forklar den til en makker.</p>
+      <details>
+        <summary>Tjek med ordre 12 og 13</summary>
+        <p>Med den forkerte nøgle får ordre 12 Espresso via kundenummer 1. Kvitteringen skal vise Latte via produktnummer 2. Ordre 13 forsvinder helt, fordi dens kundenummer er <code>NULL</code> og derfor ikke kan matche en produktnøgle med <code>=</code>.</p>
+      </details>
+      <p>På platformens større cafédata kan du nu begrænse rapporten til køb på mindst to enheder. <a href="https://sql.mercantec.tech/learn/joins-ex-01">Løs del 1 af opgave A</a>.</p>
+      <p>Hvis produktet ser forkert ud, så vis Raymond i SQL-editoren din <code>ON</code>-linje og en ordre, der rammes. Se også <a href="https://www.postgresql.org/docs/current/queries-table-expressions.html#QUERIES-JOIN">PostgreSQL om at kæde JOIN sammen</a>.</p>
+    </section>
+    <nav class="lesson-nav" aria-label="Lektionsnavigation">
+      <a href="0002-behold-raekker.html">Forrige lektion · Behold rækker</a>
+      <a href="../index.html#slutopgave">Til slutopgaven · Caféens varesalg</a>
+    </nav>
+  </main>
+</body>
+</html>

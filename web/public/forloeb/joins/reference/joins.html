@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vælg det rigtige JOIN · SQL med Raymond</title>
+  <link rel="stylesheet" href="../assets/kursus.css">
+</head>
+<body>
+  <header class="topbar"><a href="../index.html">SQL / Læringsplan</a><a href="../lessons/0002-behold-raekker.html">Til lektion 2</a></header>
+  <main class="lesson reference">
+    <header class="lesson-head">
+      <p class="meta">Huskeark</p>
+      <h1>Vælg det rigtige JOIN</h1>
+      <p>»Hvem skal stadig stå på listen, når der mangler et match?« spørger Raymond.</p>
+    </header>
+
+    <section aria-labelledby="vaelg">
+      <h2 id="vaelg">Hvilke rækker skal med?</h2>
+      <p>Med <code>customers c</code> til venstre og <code>orders o</code> til højre giver <code>ON c.id = o.customer_id</code> tre match i minicaféen. Anna har ordre 10 og 12, og Bo har ordre 11. Clara har ingen ordre. Ordre 13 har ingen registreret kunde.</p>
+      <table>
+        <thead><tr><th scope="col">JOIN</th><th scope="col">Hvad kræver rapporten?</th><th scope="col">Ud over de tre match</th><th scope="col">Rækker i alt</th></tr></thead>
+        <tbody>
+          <tr><th scope="row"><code>INNER</code></th><td>Ordrer med kendt kunde</td><td>Ingen ekstra rækker</td><td>3</td></tr>
+          <tr><th scope="row"><code>LEFT</code></th><td>Alle kunder</td><td>Clara · ordre <code>NULL</code></td><td>4</td></tr>
+          <tr><th scope="row"><code>RIGHT</code></th><td>Alle ordrer</td><td>Kunde <code>NULL</code> · ordre 13</td><td>4</td></tr>
+          <tr><th scope="row"><code>FULL</code></th><td>Alle kunder og alle ordrer</td><td>Både Clara og ordre 13</td><td>5</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section aria-labelledby="fordybelse">
+      <h2 id="fordybelse">Fordybelse · Filtrér og tæl</h2>
+      <p>Raymond skal se alle kunder og tælle deres ordrer med mindst to varer. Kun ordre 10 opfylder mængdekravet.</p>
+      <pre><code>SELECT c.name, COUNT(o.id) AS antal
+FROM customers c
+LEFT JOIN orders o ON c.id = o.customer_id
+                  AND o.quantity &gt;= 2
+GROUP BY c.id, c.name
+ORDER BY c.id;</code></pre>
+      <p><strong>Med kravet i <code>ON</code></strong> tæller vi Anna 1, Bo 0 og Clara 0. Hos Bo og Clara er <code>o.id</code> udfyldt med <code>NULL</code>. <code>COUNT(o.id)</code> springer den værdi over, mens <code>COUNT(*)</code> tæller hver bevaret række og ville give begge 1.</p>
+      <p><strong>Flyt kravet til <code>WHERE</code>.</strong> Erstat linjen <code>AND o.quantity &gt;= 2</code> med <code>WHERE o.quantity &gt;= 2</code>. Nu filtreres de færdige rækker. Kun Anna 1 står tilbage.</p>
+    </section>
+
+    <section aria-labelledby="tjek">
+      <h2 id="tjek">Raymonds tjek</h2>
+      <p>Dæk tabellen til. En kollega får fire rækker og mener derfor, at alle kunder er med. Hvilken række vil du lede efter for at teste påstanden? Kontrollér dit svar ved at sammenligne <code>LEFT</code> og <code>RIGHT</code> ovenfor.</p>
+    </section>
+    <footer><p>Læs videre i PostgreSQLs vejledning om <a href="https://www.postgresql.org/docs/current/queries-table-expressions.html#QUERIES-JOIN">JOIN og filtre</a> og <a href="https://www.postgresql.org/docs/current/functions-aggregate.html">COUNT</a>.</p></footer>
+  </main>
+</body>
+</html>

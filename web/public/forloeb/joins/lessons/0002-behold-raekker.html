@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Behold rækker med OUTER JOIN · SQL</title>
+  <link rel="stylesheet" href="../assets/kursus.css">
+  <link rel="stylesheet" href="../assets/diagrammer.css">
+  <script defer src="../assets/diagrammer.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a href="../index.html">SQL / Læringsplan</a>
+    <a href="../reference/joins.html">Huskeark</a>
+  </header>
+  <main class="lesson">
+    <header class="lesson-head">
+      <p class="meta">Lektion 2 af 3 · 20 minutter</p>
+      <h1>Hvem mangler på kundelisten?</h1>
+      <p class="lead">Vælg den JOIN-type, der bevarer de rækker, caféen skal kunne gøre rede for.</p>
+    </header>
+    <aside class="raymond-note">
+      <img src="../../../raymond/reactions/question.webp" width="96" height="96" alt="">
+      <div><strong>Raymond læser kundelisten</strong>
+        <p>“Clara er oprettet som kunde. Hun har ingen ordrer endnu. Hvordan får jeg hende med i rapporten?”</p>
+      </div>
+    </aside>
+    <section>
+      <h2>Forudsig Claras række</h2>
+      <p>Genskab først de tre match fra sidste lektion. Et <code>LEFT JOIN</code> bevarer desuden hver række fra tabellen til venstre, som mangler et match. Felterne fra den anden tabel får så værdien <code>NULL</code>.</p>
+      <pre><code>SELECT c.name AS kunde, o.id AS ordre
+FROM customers AS c
+LEFT JOIN orders AS o ON o.customer_id = c.id
+ORDER BY c.id, o.id;</code></pre>
+      <p>Skriv Claras resultat som et par <code>(kunde, ordre)</code>. Beslut også, om ordre 13, som mangler en kunde, kommer med. Kør din forespørgsel i samme PostgreSQL-session som <a href="../assets/minicafe.sql" download>minicaféens data</a>.</p>
+      <details>
+        <summary>Se, hvilke rækker der overlever</summary>
+        <div data-join-map data-start="left">
+          <p>LEFT giver Anna med 10 og 12, Bo med 11 og Clara med NULL. RIGHT giver de tre match og ordre 13 med NULL som kundenavn. FULL giver alle fem rækker.</p>
+        </div>
+      </details>
+    </section>
+    <section>
+      <h2>To rapporter med lige mange rækker</h2>
+      <p>Behold <code>customers</code> til venstre og <code>orders</code> til højre. Kassebogen skal have <em>alle ordrer</em>, også anonyme køb. Et andet udtræk skal have <em>alle kunder og alle ordrer</em>.</p>
+      <p>Vælg mellem <code>RIGHT JOIN</code> og <code>FULL JOIN</code> til hvert udtræk. Skriv, hvor Clara og ordre 13 ender. Skift derefter JOIN i diagrammet eller din SQL, og sammenlign begge udtræk med kundelisten.</p>
+      <details>
+        <summary>Afstem med caféens rapporter</summary>
+        <p>Kassebogen bruger <code>RIGHT JOIN</code> og giver fire rækker, herunder <code>(NULL, 13)</code>. Kundelisten med <code>LEFT JOIN</code> giver også fire, men dens ekstra række er <code>(Clara, NULL)</code>. <code>FULL JOIN</code> giver fem rækker, fordi begge er med. Antallet alene afslører altså ikke, hvem rapporten dækker.</p>
+      </details>
+    </section>
+    <section>
+      <h2>Overfør til varer på hylden</h2>
+      <p>Find usolgte varer på SQL-platformens større datasæt. Vælg starttabellen selv, og forklar din makker, hvilket felt der får <code>NULL</code> for en usolgt vare. <a href="https://sql.mercantec.tech/learn/joins-ex-02">Løs del 1 af opgave B</a>.</p>
+      <p>Bed Raymond i SQL-editoren om at følge én vare, hvis du mangler en række. Læs reglerne for, hvilke rækker der bevares, i <a href="https://www.postgresql.org/docs/current/queries-table-expressions.html#QUERIES-JOIN">PostgreSQLs beskrivelse af JOIN-typer</a>.</p>
+    </section>
+    <nav class="lesson-nav" aria-label="Lektionsnavigation">
+      <a href="0001-find-match.html">Forrige lektion · Find et match</a>
+      <a href="0003-foelg-en-ordre.html">Næste lektion · Følg en ordre</a>
+    </nav>
+  </main>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Lær SQL JOINs med Raymond. Følg caféens ordrer fra nøgler og match til en rapport med alle varer.">
+  <title>SQL JOINs med Raymond · Læringsplan</title>
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/kursus.css">
+</head>
+<body>
+  <header class="topbar">
+    <a href="https://sql.mercantec.tech/modules/joins-subqueries">SQL / JOIN-modulet</a>
+    <a href="reference/joins.html">Huskeark</a>
+  </header>
+  <main class="plan">
+    <section class="hero" aria-labelledby="titel">
+      <div class="hero-copy">
+        <p class="meta">Læringsplan for SQL</p>
+        <h1 id="titel">Hvem købte hvad?</h1>
+        <p class="lead">Lær JOINs med Raymond, og byg en caférapport, hvor du kan gøre rede for hver række.</p>
+        <a class="primary" href="lessons/0001-find-match.html">Start med det første match</a>
+      </div>
+      <figure class="hero-figure">
+        <img src="../../raymond/reactions/join.webp" width="512" height="512" alt="Raymond holder to sammenkædede tabeller op.">
+        <figcaption>“Jeg har en kvittering uden kundenavn. Skal den med i dagens rapport?” <span>Raymond</span></figcaption>
+      </figure>
+    </section>
+    <section class="schedule" aria-labelledby="plan">
+      <div class="section-intro">
+        <h2 id="plan">Dit forløb</h2>
+        <p>Du skal kunne læse en enkel <code>SELECT</code> med <code>FROM</code> og <code>WHERE</code>. Sæt 70 minutter af i dag og 5 minutter til hver af de to gentagelser.</p>
+      </div>
+      <ol class="stages">
+        <li><a href="lessons/0001-find-match.html"><span class="stage-time">15 min.</span><span><strong>Find et match</strong><span class="stage-skill">Forbind nøglerne, og forklar, hvorfor Anna får to rækker med INNER JOIN.</span></span></a></li>
+        <li><a href="lessons/0002-behold-raekker.html"><span class="stage-time">20 min.</span><span><strong>Vælg, hvem der bliver</strong><span class="stage-skill">Sammenlign LEFT, RIGHT og FULL. Følg Clara og kvitteringen uden kundenavn.</span></span></a></li>
+        <li><a href="lessons/0003-foelg-en-ordre.html"><span class="stage-time">20 min.</span><span><strong>Læs en hel ordre</strong><span class="stage-skill">Gå fra en ordres to fremmednøgler til kundenavnet og varen på kvitteringen.</span></span></a></li>
+        <li><a href="#slutopgave"><span class="stage-time">15 min.</span><span><strong>Aflevér caféens varesalg</strong><span class="stage-skill">Skriv din egen forespørgsel, og brug en usolgt croissant til at teste den.</span></span></a></li>
+      </ol>
+    </section>
+    <section class="assessment" id="slutopgave" aria-labelledby="aflever">
+      <div class="section-intro">
+        <h2 id="aflever">Hvilke varer blev solgt?</h2>
+        <p>Raymond skal bruge en liste over alle caféens varer og de tilhørende ordrenumre. Også varen, der stadig ligger i montren.</p>
+      </div>
+      <div class="activity">
+        <p><strong>Din aflevering.</strong> Tegn først den række, du forventer for Croissant. Skriv derefter en forespørgsel med kolonnerne <code>vare</code> og <code>ordre</code>. Sortér på produkt-id og derefter ordre-id. Kør den på minicaféens data, og forklar en makker, hvorfor Espresso optræder flere gange.</p>
+        <p>Arbejd i din egen PostgreSQL-session. Kør først <a href="assets/minicafe.sql" download>minicaféens SQL-fil</a> én gang i sessionen. Platformens almindelige editor bruger en større café med andre ordrer.</p>
+        <details>
+          <summary>Sammenlign med Raymonds rapport</summary>
+          <pre><code>SELECT p.name AS vare, o.id AS ordre
+FROM products AS p
+LEFT JOIN orders AS o ON o.product_id = p.id
+ORDER BY p.id, o.id;</code></pre>
+          <table class="results"><caption>De fem rækker i minicaféen</caption>
+            <thead><tr><th scope="col">vare</th><th scope="col">ordre</th></tr></thead>
+            <tbody><tr><td>Espresso</td><td>10</td></tr><tr><td>Espresso</td><td>13</td></tr><tr><td>Latte</td><td>11</td></tr><tr><td>Latte</td><td>12</td></tr><tr><td>Croissant</td><td><code>NULL</code></td></tr></tbody>
+          </table>
+          <p>Ordre 10 indeholder to espressoer, men bidrager med én række. Den anden række med Espresso kommer fra ordre 13. Croissant er bevaret af <code>LEFT JOIN</code>, og dens tomme ordrefelt viser, at ingen ordre matcher.</p>
+          <p><strong>Du er i mål, når</strong> din rapport har de fem rækker, du kan udpege de to nøgler i <code>ON</code>, og du kan forklare, hvilken række der ville forsvinde med <code>INNER JOIN</code>.</p>
+        </details>
+      </div>
+    </section>
+    <section class="revisit" aria-labelledby="gentag">
+      <h2 id="gentag">Hent det frem igen</h2>
+      <dl><div><dt>Næste dag</dt><dd>Luk huskearket. Tegn Clara og ordre 13, og skriv, hvilken af de to der kommer med ved LEFT og ved RIGHT, når <code>customers</code> står til venstre. Tjek i <a href="lessons/0002-behold-raekker.html">rækkediagrammet</a>.</dd></div>
+        <div><dt>Om en uge</dt><dd>Skriv rapporten over usolgte varer fra hukommelsen i det større cafédatasæt. Kør din løsning, og brug platformens kontrol til at afprøve den. <a href="https://sql.mercantec.tech/learn/joins-ex-02">Åbn opgave B, del 1</a>.</dd></div></dl>
+    </section>
+  </main>
+  <footer class="footer"><a href="reference/joins.html">Huskeark til JOINs</a><a href="https://www.postgresql.org/docs/current/tutorial-join.html">PostgreSQL om JOINs</a></footer>
+</body>
+</html>

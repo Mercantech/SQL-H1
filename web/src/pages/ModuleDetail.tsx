@@ -63,6 +63,11 @@ export function ModuleDetail() {
                 <Link className="btn primary" to={`/learn/${first.slug}`}>
                   Start her
                 </Link>
+                {mod.slug === "joins-subqueries" && (
+                  <a className="btn" href="/forloeb/joins/index.html">
+                    Læringsplan med Raymond
+                  </a>
+                )}
               </p>
             )}
 
