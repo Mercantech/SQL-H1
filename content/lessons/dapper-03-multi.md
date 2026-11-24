@@ -28,6 +28,13 @@ sandbox:
 
 Raymond skal vise en ordreliste med kunde- og produktnavne. Skærmen har brug for en flad rapportlinje, ikke en kopi af alle databasens tabeller som objektgrafer. Derfor starter han med resultatets form og vælger en DTO, der matcher den.
 
+```teach
+{
+  "question": "En skærm viser fem felter pr. ordrelinje fra tre tabeller. Der skal hverken vises eller ændres et helt objekthierarki. Hvordan vil du mappe svaret?",
+  "answer": "Start med én JOIN og en flad DTO med skærmens fem felter. Vælg tydelige kolonnealiaser. Vælg først multi-mapping, hvis forbrugeren faktisk har brug for separate objekter."
+}
+```
+
 ## Flad DTO fra JOIN (simpelt og godt)
 
 ```csharp

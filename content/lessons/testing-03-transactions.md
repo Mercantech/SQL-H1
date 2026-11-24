@@ -14,6 +14,13 @@ objectives:
 
 **Mission · Målpind 24 · 25 minutter.** Raymond åbner to forbindelser til GameHubs testdatabase. Begge spillere vil have finalens sidste plads. Et vellykket køb med én forbindelse beviser ikke, hvad der sker med to, så han skriver forventningen først: én billet, én vinder og nul resterende pladser. Bagefter vil han gendanne data og gentage forsøget.
 
+```teach
+{
+  "question": "To forbindelser vil reservere den sidste plads. Hvilke to observationer skal kunne genfindes i det endelige resultat?",
+  "answer": "Præcis én reservation skal være accepteret, og antallet af ledige pladser skal slutte på nul. Kontrollér begge dele efter begge transaktioner, og prøv igen fra samme starttilstand."
+}
+```
+
 > [!RAYMOND:transaction] To købere, én fælles regel
 >
 > Begge klienter når at læse `remaining = 1`. Hvilken handling afgør, hvem der får pladsen? En tidligere læsning er ikke et bevis på, at **pladsen stadig er ledig**, når klienten skriver.

@@ -113,6 +113,13 @@ Visse `UNIQUE`, `PRIMARY KEY`, FK- og exclusion-constraints kan oprettes som **D
 
 Når I har eksperimenteret færdigt: **Nulstil database**, så café-seed’en er ren igen til næste lektion.
 
+```teach
+{
+  "question": "Med CHECK (price > 0), price NOT NULL og UNIQUE (email): forudsig om pris 0, pris 0.01 og en gentagelse af en kendt e-mail kan gemmes.",
+  "answer": "0 bryder CHECK. 0.01 er gyldig. En gentagelse af en eksisterende, udfyldt e-mail bryder UNIQUE. Hver regel kan afprøves med en ellers gyldig række, så årsagen kan identificeres."
+}
+```
+
 ## Prøv selv
 
 1. Tilføj `products_price_positive` og fremprovokér fejlen.  
@@ -122,3 +129,5 @@ Når I har eksperimenteret færdigt: **Nulstil database**, så café-seed’en e
 > [!RAYMOND:eureka] Din fejl skal være den forventede fejl
 >
 > Vælg én gyldig værdi og én ugyldig værdi til en regel. Forudsig, hvilken constraint og SQLSTATE der skal reagere. En negativ test er først overbevisende, når den fejler af den grund, du ville undersøge.
+
+Fordybelse i PostgreSQL · [Kontrol af værdier og unikhed](https://www.postgresql.org/docs/16/ddl-constraints.html).

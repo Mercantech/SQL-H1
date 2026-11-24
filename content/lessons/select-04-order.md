@@ -69,6 +69,15 @@ ORDER BY price DESC;
 >
 > Hvis jeg skriver `LIMIT 3` uden en sortering, har jeg kun begrænset antal rækker. Hvilken del af forespørgslen gør dem til de dyreste, og hvordan kan du kontrollere det i resultatet?
 
+```teach
+{
+  "question": "Raymond vil sætte de to dyreste drikke på tavlen. Skriv navnene i forventet rækkefølge, og prøv så filter, sortering og LIMIT i editoren.",
+  "answer": "Smoothie til 42.00 kommer før Latte til 35.00. Filtrér først til Drikke og sortér price faldende. LIMIT 2 udvælger derefter de to første."
+}
+```
+
 ## Prøv selv
 
 Vis de 2 dyreste produkter i kategorien `Bagværk`.
+
+Fordybelse i PostgreSQL · [Sådan sorteres resultatrækker](https://www.postgresql.org/docs/16/queries-order.html).

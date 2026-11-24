@@ -3,6 +3,7 @@
   "assertions": [
     {
       "type": "sql_equals",
+      "columns": ["name", "price", "niveau"],
       "sql": "SELECT name, price, CASE WHEN price >= 40 THEN 'premium' ELSE 'standard' END AS niveau FROM products ORDER BY name",
       "expected": [
         ["Chokoladebolle", 18.00, "standard"],
@@ -18,6 +19,7 @@
     },
     {
       "type": "sql_equals",
+      "columns": ["navn"],
       "sql": "SELECT name AS navn FROM products UNION SELECT 'Testkunde' ORDER BY navn",
       "expected": [
         ["Chokoladebolle"],

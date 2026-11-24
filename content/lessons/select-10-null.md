@@ -104,9 +104,18 @@ En række, hvor betingelsen er **ukendt**, filtreres fra — derfor skal du eksp
 >
 > COALESCE gør en manglende værdi læselig, mens IS NULL undersøger, om den mangler. Forklar, hvorfor teksten `(ingen e-mail)` i en rapport ikke er dokumentation for, at en kunde faktisk har oplyst en e-mail.
 
+```teach
+{
+  "question": "To ordrer mangler kundenummer i caféens startdata. Giver WHERE customer_id = NULL eller WHERE customer_id IS NULL de to rækker? Prøv begge.",
+  "answer": "IS NULL giver de to walk-in-ordrer. Ved = NULL er sammenligningen ukendt for hver række, og WHERE beholder kun rækker, hvor betingelsen er sand."
+}
+```
+
 ## Café-tip
 
 | Kolonne | NULL betyder |
 |---------|--------------|
 | `customers.email` | ikke oplyst |
 | `orders.customer_id` | walk-in / anonym |
+
+Fordybelse i PostgreSQL · [Sammenligninger med NULL](https://www.postgresql.org/docs/16/functions-comparison.html).

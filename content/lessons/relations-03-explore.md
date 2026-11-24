@@ -115,6 +115,13 @@ ORDER BY ordrer DESC;
 >
 > COUNT(DISTINCT customer_id) ignorerer walk-in. Et produkt kan derfor have salg, men ingen identificerede kunder. Hvilken anden tælling vil du sammenligne med for at skelne det fra et usolgt produkt?
 
+```teach
+{
+  "question": "En ny vare sælges én gang som walk-in. Hvad viser COUNT(o.id) og COUNT(DISTINCT o.customer_id) for varen? Beskriv forskellen til en usolgt vare.",
+  "answer": "Den solgte vare giver 1 ordrelinje og 0 kendte kunder. Den usolgte vare giver 0 ordrelinjer og 0 kendte kunder, hvis du starter i products og bruger LEFT JOIN. Det første tal skelner de to situationer."
+}
+```
+
 ## Prøv selv
 
 1. Find produkter med **0** unikke kunder — men gerne med linjer (hint: walk-in + usolgt).  
@@ -122,3 +129,5 @@ ORDER BY ordrer DESC;
 3. Forklar forskellen på de to `COUNT`-varianter øverst med egne ord.
 
 Næste lektioner: **normalisering** (1NF–3NF) og **designmønstre**.
+
+Fordybelse i PostgreSQL · [Hvilke værdier tæller COUNT?](https://www.postgresql.org/docs/16/functions-aggregate.html).

@@ -11,17 +11,7 @@ sandbox:
   allowWrite: true
   checks: exercises/procedures-ex-02/checks.json
   starterSql: |
-    CREATE OR REPLACE FUNCTION require_positive(p_n INT)
-    RETURNS INT
-    LANGUAGE plpgsql
-    AS $$
-    BEGIN
-      IF p_n IS NULL OR p_n <= 0 THEN
-        RAISE EXCEPTION 'Forventede n > 0, fik %', p_n;
-      END IF;
-      RETURN p_n;
-    END;
-    $$;
+    -- Skriv en funktion, som håndterer positive tal, nul, negative tal og NULL.
 ---
 
 # Opgave B — Validerende funktion
@@ -32,3 +22,5 @@ Opret funktionen **`require_positive(p_n INT)`**, der:
 
 - returnerer `p_n`, hvis `p_n > 0`
 - kaster fejl med `RAISE EXCEPTION`, hvis `p_n` er `NULL` eller `<= 0`
+
+Kør `SELECT require_positive(1)` og prøv derefter `0`, `-1` og `NULL` hver for sig. Brug standardfejlkoden `P0001` fra `RAISE EXCEPTION` til de tre afvisninger. Skriv én sætning om, hvorfor sammenligningen med nul alene ikke håndterer NULL.

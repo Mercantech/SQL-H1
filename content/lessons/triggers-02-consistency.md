@@ -34,6 +34,13 @@ sandbox:
 
 Raymond bliver foreslået en trigger, hver gang en ny regel dukker op. Han stopper op: Vi skal først finde den mindste mekanisme, der kan beskytte reglen. Her sammenligner I validering, constraints og automatiske handlinger.
 
+```teach
+{
+  "question": "Hvilken databaseregel vælger du til henholdsvis en pris over nul og et krav om at logge en prisændring?",
+  "answer": "En CHECK (price > 0) kan håndhæve værdireglen, suppleret med NOT NULL når prisen skal være udfyldt. En række-trigger kan sammenholde OLD og NEW og skrive auditposten, når prisen ændres."
+}
+```
+
 Constraints (`CHECK`, `FK`, `UNIQUE`) bør være **første valg**. Triggers er til regler, der er mere dynamiske — eller til side effects (log, cache-tabeller).
 
 ## BEFORE INSERT/UPDATE — afvis ugyldigt
@@ -127,3 +134,5 @@ En FOR EACH ROW-trigger kaldes pr. berørt række: 1.000 rækker giver 1.000 kal
 > [!RAYMOND:idea-notes] Vælg og begrund
 >
 > Fordel tre krav: positivt antal, reference til en eksisterende kunde og log over prisændringer. Vælg den enkleste egnede mekanisme til hvert krav, og forklar, hvad der kan gå galt, hvis en klient omgår appens validering.
+
+[PostgreSQL om dataintegritet](https://www.postgresql.org/docs/16/ddl-constraints.html).

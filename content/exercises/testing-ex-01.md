@@ -52,3 +52,5 @@ SELECT gamehub_rejects('quantity_zero') AS afviser_nul,
 **Tjek svar** afprøver både ugyldige og gyldige indsatser mod dine constraints. At reglen blot har et bestemt navn er ikke nok. Tag et grønt resultat med til afleveringen sammen med en forklaring af én test, der var rød før din ændring.
 
 Fortsæt i [projektet: bevis at databasen holder](/learn/testing-project-01), hvor C# og en rigtig PostgreSQL-database mødes.
+
+Når du vender tilbage, så vælg en anden constraint og skriv dens mindste afslørende test uden at bruge tabellen ovenfor. Kør testen i den lokale lab, og sammenhold SQLSTATE med din forventning.

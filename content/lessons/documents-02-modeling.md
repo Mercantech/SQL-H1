@@ -16,6 +16,13 @@ objectives:
 
 Raymond åbner både profilvisningen og turneringens deltagerliste. Profilen skal vise indstillinger med det samme; tilmeldinger skal kunne søges på tværs af tusindvis af spillere. Han opdager, at de to læsemønstre ikke behøver samme løsning.
 
+```teach
+{
+  "question": "En profil havde to badges. Nu kan den få tusinder af begivenheder, som læses sidevis. Hvilken ændring i adgangsmønsteret kan få dig til at vælge referencer?",
+  "answer": "Listen har voksende størrelse og hentes i afgrænsede udsnit. En særskilt collection med profilreference og passende indeks kan gøre det muligt at hente én side uden at læse eller udvide hele profilen."
+}
+```
+
 > [!RAYMOND:question] Hvad læser og ændrer vi sammen?
 >
 > Sammenlign **en spillers temaindstilling** med **alle tilmeldinger til en turnering**. Hvilke data hører til én profil, og hvilke skal findes fra mange retninger? Brug de to konkrete opslag til at foreslå dokumentgrænser.

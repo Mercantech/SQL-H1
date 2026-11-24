@@ -12,17 +12,8 @@ sandbox:
   allowWrite: true
   checks: exercises/views-ex-01/checks.json
   starterSql: |
-    CREATE OR REPLACE VIEW v_order_lines AS
-    SELECT
-      o.id AS order_id,
-      COALESCE(c.name, 'Walk-in') AS kunde,
-      p.name AS produkt,
-      o.quantity,
-      (o.quantity * p.price) AS linje_beloeb,
-      o.order_date
-    FROM orders o
-    LEFT JOIN customers c ON c.id = o.customer_id
-    JOIN products p ON p.id = o.product_id;
+    -- Byg et view med én række pr. ordre og bevar walk-in-ordrer.
+    -- Begynd med at vælge tabellen, der indeholder alle ordrelinjerne.
 ---
 
 # Opgave — Ordreoversigt som view
@@ -40,3 +31,5 @@ sandbox:
 2. View’et skal inkludere **walk-in**-ordrer (`LEFT JOIN` på customers).
 
 Tryk **Tjek svar**, når det er på plads.
+
+Prøv ordre 13 som kontrol, før du åbner et eksempel. Den har ingen registreret kunde. Hvis ordren forsvinder, så find det JOIN, der fjernede rækken, og brug ordre 1 til at kontrollere, at beløbet stadig beregnes rigtigt.

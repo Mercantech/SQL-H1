@@ -70,6 +70,15 @@ HAVING COUNT(*) >= 2;
 >
 > Vil jeg fjerne billige varer **før** optællingen, bruger jeg `WHERE`. Vil jeg beholde kategorier med mindst et bestemt antal varer **efter** optællingen, bruger jeg `HAVING`. Peg på, hvad hver række betyder på de to tidspunkter.
 
+```teach
+{
+  "question": "Caféen har 4 drikke, 2 slags mad og 2 slags bagværk. Hvilke grupper vil du få, hvis du kræver mindst 3 produkter? Afgør også, hvor kravet skal stå.",
+  "answer": "Kun Drikke med antal 4. Brug HAVING COUNT(*) >= 3 efter GROUP BY category. WHERE vurderer de enkelte produkter, før grupperne er dannet."
+}
+```
+
 ## Prøv selv
 
 Vis antal kunder pr. by (`city`, `antal`), kun byer med mindst 2 kunder.
+
+Fordybelse i PostgreSQL · [Gruppering og HAVING](https://www.postgresql.org/docs/16/tutorial-agg.html).

@@ -389,6 +389,7 @@ export function Present() {
             }`}
           >
             <Markdown
+              key={`${item.slug}-${index}`}
               keepLeadingH1
               onInsertCode={
                 showSandbox

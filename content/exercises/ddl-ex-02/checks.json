@@ -9,7 +9,7 @@
     },
     {
       "type": "sql_equals",
-      "sql": "SELECT COUNT(*)::int FROM information_schema.table_constraints WHERE table_schema = 'public' AND constraint_name = 'products_category_fk'",
+      "sql": "SELECT COUNT(*)::int FROM pg_constraint c JOIN pg_attribute a ON a.attrelid = c.conrelid AND c.conkey = ARRAY[a.attnum] JOIN pg_attribute b ON b.attrelid = c.confrelid AND c.confkey = ARRAY[b.attnum] WHERE c.contype = 'f' AND c.conname = 'products_category_fk' AND c.conrelid = 'products'::regclass AND a.attname = 'category_id' AND c.confrelid = 'categories'::regclass AND b.attname = 'id'",
       "expected": [[1]],
       "message": "FK products_category_fk findes"
     },
@@ -23,7 +23,23 @@
       "type": "sql_equals",
       "sql": "SELECT p.name, c.name FROM products p JOIN categories c ON c.id = p.category_id WHERE p.name = 'Espresso'",
       "expected": [["Espresso", "Drikke"]],
-      "message": "Espresso pejer på Drikke"
+      "message": "Espresso peger på Drikke"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM products p LEFT JOIN categories c ON c.id = p.category_id WHERE p.category IS DISTINCT FROM c.name",
+      "expected": [
+        [
+          0
+        ]
+      ],
+      "message": "Hver vares kategori via FK skal svare til dens eksisterende tekst"
+    },
+    {
+      "type": "sql_errors",
+      "sql": "INSERT INTO categories (id, name) SELECT COALESCE(MAX(id), 0) + 1, 'Drikke' FROM categories",
+      "sqlState": "23505",
+      "message": "En ny kategori med samme navn skal afvises"
     }
   ]
 }

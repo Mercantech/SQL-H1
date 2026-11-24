@@ -18,6 +18,13 @@ objectives:
 
 Raymond åbner skolens GameHub. Nogle spiller turneringer, andre bygger verdener, og én vil kun vise sine speedruns. Skal alle profiler have præcis de samme felter?
 
+```teach
+{
+  "question": "Alle profiler får et frivilligt kaldenavn. En eksisterende profil mangler feltet. Hvad vil du undersøge før og efter du skriver feltet på én profil?",
+  "answer": "Læs dokumentet og eventuelle valideringsregler først. Opdatér kun kaldenavnets feltsti. Læs dokumentet igen, og kontrollér at spil, rating og indstillinger er bevaret."
+}
+```
+
 > [!RAYMOND:curious] Hvad betyder feltet for programmet?
 >
 > To profiler må gerne have forskellige ekstra felter. Men hvad skal `rating` betyde i begge? Beskriv **én fælles regel** for feltets type, før du beslutter, hvilke dele af profilen der skal være fleksible.

@@ -78,6 +78,15 @@ FROM products;
 >
 > Vælg en pris på en af grænserne, 30 eller 45. Gå gennem WHEN-grenene i rækkefølge, og forklar den valgte etiket. Gør bagefter det samme for en lagerført og en udsolgt vare.
 
+```teach
+{
+  "question": "Caféen giver prisen 40 mærket premium og alle lavere priser standard. Hvilke mærker skal en vare til præcis 40 og en vare til 39.99 få? Skriv betingelsen.",
+  "answer": "40 bliver premium, og 39.99 bliver standard. WHEN price >= 40 THEN 'premium' ELSE 'standard' dækker grænsen, også når ingen eksisterende vare koster præcis 40."
+}
+```
+
 ## Prøv selv
 
 Vis alle produkter med en kolonne `status`: `'udsolgt'` hvis `in_stock` er false, ellers `'klar'`.
+
+Fordybelse i PostgreSQL · [CASE og betingede udtryk](https://www.postgresql.org/docs/16/functions-conditional.html).

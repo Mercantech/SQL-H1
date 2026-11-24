@@ -35,6 +35,13 @@ sandbox:
 
 Raymond vil kunne svare på to forskellige spørgsmål: Hvornår blev produktet sidst opdateret, og hvem ændrede prisen? Det kræver tydelige felter og et dokumenteret revisionsspor, ikke bare flere skjulte handlinger.
 
+```teach
+{
+  "question": "En udvikler bruger DEFAULT now() på updated_at. Produktet får i morgen et nyt navn. Hvad forventer du i updated_at efter ændringen?",
+  "answer": "En standardværdi bruges ved indsættelse, når værdien udelades. Den ændrer ikke automatisk en eksisterende række. En BEFORE UPDATE-rækketrigger kan tildele NEW.updated_at et nyt tidsstempel og returnere NEW."
+}
+```
+
 ## updated_at automatisk
 
 ```sql
@@ -109,3 +116,5 @@ Kun når I forstår konsekvensen.
 > [!RAYMOND:reading] Gør det skjulte synligt
 >
 > Beskriv triggerens hændelse, tidspunkt og ændrede felter til en makker. Kan makkeren forudsige effekten af en UPDATE uden at læse appens kode? Dokumentér også, hvordan I kontrollerer data efter en eventuel importpause.
+
+[PostgreSQLs PL/pgSQL-eksempler med OLD og NEW](https://www.postgresql.org/docs/16/plpgsql-trigger.html).

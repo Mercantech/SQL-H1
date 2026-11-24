@@ -65,3 +65,7 @@ Aflevér højst to sider plus målebilag:
 Hold en pitch på to minutter. Et andet hold udfordrer én antagelse; ret kortet, hvis indvendingen holder.
 
 Underviseren vurderer præcisionen i jeres argumenter og målinger. Ingen bestemt database er facit, og projektet bliver ikke automatisk bestået på platformen.
+
+## Når kravet ændrer sig
+
+Genåbn kortet næste undervisningsgang. Kunden vil nu primært skrive resultater under finaler og sjældent læse toplisten. Lad et andet hold vælge én ændret antagelse. Beskriv en måleserie, der kunne afgøre, om jeres tidligere anbefaling stadig holder.

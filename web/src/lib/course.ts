@@ -1,3 +1,10 @@
+import type { ExerciseAnswerPart, QueryAnswer } from "../api";
+
+export function collectQueryAnswers(parts: readonly ExerciseAnswerPart[] | undefined, drafts: Record<string, string>): QueryAnswer[] | undefined {
+  if (!parts?.length) return undefined;
+  return parts.map((part) => ({ partId: part.id, sql: drafts[part.id] ?? part.starterSql ?? "" }));
+}
+
 export const courseMissions: Record<string, { image: string; alt: string; challenge: string }> = {
   orm: { image: "orm", alt: "Raymond tegner og tager noter til en objektmodel", challenge: "Fra C#-objekter til rigtig SQL" },
   documents: { image: "documents", alt: "Raymond er klar til at undersøge dokumentdata", challenge: "Giv spillernes profiler plads til forskelle" },

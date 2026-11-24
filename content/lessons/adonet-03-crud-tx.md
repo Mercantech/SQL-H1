@@ -23,6 +23,13 @@ sandbox:
 
 Raymond skal oprette en caféordre både for en registreret kunde og for en gæst uden kundekonto. Den samme metode skal håndtere nullable `customerId`, beskytte brugerinput og kunne indgå i en samlet transaktion.
 
+```teach
+{
+  "question": "En gæsteordre har intet kunde-id, mens produkt-id er et almindeligt heltal. Hvordan sender du det manglende id, og hvad skal der ske, hvis produktet ikke findes?",
+  "answer": "Send DBNull.Value i en parameter med eksplicit heltalstype. Lad fremmednøglen afvise det ukendte produkt; ved en fejl i en flertrinsordre fortryder du transaktionen og kontrollerer, at der ikke ligger en halv ordre."
+}
+```
+
 ## Aldrig streng-sammensæt SQL med brugerinput
 
 ```csharp

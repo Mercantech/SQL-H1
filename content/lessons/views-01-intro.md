@@ -24,6 +24,13 @@ sandbox:
 
 Raymond laver den samme ordreoversigt til caféen flere gange. Han giver den et navn med et **view**, så kollegaen kan spørge til oversigten uden at skrive hele JOIN-kæden igen. Et almindeligt view gemmer definitionen; rækkerne kommer fra de underliggende tabeller.
 
+```teach
+{
+  "question": "Caféen retter prisen på Espresso. Skal Raymond genskabe sit almindelige menuview for at se den nye pris? Forklar, hvad der sker ved næste SELECT.",
+  "answer": "Næste SELECT læser tabellens aktuelle data gennem viewets definition. Et almindeligt view gemmer forespørgslen. Prøv at læse viewet før og efter ændringen i din øvedatabase."
+}
+```
+
 > [!RAYMOND:question] Hvad sker der ved næste ordre?
 >
 > Hvis caféen indsætter en ordre efter oprettelsen af viewet, skal vi så kopiere data ind i viewet? Forudsig svaret ud fra, om et almindeligt view gemmer rækker eller en forespørgselsdefinition.
@@ -107,3 +114,5 @@ Et view **cacher ikke** automatisk. Tunge views kørt ofte → overvej indeks p�
 > [!RAYMOND:eureka] Forklar hvad du genbruger
 >
 > Vis både definitionen og en forespørgsel mod dit view. Forklar en makker, hvad der er gemt, hvad der beregnes ved læsning, og hvorfor et viewnavn ikke automatisk gør en dyr forespørgsel billig.
+
+[PostgreSQL om views](https://www.postgresql.org/docs/16/sql-createview.html).

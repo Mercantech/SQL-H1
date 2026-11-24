@@ -19,6 +19,13 @@ sandbox:
 
 Raymond vil vise caféens kunder fra Viborg i en C#-liste. Forespørgslen kender du allerede; nu skal hver kolonne oversættes til den rigtige .NET-type. Følg én række fra SQL-resultat til objekt, før du bygger resten af API'en.
 
+```teach
+{
+  "question": "Clara fra Viborg har ingen e-mail. Hvad skal en reader returnere til C# for den kolonne? Sammenlign med en by uden kunder.",
+  "answer": "Ved Claras række aflæser du IsDBNull og sætter Email til null på kundens objekt. For byen uden kunder returnerer ReadAsync false ved første kald, så der oprettes ingen kunder."
+}
+```
+
 ## SELECT → DataReader
 
 ```csharp
@@ -121,3 +128,7 @@ Undgå at hænge request-tråde på tunge queries — sæt timeout bevidst.
 > [!RAYMOND:testing] Følg den manglende e-mail
 >
 > Vis, hvor `email` vælges, hvor SQL `NULL` kontrolleres, og hvor resultatet bliver til `string?`. Hvad gør `ReadAsync`-løkken, hvis ingen kunder matcher byen? Forklar forskellen på **ingen rækker** og **en række med en NULL-kolonne**.
+
+Åbn [caférapporten i .NET-labben](/downloads/orm-lab.zip), og følg README-afsnittet *Caférapport med ADO.NET og Dapper*. Kør `ado Viborg` og find den kunde, hvis e-mail mangler. Sammenlign med `ado Aarhus`, før du ændrer mappingen.
+
+[Npgsql om kommandoer og resultatlæsning](https://www.npgsql.org/doc/basic-usage.html).

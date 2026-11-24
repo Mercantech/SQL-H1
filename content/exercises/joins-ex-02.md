@@ -12,14 +12,12 @@ sandbox:
   allowWrite: false
   checks: exercises/joins-ex-02/checks.json
   starterSql: |
-    SELECT p.name
-    FROM products p
-    LEFT JOIN orders o ON o.product_id = p.id
-    WHERE o.id IS NULL
-    ORDER BY p.name;
+    -- Hvilken tabel skal beholde sine rækker, når ordren mangler?
 ---
 
 # Opgave B — LEFT JOIN og EXISTS
+
+Tegn først en resultatrække for en vare uden salg. Beslut, hvilke felter der vil være tomme, før du skriver det første JOIN.
 
 ## Del 1
 
@@ -32,3 +30,5 @@ Vis antal ordrer pr. produkt (`name`, `antal`), inkl. produkter med 0 ordrer. So
 ## Del 3
 
 Vis kundenavne for kunder der har bestilt mindst én **Drikke** (brug `EXISTS` eller `IN`). Sorter på `name`.
+
+I morgen kan du sammenligne med [minicaféens oversigt over bevarede rækker](/forloeb/joins/reference/joins.html). Eksemplet dér bruger et mindre datasæt, så andre varer er usolgte.

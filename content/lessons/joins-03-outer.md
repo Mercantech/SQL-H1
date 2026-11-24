@@ -76,6 +76,17 @@ ORDER BY c.name NULLS LAST, o.id;
 >
 > Et WHERE-krav til højresidens ordrefelter kan fjerne de NULL-udfyldte rækker fra et LEFT JOIN. Spørg derfor: Skal kravet afgøre, hvilke ordrer der kan matche i ON, eller hvilke færdige resultatrækker der beholdes i WHERE?
 
+```teach
+{
+  "question": "Du starter i products og bruger LEFT JOIN til orders. Hvor meget tæller COUNT(*) og COUNT(o.id) for den usolgte Chokoladebolle i caféens startdata?",
+  "answer": "COUNT(*) tæller den ene bevarede række og giver 1. COUNT(o.id) springer det tomme ordre-id over og giver 0. Brug sidstnævnte, når rapporten skal vise antallet af ordrelinjer."
+}
+```
+
 ## Prøv selv
 
 List kunder der **ikke** har nogen ordre (`LEFT JOIN` + `WHERE o.id IS NULL`).
+
+Skift mellem LEFT, RIGHT og FULL i [minicaféens rækkediagram](/forloeb/joins/lessons/0002-behold-raekker.html).
+
+Fordybelse i PostgreSQL · [Bevarede rækker og ydre JOIN](https://www.postgresql.org/docs/16/queries-table-expressions.html).

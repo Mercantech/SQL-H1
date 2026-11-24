@@ -18,6 +18,13 @@ objectives:
 
 GameHub skal vise spillerprofiler, reservere turneringspladser og levere et dashboard. Kunden spørger: »Skal vi bruge SQL, EF Core eller MongoDB?«
 
+```teach
+{
+  "question": "GameHub ønsker fleksible profilfelter og unikke billetreservationer. Hvilke to beslutninger bør stå særskilt i jeres anbefaling?",
+  "answer": "Beskriv først datamodellen og mekanismen, der håndhæver en unik reservation. Vælg derefter hvordan applikationen skal tilgå den, fx SQL, Dapper eller EF Core. Fleksible profilfelter afgør ikke alene begge valg."
+}
+```
+
 Raymond tager en tusch frem. Spørgsmålet indeholder **to valg på forskellige niveauer**.
 
 ## Først databasemodel, derefter adgangslag

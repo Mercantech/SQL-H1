@@ -4,25 +4,42 @@
     {
       "type": "sql_equals",
       "sql": "SELECT COUNT(*)::int FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'product_audit'",
-      "expected": [[1]],
+      "expected": [
+        [
+          1
+        ]
+      ],
       "message": "Tabellen product_audit findes"
     },
     {
       "type": "sql_equals",
-      "sql": "SELECT COUNT(*)::int FROM pg_trigger t JOIN pg_class c ON c.oid = t.tgrelid JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relname = 'products' AND t.tgname = 'trg_product_price' AND NOT t.tgisinternal",
-      "expected": [[1]],
-      "message": "Triggeren trg_product_price findes på products"
+      "sql": "SELECT COUNT(*)::int FROM pg_trigger t WHERE t.tgrelid = 'public.products'::regclass AND t.tgname = 'trg_product_price' AND t.tgfoid = to_regprocedure('public.log_product_price_change()') AND NOT t.tgisinternal AND t.tgtype = 17 AND t.tgenabled IN ('O','A')",
+      "expected": [
+        [
+          1
+        ]
+      ],
+      "message": "En aktiv AFTER UPDATE-rækketrigger på products bruger log_product_price_change"
     },
     {
       "type": "sql_equals",
       "sql": "SELECT price FROM products WHERE name = 'Espresso'",
-      "expected": [[30.00]],
+      "expected": [
+        [
+          30.0
+        ]
+      ],
       "message": "Espresso koster 30.00 efter UPDATE"
     },
     {
       "type": "sql_equals",
       "sql": "SELECT old_price, new_price FROM product_audit a JOIN products p ON p.id = a.product_id WHERE p.name = 'Espresso' ORDER BY a.id DESC LIMIT 1",
-      "expected": [[28.00, 30.00]],
+      "expected": [
+        [
+          28.0,
+          30.0
+        ]
+      ],
       "message": "Audit logger 28 → 30 for Espresso"
     }
   ]

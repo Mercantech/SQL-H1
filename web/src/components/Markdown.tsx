@@ -11,6 +11,8 @@ import { CodeBlock } from "./CodeBlock";
 import { JoinViz, parseJoinVizFence } from "./join/JoinViz";
 import { parseRaymondLessonHeader } from "../lib/raymondLesson";
 import { RaymondLessonNote } from "./raymond/RaymondLessonNote";
+import { rehypeTeachCheckpoints } from "../lib/teachCheckpoint";
+import "./teach.css";
 
 type Props = {
   children: string;
@@ -22,6 +24,7 @@ type Props = {
 };
 
 const rehypePlugins: PluggableList = [
+  rehypeTeachCheckpoints,
   [
     rehypeHighlight,
     {

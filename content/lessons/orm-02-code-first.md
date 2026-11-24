@@ -16,6 +16,13 @@ objectives:
 
 Raymond kommer med GameHubs første krav: **En turnering har mange tilmeldinger. Samme spillertag må kun tilmeldes én gang til den samme turnering.** Han vil kunne pege på reglen både i C#-modellen og i den kørende database. Dit job er at forbinde de to.
 
+```teach
+{
+  "question": "Raymond bestiller PrizePool på Tournament. Eksisterende turneringer skal begynde med nul i præmiepuljen. Hvilke regler skal du finde i migrationen, og hvad skal du kontrollere efter anvendelsen?",
+  "answer": "Find en numeric(10,2)-kolonne med NOT NULL, standardværdien 0 og en CHECK mod negative beløb. Efter migrationen skal de oprindelige turneringer stadig findes, og deres præmiepulje skal være 0."
+}
+```
+
 ## Hvem bestemmer strukturen?
 
 Ved **code-first** er objektmodellen og dens mapping udgangspunktet for skemaets udvikling. En migration beskriver et trin fra den gamle version til den nye. Databasen gemmer, hvilke migrationer der er anvendt.

@@ -19,6 +19,13 @@ sandbox:
 
 Raymond har en gennemprøvet kunderapport, men dens reader-løkke fylder mere end selve forespørgslen. Med **Dapper** beholder han SQL'en og lader et tyndt mappinglag (*micro-ORM*) danne C#-objekterne.
 
+```teach
+{
+  "question": "Genkald DataReader-løkken. Hvilke dele af arbejdet tager Dapper over, når Clara skal blive til et Customer-objekt med manglende e-mail?",
+  "answer": "Dapper læser resultatets kolonner og opretter objektet ud fra kompatible navne og typer. Du vælger stadig SQL-kolonner og filter og modellerer email som string?, så NULL får plads."
+}
+```
+
 ```text
 Rå NpgsqlCommand + Reader  →  meget kontrol, meget boilerplate
 Dapper                     →  SQL + automatisk mapping
@@ -98,3 +105,7 @@ Raymond vælger ud fra, hvem der skal formulere SQL og vedligeholde datamodellen
 > [!RAYMOND:thinking] Tegn mappingkontrakten
 >
 > Forbind hver valgt SQL-kolonne med et felt i `Customer`. Hvad sker der med et manglende eller forkert typet felt? Forklar til sidst, hvorfor det at skrive en ny `record` **ikke** i sig selv opretter en tabel eller ændrer databasen.
+
+Genbrug [caférapporten fra ADO.NET](/learn/adonet-02-command-reader). Kør `dapper Viborg` og `dapper Aarhus` i den samme [Docker-lab](/downloads/orm-lab.zip). Sammenlign navn og e-mail række for række med `ado`; find stedet i programmet, hvor læseløkken bliver overflødig.
+
+[Dappers eksempel på typet mapping](https://github.com/DapperLib/Dapper#readme).

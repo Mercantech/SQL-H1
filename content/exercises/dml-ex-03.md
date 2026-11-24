@@ -1,5 +1,5 @@
 ---
-title: Opgave C — DELETE og RETURNING
+title: Opgave C — DELETE og fremmednøgler
 slug: dml-ex-03
 module: dml
 order: 12
@@ -12,23 +12,25 @@ sandbox:
   allowWrite: true
   checks: exercises/dml-ex-03/checks.json
   starterSql: |
-    DELETE FROM orders WHERE product_id = (
-      SELECT id FROM products WHERE name = 'Chokoladebolle'
-    );
+    -- Slå Latte op først, og find de ordrelinjer, som peger på produktet.
 ---
 
 # Opgave C — DELETE og fremmednøgler
 
-**Chokoladebolle** er udsolgt og skal fjernes helt.
+Følg Latte fra varer til ordrelinjer. Tæl de matchende linjer før sletningen og afgør, i hvilken rækkefølge tabellerne kan ændres.
+
+I dette forsøg rydder du Latte og de tilhørende salg fra caféens testdata.
 
 ## Del 1
 
-Slet **alle ordrer** der refererer til produktet **Chokoladebolle**.
+Slet **alle ordrer** der refererer til produktet **Latte**.
 
 ## Del 2
 
-Slet derefter selve produktet **Chokoladebolle**.
+Slet derefter selve produktet **Latte**.
 
 ## Del 3
 
 Slet alle ordrer med `order_date = '2024-04-01'`.
+
+I morgen kan du genskabe de to mulige strategier i [lektionen om referencer ved sletning](/learn/dml-05-cascade). Forklar, hvornår du i stedet ville udfase en vare og bevare salgene.

@@ -14,6 +14,13 @@ objectives:
 
 **Mission · Målpind 23 · 20 minutter.** Raymond finder en gammel GameHub-backup på en glemt USB-nøgle. Serveren har en adgangskode, men dumpfilen ligger nu et helt andet sted. Han tegner derfor ikke én stor hængelås omkring systemet: han markerer hvert sted, hvor nogen kan læse data, og spørger, hvilken beskyttelse der faktisk gælder dér.
 
+```teach
+{
+  "question": "Backupfilen er krypteret. Hvilke to adgangsveje er afgørende, hvis holdet skal kunne gendanne den efter et maskinnedbrud?",
+  "answer": "En autoriseret person skal kunne hente en intakt backup og få adgang til den korrekte nøgle via den aftalte nøglehåndtering. Brug dem til en separat prøvegendannelse, og verificér kendte data."
+}
+```
+
 > [!RAYMOND:question] Hvilken lås følger med filen?
 >
 > USB-nøglen er væk, men databasekontoens password er stadig hemmeligt. Hvad forhindrer en fremmed i at læse **selve backupfilen**? En beskyttelse af forbindelsen følger ikke automatisk med en kopi af data.

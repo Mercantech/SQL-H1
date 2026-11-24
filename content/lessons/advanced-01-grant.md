@@ -22,6 +22,13 @@ sandbox:
 
 Raymond skal give caféens menuskærm læseadgang, mens en anden rolle vedligeholder data. **DCL** (*Data Control Language*) hjælper ham med at give de nødvendige rettigheder. At kunne vise menuen kræver ikke ejerskab over tabellerne.
 
+```teach
+{
+  "question": "Du har givet rollen læseadgang til menuviewet. Hvilke to forsøg viser, om rollen er tilstrækkeligt afgrænset?",
+  "answer": "Kør begge forsøg som læserollen i en lokal database. Den skal kunne læse menuviewet og få afvist en læsning af en privat kolonne direkte i basistabellen. Det er vigtigt, hvilken rolle der udfører dem."
+}
+```
+
 Her på platformen ejer **du** din database. Du kan øve `GRANT`/`REVOKE` på egne objekter. Du må **ikke** oprette cluster-roller (`CREATE ROLE`) her — det er en server-admin-ting.
 
 > [!RAYMOND:safe-lock] Hvem skal kunne hvad?
@@ -116,6 +123,6 @@ I team-databaser sætter man ofte `ALTER DEFAULT PRIVILEGES`, så nye tabeller a
 
 > [!RAYMOND:reading] Vis både tildeling og fjernelse
 >
-> Gem oversigten før og efter `REVOKE`, og forklar præcis hvilken adgang du ændrede. `table_privileges` kan vise `PUBLIC`-grants, mens `role_table_grants` udelader dem. Beskriv også, hvad du endnu ikke har testet med din ejerrolle.
+> Gem oversigten før og efter `REVOKE`, og forklar præcis hvilken adgang du ændrede. `table_privileges` kan vise `PUBLIC`-grants, mens `role_table_grants` afgrænser visningen til grants, hvor tildeler eller modtager er en aktiv rolle. Som ejer kan du derfor også se dit eget grant til PUBLIC dér. Beskriv også, hvad du endnu ikke har testet med din ejerrolle.
 
 Kilde: [PostgreSQLs oversigt over grants til aktive roller og PUBLIC](https://www.postgresql.org/docs/16/infoschema-role-table-grants.html).

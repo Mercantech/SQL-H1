@@ -37,6 +37,13 @@ sandbox:
 
 Caféen beder Raymond om både en detaljeret ordreoversigt og omsætning pr. kategori. Han lader et detalje-view beskrive linjerne og et andet view samle dem. Hvert lag får en opgave, som du kan kontrollere for sig:
 
+```teach
+{
+  "question": "En ordre uden kundenummer skal tælle med i dagsomsætningen. I hvilket lag vil du først lede, hvis den mangler?",
+  "answer": "Læs detaljeviewet for netop ordren. Mangler rækken allerede dér, skal sammenkoblingen til kunder bevare ordrer uden kunde, fx med LEFT JOIN. Findes den dér, kan du undersøge filtrering og gruppering i rapportviewet."
+}
+```
+
 ```text
 basistabeller → detalje-view → aggregat-view → rapport/API
 ```
@@ -128,3 +135,5 @@ PostgreSQL registrerer afhængighederne mellem objekter. En simpel kolonneomdøb
 > [!RAYMOND:reading] Følg én ændring gennem begge lag
 >
 > Vælg en kategori og forklar dens sum ud fra detalje-viewets linjer. Hvad ændres i rapporten, hvis en produktpris ændres? Vis også, hvorfor `COUNT(*)` af ordrelinjer ikke er det samme som solgt antal `SUM(quantity)`.
+
+[PostgreSQL om afhængigheder](https://www.postgresql.org/docs/16/ddl-depend.html).

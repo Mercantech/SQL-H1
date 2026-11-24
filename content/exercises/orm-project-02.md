@@ -53,3 +53,7 @@ Aflever koden uden `.env`, dit E/R-diagram og `beviser.md` med:
 | Arbejdsgang | En kort sammenligning med code-first og en forklaring af skemaejerskabet |
 
 **Færdig til gennemgang:** En anden elev kan følge dine kommandoer og få en model fra databasen. Du kan forklare, hvad EF genererer, og hvad du selv skal vedligeholde. Du udfører C#-projektet lokalt, og underviseren vurderer løsningen.
+
+## Genbesøg skemaejerskab
+
+Ved næste projektmøde får I et ændret krav om et valgfrit turneringssted i legacy-databasen. Beskriv først hvor ændringen starter, hvilken kommando der henter den ind i modellen, og hvilken egen tilføjelse der skal overleve. Sammenhold derefter med jeres forrige diff.

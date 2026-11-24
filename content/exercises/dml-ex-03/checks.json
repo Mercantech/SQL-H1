@@ -3,21 +3,33 @@
   "assertions": [
     {
       "type": "sql_equals",
-      "sql": "SELECT COUNT(*)::int FROM orders o JOIN products p ON p.id = o.product_id WHERE p.name = 'Chokoladebolle'",
+      "sql": "SELECT COUNT(*)::int FROM orders o JOIN products p ON p.id = o.product_id WHERE p.name = 'Latte'",
       "expected": [[0]],
-      "message": "Del 1: Ingen ordrer på Chokoladebolle"
+      "message": "Del 1: Ingen ordrer på Latte"
     },
     {
       "type": "sql_equals",
-      "sql": "SELECT COUNT(*)::int FROM products WHERE name = 'Chokoladebolle'",
+      "sql": "SELECT COUNT(*)::int FROM products WHERE name = 'Latte'",
       "expected": [[0]],
-      "message": "Del 2: Chokoladebolle er slettet"
+      "message": "Del 2: Latte er slettet"
     },
     {
       "type": "sql_equals",
       "sql": "SELECT COUNT(*)::int FROM orders WHERE order_date = '2024-04-01'",
       "expected": [[0]],
       "message": "Del 3: Ingen ordrer den 1. april"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT id FROM orders ORDER BY id",
+      "expected": [[2],[4],[5],[7],[8],[9],[10],[11],[12],[13],[14]],
+      "message": "De øvrige ordrelinjer skal stadig findes"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT COUNT(*)::int FROM products",
+      "expected": [[7]],
+      "message": "Caféen skal beholde de syv andre varer"
     }
   ]
 }

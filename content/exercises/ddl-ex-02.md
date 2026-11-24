@@ -12,13 +12,12 @@ sandbox:
   allowWrite: true
   checks: exercises/ddl-ex-02/checks.json
   starterSql: |
-    CREATE TABLE categories (
-      id SERIAL PRIMARY KEY,
-      name TEXT NOT NULL UNIQUE
-    );
+    -- Design kategoriens nøgle, inden du forbinder produkterne.
 ---
 
 # Opgave B — Lookup-tabel categories
+
+Tre fælles kategorier skal erstatte gentaget tekst som forbindelse. Forudsig først, hvor mange kategorirækker og hvor mange produktrækker du skal ændre i caféens startdata.
 
 ## Krav
 
@@ -31,3 +30,5 @@ sandbox:
 4. Tilføj FK **`products_category_fk`**: `products.category_id` → `categories(id)`.
 
 5. Opdatér alle produkter, så `category_id` matcher deres nuværende `category`-tekst.
+
+Kontrollér hver kategori ved at sammenligne produktets oprindelige tekst med kategorinavnet via din FK. Om en uge kan du genskabe samme model i [Relationsmodulets designøvelse](/learn/relations-05-design-patterns).

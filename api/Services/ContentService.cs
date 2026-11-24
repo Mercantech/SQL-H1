@@ -67,6 +67,12 @@ public class ContentService
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
 
+    public IEnumerable<AnswerPart> GetAnswerParts(ContentItem item) =>
+        (LoadChecks(item)?.Assertions ?? [])
+            .Select((assertion, index) => (assertion, number: index + 1))
+            .Where(part => part.assertion.NeedsAnswer(item))
+            .Select(part => new AnswerPart($"part-{part.number}", $"Del {part.number}"));
+
     public string? ReadSeedSql(ContentItem item)
     {
         var path = ResolveSeedPath(item);
@@ -116,6 +122,12 @@ public class ContentService
         _modules = JsonSerializer.Deserialize<List<ModuleCatalogItem>>(
             File.ReadAllText(modulesPath),
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? [];
+
+        foreach (var module in _modules)
+        {
+            var reference = Path.Combine(_root, "references", module.Slug + ".md");
+            if (File.Exists(reference)) module.ReferenceMarkdown = File.ReadAllText(reference);
+        }
 
         _items = new Dictionary<string, ContentItem>(StringComparer.OrdinalIgnoreCase);
         foreach (var dir in new[] { "lessons", "exercises" })

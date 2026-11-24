@@ -16,6 +16,7 @@ import { usePlaygroundLayout } from "../hooks/usePlaygroundLayout";
 import { explainPostgresError } from "../lib/raymond";
 import { RaymondNote } from "./raymond/RaymondUI";
 import { getSqlFeedbackReaction } from "../lib/raymondFeedback";
+import { SqlResultTable } from "./SqlResultTable";
 
 hljs.registerLanguage("sql", sqlLang);
 
@@ -26,6 +27,7 @@ type Props = {
   onRun: (sqlToRun?: string) => void | Promise<void>;
   onReset?: () => void;
   onCheck?: () => void;
+  answerSectionId?: string;
   /** Når sat, vises "Log ind" i stedet for "Kør SQL". */
   onLogin?: () => void;
   running?: boolean;
@@ -48,7 +50,7 @@ function normalizeSets(result: ExecuteResult): ResultSet[] {
   if (result.columns.length > 0 || result.rows.length > 0) {
     return [
       {
-        label: "SELECT 1",
+        label: "Resultat 1",
         columns: result.columns,
         rows: result.rows,
         truncated: result.truncated,
@@ -218,44 +220,13 @@ function highlightSqlPreview(sqlText: string) {
   }
 }
 
-function ResultTable({ set }: { set: ResultSet }) {
-  if (set.rowsAffected != null && set.columns.length === 0) {
-    return <p>{set.rowsAffected} række(r) påvirket.</p>;
-  }
-
-  return (
-    <>
-      {set.truncated && <p className="muted">Viser max antal rækker.</p>}
-      <div className="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              {set.columns.map((c) => (
-                <th key={c}>{c}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {set.rows.map((row, i) => (
-              <tr key={i}>
-                {row.map((cell, j) => (
-                  <td key={j}>{cell == null ? "NULL" : String(cell)}</td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </>
-  );
-}
-
 export function SqlEditor({
   value,
   onChange,
   onRun,
   onReset,
   onCheck,
+  answerSectionId,
   onLogin,
   running,
   error,
@@ -452,7 +423,7 @@ export function SqlEditor({
               ))}
             </div>
           )}
-          {active && <ResultTable set={active} />}
+          {active && <SqlResultTable set={active} />}
         </>
       )}
     </div>
@@ -499,6 +470,9 @@ export function SqlEditor({
           <button type="button" className="btn accent" onClick={onCheck} disabled={running}>
             Tjek svar
           </button>
+        )}
+        {answerSectionId && !onLogin && (
+          <a className="btn" href={`#${answerSectionId}`}>Til svarfelterne</a>
         )}
         {!onLogin && (
           <button

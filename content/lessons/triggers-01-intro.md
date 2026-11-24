@@ -42,6 +42,13 @@ sandbox:
 
 Priserne i caféen bliver ændret, men Raymond kan ikke se, hvad de kostede før. Han beder dig bygge et revisionsspor, som også virker, når en anden klient opdaterer databasen.
 
+```teach
+{
+  "question": "Prisen ændres fra 28 til 30. Hvilken rækkevariabel læser en audit-trigger for hvert beløb, og hvor mange auditposter forventer du for én ændret række?",
+  "answer": "Læs 28 i OLD.price og 30 i NEW.price. En AFTER UPDATE-trigger med FOR EACH ROW, der logger prisændringer, skal indsætte én auditpost for denne ændring."
+}
+```
+
 En **trigger** reagerer automatisk på en valgt databasehændelse, her INSERT, UPDATE eller DELETE. Raymond starter med audit: vi gemmer den gamle og nye pris, når prisen faktisk ændres. Regler, der kan udtrykkes som constraints, beholder vi som constraints.
 
 ## To dele
@@ -139,3 +146,5 @@ Nyere Postgres kan give `REFERENCING NEW TABLE AS …` til statement-triggers �
 > [!RAYMOND:testing] Følg én ændring hele vejen
 >
 > Vis den ændrede produktrække og dens audit-række. Forklar, hvilken tabel triggeren er knyttet til, hvornår funktionen kaldes, og hvorfor `IS DISTINCT FROM` er nyttig ved sammenligning med NULL.
+
+[PostgreSQL om rækketriggere](https://www.postgresql.org/docs/16/trigger-definition.html).

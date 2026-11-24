@@ -45,3 +45,7 @@ Aflever kodeændring, testoutput med dato og én side sikkerhedsbriefing. Medtag
 | Selvstændigt arbejde | Mindst én ny relevant test og forklaring af dens forventning |
 
 Byt briefing med et andet par. De vælger én kontrol og beder jer demonstrere den. Underviseren vurderer den samlede aflevering; grønt testoutput alene er ikke hele målpinden.
+
+## Ny bestilling til læserollen
+
+Ved næste undervisningsgang vil arrangøren have vist et ekstra offentligt felt. Forklar med lukkede noter, hvad der skal ændres i viewet og i den lokale test, og hvilken kontrol fortsat skal afvise læsning af private e-mails. Vis derefter begge udfald for makkeren.

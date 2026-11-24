@@ -145,8 +145,17 @@ I ADO.NET/Dapper mapper I `customer_id` → `CustomerId`. Nøglerne er broen mel
 >
 > Find et ordre-id og følg dets kunde-id til kundens primærnøgle. Forklar, hvorfor kunden kan have flere ordrer, mens ét udfyldt customer_id på ordren kun peger på én kunde.
 
+```teach
+{
+  "question": "To kunder kan begge hedde Anna. Hvad sker der med ordrernes henvisninger, hvis den ene Anna retter sit navn?",
+  "answer": "Når orders.customer_id peger på customers.id, forbliver forbindelsen gyldig. Kun navnet i den pågældende kunderække skal ændres. En navnebaseret forbindelse kunne ramme begge kunder."
+}
+```
+
 ## Prøv selv
 
 1. Kør JOIN’en øverst — peg på hvilke kolonner der er PK, og hvilke der er FK.  
 2. Find en walk-in-ordre og forklar, hvad `NULL` i FK betyder.  
 3. Argumentér: hvorfor er `name` *ikke* en god primærnøgle for kunder?
+
+Fordybelse i PostgreSQL · [Primærnøgler og fremmednøgler](https://www.postgresql.org/docs/16/ddl-constraints.html).

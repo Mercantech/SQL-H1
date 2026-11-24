@@ -3,6 +3,7 @@
   "assertions": [
     {
       "type": "sql_equals",
+      "columns": ["name", "city"],
       "sql": "SELECT name, city FROM customers WHERE city = 'Viborg' ORDER BY name",
       "expected": [
         ["Anna Jensen", "Viborg"],
@@ -13,6 +14,8 @@
     },
     {
       "type": "sql_equals",
+      "columns": ["name", "price"],
+      "ordered": false,
       "sql": "SELECT name, price FROM products WHERE category = 'Mad' ORDER BY name",
       "expected": [
         ["Saladsandwich", 52.00],
@@ -22,6 +25,8 @@
     },
     {
       "type": "sql_equals",
+      "columns": ["name", "email"],
+      "ordered": false,
       "sql": "SELECT name, email FROM customers WHERE email IS NULL ORDER BY name",
       "expected": [
         ["Clara Holm", null]

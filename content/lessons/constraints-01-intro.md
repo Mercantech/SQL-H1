@@ -102,6 +102,13 @@ Navngiv constraints i DDL (`CONSTRAINT products_price_positive …`), så fejlbe
 - `CHECK` og `NOT NULL` gør **ikke** i sig selv et indeks  
 - PostgreSQL opretter ikke automatisk indeks på FK-kolonnen i barnet. Overvej et ud fra opslag, sletninger og datamængde; mål effekten i DDL-modulet.
 
+```teach
+{
+  "question": "Prøv at forudsige, om NOT NULL alene vil afvise henholdsvis NULL, tom tekst og 'Espresso' som produktnavn. Hvilken ekstra regel mangler, hvis tom tekst også er ugyldig?",
+  "answer": "Af de tre værdier afvises kun NULL. Tom tekst er en værdi. Sammen med NOT NULL kan CHECK (btrim(name) <> '') kræve mindst ét tegn, der ikke er et mellemrum."
+}
+```
+
 ## Prøv selv
 
 1. Fremprovokér `NOT NULL`-fejl og `FK`-fejl — læs begge beskeder.  
@@ -111,3 +118,5 @@ Navngiv constraints i DDL (`CONSTRAINT products_price_positive …`), så fejlbe
 > [!RAYMOND:primary-key] Vælg reglen med en begrundelse
 >
 > Navnet skal udfyldes, e-mailen skal være unik, og ordren skal pege på et produkt. Find en constraint til hvert krav. Forklar også, hvilket ekstra krav `CHECK (price > 0)` ikke håndhæver, hvis prisen må være `NULL`.
+
+Fordybelse i PostgreSQL · [NOT NULL og CHECK](https://www.postgresql.org/docs/16/ddl-constraints.html).

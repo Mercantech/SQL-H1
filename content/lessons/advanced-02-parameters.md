@@ -26,6 +26,13 @@ sandbox:
 
 En gæst i caféen har en apostrof i sit navn. Raymond vil kunne finde gæsten uden at ændre navnet og uden at lade teksten ændre SQL-koden. Det kræver, at programmet holder **værdier og SQL-struktur adskilt**.
 
+```teach
+{
+  "question": "Kundesøgningen skal finde O'Neil præcis som skrevet. Hvilke to værdier afleverer C#-koden til databasedriveren?",
+  "answer": "Giv driveren en fast SQL-tekst med en placeholder og navnet O'Neil som separat parameterværdi. Så kan apostroffen bevares, og databasen sammenligner hele navnet."
+}
+```
+
 > [!RAYMOND:question] Et navn er stadig data
 >
 > Hvis input indeholder en apostrof, hvorfor er løsningen så ikke bare at fjerne tegnet? Beskriv, hvordan databasen skal forstå værdien, også når den ligner et stykke SQL.
@@ -38,7 +45,7 @@ Hvis en app bygger SQL sådan her:
 "SELECT * FROM customers WHERE name = '" + userInput + "'"
 ```
 
-kan en bruger indtaste `x' OR '1'='1` og lække hele tabellen. Det kaldes **SQL injection**.
+kan en apostrof i navnet ændre SQL-tekstens betydning. Når brugerinput kan ændre en forespørgsels struktur, opstår risikoen for **SQL injection**.
 
 ## Løsningen: parametre
 
@@ -105,15 +112,14 @@ SELECT name, stock_label(in_stock) FROM products ORDER BY name;
 | Postgres | Views + GRANT til least privilege |
 | Elev-DB her | Øv funktioner/views — men husk injection, når I bygger API |
 
-## Flere injection-varianter (kend dem)
+## To kontroller af kundesøgningen
 
-| Variant | Idé |
-|---------|-----|
-| Klassisk `OR 1=1` | omgå WHERE |
-| Comment-out `--` | afkort query |
-| Second-order | gemt payload der senere konkateners |
+| Input | Forventet bevis |
+|---|---|
+| Et eksisterende navn med apostrof | Søgningen bevarer hele navnet og returnerer netop den kendte kunde. |
+| Et ukendt navn med apostrof | Søgningen giver nul rækker og kan genbruges med et andet navn. |
 
-Parametre + mindst privilegium + views = forsvar i dybden.
+Vis makkeren den ene faste SQL-tekst og parameterværdierne fra de to kald. Kontroller også forbindelsens læserettigheder i [rettighedsopgaven](/learn/advanced-ex-01).
 
 ## ORM vs. rå SQL
 
@@ -123,9 +129,11 @@ Dapper/ADO.NET beskytter **kun**, hvis I bruger parametre.
 ## Prøv selv
 
 1. Opret `product_price` og kald den med to produktnavne.  
-2. Skriv (på papir) den *forkerte* C#-streng og den *rigtige* med `@name`.  
+2. Skriv det parametriserede C#-kald med `@name` og vis, hvor navnet tilføjes som parameterværdi.
 3. Forklar hvorfor `product_price(p_name TEXT)` ikke er injection, selvom input kommer udefra.
 
 > [!RAYMOND:idea-notes] Forklar grænsen mellem kode og data
 >
 > Peg på én sikker værdiparameter og én situation, der kræver en fast liste over tilladte SQL-navne. Hvorfor løser det ikke problemet at pakke en usikker sammensat streng ind i Dapper?
+
+[Npgsql om parametre](https://www.npgsql.org/doc/basic-usage.html).

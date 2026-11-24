@@ -72,6 +72,13 @@ ORDER BY p.name;
 >
 > I produktforespørgslen står både produkt-id og kundens by inde i delspørgsmålet. Forklar, hvorfor et køb fra en kunde i en anden by ikke er nok til, at den ydre produktrække bliver valgt.
 
+```teach
+{
+  "question": "Anna har tre ordrer. Hvor mange rækker får hun i en kundeliste med WHERE EXISTS, og hvor mange får hun i en INNER JOIN til orders uden yderligere filtrering?",
+  "answer": "Én kunderække med EXISTS, fordi testen kun kræver ét match. JOIN giver tre matchende ordrelinjer. Beslut først, om hver række i rapporten repræsenterer en kunde eller et køb."
+}
+```
+
 ## Prøv selv
 
 List kategorier hvor der **findes** mindst ét udsolgt produkt (`NOT in_stock`).

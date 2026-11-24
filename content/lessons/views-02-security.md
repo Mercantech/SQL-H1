@@ -23,6 +23,13 @@ sandbox:
 
 Raymond får et konkret krav fra caféen: menuskærmen skal kun vise varer på lager og behøver ingen kundeoplysninger. Et view kan afgrænse de rækker og kolonner, skærmen læser. For at gøre afgrænsningen til adgangskontrol skal rettighederne også passe.
 
+```teach
+{
+  "question": "Menuskærmens rolle må læse v_menu og har stadig SELECT på products. Kan rollen hente en kolonne, som menuen skjuler? Hvilken tilladelse vil du undersøge?",
+  "answer": "Ja. Rollen kan læse products direkte. Undersøg adgang til basistabellen gennem rollen, dens medlemskaber og PUBLIC. Afprøv med en begrænset rolle i den lokale lab."
+}
+```
+
 > [!RAYMOND:safe-lock] Hvad behøver skærmen at vide?
 >
 > Vælg de nødvendige felter til en offentlig menu. Hvilke felter udelader du, og hvorfor? Et lille, tydeligt resultat er lettere at begrunde end at give klienten alle kolonner for en sikkerheds skyld.
@@ -111,3 +118,5 @@ Til jeres projekt anbefales **views som læse-API** + Dapper `QueryAsync` mod vi
 > [!RAYMOND:question] Adskil resultat og adgang
 >
 > Vis først, at dit view kun returnerer de ønskede oplysninger. Beskriv derefter, hvilken rolle du ville afprøve med, og hvad et direkte opslag i basistabellen skal gøre. Det er to forskellige kontroller.
+
+[PostgreSQL om rettigheder på views](https://www.postgresql.org/docs/16/sql-createview.html).

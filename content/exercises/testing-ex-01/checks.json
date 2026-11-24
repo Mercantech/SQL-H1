@@ -1,83 +1,57 @@
 {
-  "description": "Adfærd og rettigheder testes mod elevens faktiske database.",
+  "description": "Kontrollerer billetreglerne med rigtige indsatser i en transaktion, der rulles tilbage.",
   "assertions": [
     {
-      "type": "sql_equals",
-      "sql": "SELECT gamehub_rejects('quantity_zero')",
-      "expected": [
-        [
-          true
-        ]
-      ],
-      "message": "Antal 0 afvises af CHECK"
+      "type": "sql_errors",
+      "sql": "INSERT INTO tickets(id,player_id,ticket_code,quantity) OVERRIDING SYSTEM VALUE VALUES(-1,1,'PROBE-ZERO',0)",
+      "message": "Antal 0 afvises af CHECK",
+      "sqlState": "23514"
+    },
+    {
+      "type": "sql_errors",
+      "sql": "INSERT INTO tickets(id,player_id,ticket_code,quantity) OVERRIDING SYSTEM VALUE VALUES(-1,1,'PROBE-FIVE',5)",
+      "message": "Antal 5 afvises af CHECK",
+      "sqlState": "23514"
+    },
+    {
+      "type": "sql_errors",
+      "sql": "INSERT INTO tickets(id,player_id,ticket_code,quantity) OVERRIDING SYSTEM VALUE VALUES(-1,1,'PROBE-NULL',NULL)",
+      "message": "NULL-antal afvises af NOT NULL",
+      "sqlState": "23502"
+    },
+    {
+      "type": "sql_errors",
+      "sql": "INSERT INTO tickets(id,player_id,ticket_code,quantity) OVERRIDING SYSTEM VALUE VALUES(-1,9999,'PROBE-FK',1)",
+      "message": "Ukendt spiller afvises af FK",
+      "sqlState": "23503"
+    },
+    {
+      "type": "sql_errors",
+      "sql": "INSERT INTO tickets(id,player_id,ticket_code,quantity) OVERRIDING SYSTEM VALUE VALUES(-1,NULL,'PROBE-PLAYER',1)",
+      "message": "NULL-spiller afvises",
+      "sqlState": "23502"
+    },
+    {
+      "type": "sql_errors",
+      "sql": "INSERT INTO tickets(id,player_id,ticket_code,quantity) OVERRIDING SYSTEM VALUE VALUES(-1,2,'FINAL-1',1)",
+      "message": "Dubletkode afvises af UNIQUE",
+      "sqlState": "23505"
+    },
+    {
+      "type": "sql_errors",
+      "sql": "INSERT INTO tickets(id,player_id,ticket_code,quantity) OVERRIDING SYSTEM VALUE VALUES(-1,1,NULL,1)",
+      "message": "NULL-kode afvises",
+      "sqlState": "23502"
     },
     {
       "type": "sql_equals",
-      "sql": "SELECT gamehub_rejects('quantity_five')",
+      "sql": "WITH accepted AS (INSERT INTO tickets(id,player_id,ticket_code,quantity) OVERRIDING SYSTEM VALUE VALUES(-1,2,'PROBE-VALID-1',1),(-2,2,'PROBE-VALID-4',4) RETURNING quantity) SELECT quantity FROM accepted ORDER BY quantity",
       "expected": [
         [
-          true
-        ]
-      ],
-      "message": "Antal 5 afvises af CHECK"
-    },
-    {
-      "type": "sql_equals",
-      "sql": "SELECT gamehub_rejects('quantity_null')",
-      "expected": [
+          1
+        ],
         [
-          true
-        ]
-      ],
-      "message": "NULL-antal afvises af NOT NULL"
-    },
-    {
-      "type": "sql_equals",
-      "sql": "SELECT gamehub_rejects('player_missing')",
-      "expected": [
-        [
-          true
-        ]
-      ],
-      "message": "Ukendt spiller afvises af FK"
-    },
-    {
-      "type": "sql_equals",
-      "sql": "SELECT gamehub_rejects('player_null')",
-      "expected": [
-        [
-          true
-        ]
-      ],
-      "message": "NULL-spiller afvises"
-    },
-    {
-      "type": "sql_equals",
-      "sql": "SELECT gamehub_rejects('code_duplicate')",
-      "expected": [
-        [
-          true
-        ]
-      ],
-      "message": "Dubletkode afvises af UNIQUE"
-    },
-    {
-      "type": "sql_equals",
-      "sql": "SELECT gamehub_rejects('code_null')",
-      "expected": [
-        [
-          true
-        ]
-      ],
-      "message": "NULL-kode afvises"
-    },
-    {
-      "type": "sql_equals",
-      "sql": "SELECT gamehub_accepts(1), gamehub_accepts(4)",
-      "expected": [
-        [
-          true,
-          true
+          4
         ]
       ],
       "message": "Begge gyldige grænser accepteres"

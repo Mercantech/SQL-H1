@@ -75,6 +75,15 @@ SELECT name, email FROM customers WHERE email IS NOT NULL;
 >
 > Når en e-mail er `NULL`, kender vi ikke en almindelig tekstværdi at sammenligne med. Derfor spørger vi `IS NULL`. Kan du forklare, hvorfor det ikke er det samme spørgsmål som, om e-mailen er en tom tekst?
 
+```teach
+{
+  "question": "I caféens startdata koster Sandwich 48 og Latte 35. Hvilken af de to bliver i en liste med category = 'Mad' AND price > 45? Skriv grunden før du kører filteret.",
+  "answer": "Sandwich bliver, fordi begge betingelser gælder. Latte er en drik og koster under 45. Hele cafélisten rummer også Saladsandwich til 52."
+}
+```
+
 ## Prøv selv
 
 Find produkter i kategorien `Mad` der koster mere end 45 kr.
+
+Fordybelse i PostgreSQL · [WHERE og filtrering](https://www.postgresql.org/docs/16/queries-table-expressions.html).

@@ -23,6 +23,13 @@ sandbox:
 
 Raymond vil gemme en ordre og den tilhørende ændring af lageret som én samlet handling. En **transaktion** samler ændringer, så de kan godkendes med `COMMIT` eller fortrydes med `ROLLBACK`. Den hjælper dig med at undgå, at kun en del af den planlagte handling gemmes.
 
+```teach
+{
+  "question": "En ordre og dens lagerreservation skal gemmes samlet. Reservationen bliver afvist efter indsættelsen af ordren. Hvad skal en ny forbindelse kunne se efter rollback?",
+  "answer": "Den nye ordre må ikke findes, og lageret skal have samme værdi som før forsøget. Kør begge ændringer på samme forbindelse i samme transaktion, og kontrollér derefter begge tabeller."
+}
+```
+
 > [!RAYMOND:transaction] Hvilke trin skal følges ad?
 >
 > Hvis ordren gemmes, men lagerændringen fejler, hvad fortæller databasen så til den næste kunde? Skriv start- og sluttilstanden for den samlede handling, før du vælger transaktionens grænser.
@@ -119,3 +126,5 @@ try {
 > [!RAYMOND:skeptical] Tre forskellige garantier
 >
 > Forklar forskellen på at samle ændringer i en transaktion, at beskytte mod ugyldige værdier med constraints og at koordinere to samtidige køb. Hvilket problem løser hver mekanisme i caféens ordreflow?
+
+[PostgreSQL om transaktioner](https://www.postgresql.org/docs/16/tutorial-transactions.html).

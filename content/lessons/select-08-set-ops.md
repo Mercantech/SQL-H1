@@ -67,6 +67,15 @@ Sortér det samlede resultat med en afsluttende `ORDER BY`. Resultatets kolonnen
 >
 > To ens bynavne kan enten være en dublet, du vil fjerne, eller to registreringer, du vil beholde. Forklar, hvorfor UNION og UNION ALL kan besvare forskellige spørgsmål med de samme kildedata.
 
+```teach
+{
+  "question": "Gæt antallet af rækker i SELECT 'Viborg' UNION SELECT 'Viborg'. Erstat derefter UNION med UNION ALL, og kontrollér begge gæt.",
+  "answer": "UNION giver én række, fordi de to resultatrækker er ens. UNION ALL giver to. Sammenlign de to udtræk, hvis de samme byer optræder i flere lister."
+}
+```
+
 ## Prøv selv
 
 Lav en liste over alle bynavne fra `customers` plus den ekstra by `'Odense'` (brug `UNION`).
+
+Fordybelse i PostgreSQL · [UNION, INTERSECT og EXCEPT](https://www.postgresql.org/docs/16/queries-union.html).

@@ -138,8 +138,17 @@ Raymond skelner mellem, hvad **modellen tillader**, og hvad en **forespørgsel v
 >
 > To tabeller kan tilfældigvis have én række hver uden at være en 1:1-model. Peg på den nøgle eller UNIQUE-regel, som gør din påstand sand, også når der kommer flere data.
 
+```teach
+{
+  "question": "Hver kunde kan have højst én profil, og nogle har ingen. Hvor skal nøglen stå, og hvordan forhindrer du profil nummer to?",
+  "answer": "Lad customer_profiles.customer_id både være primærnøgle og fremmednøgle til customers.id. Nøglen begrænser hver kunde til højst én profil. En kunde uden profil kræver ingen række i customer_profiles."
+}
+```
+
 ## Prøv selv
 
 1. Vis hvor mange **forskellige** produkter hver kunde har købt (`COUNT(DISTINCT product_id)`).  
 2. Tegn (på papir) 1:n mellem `products` og `orders` med FK-pilen.  
 3. Forklar med egne ord, hvorfor n:n kræver en tabel i midten.
+
+Fordybelse i PostgreSQL · [Unikhed og fremmednøgler](https://www.postgresql.org/docs/16/ddl-constraints.html).

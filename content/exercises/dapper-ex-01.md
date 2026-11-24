@@ -12,15 +12,7 @@ sandbox:
   allowWrite: false
   checks: exercises/dapper-ex-01/checks.json
   starterSql: |
-    SELECT
-      c.name AS kunde,
-      p.name AS produkt,
-      o.quantity
-    FROM orders o
-    JOIN customers c ON c.id = o.customer_id
-    JOIN products p ON p.id = o.product_id
-    WHERE c.city = 'Aarhus'
-    ORDER BY c.name, p.name;
+    -- Skriv din egen SELECT til Aarhus-rapporten.
 ---
 
 # Opgave — Rapport-SQL til Dapper
@@ -34,3 +26,5 @@ For kunder i **Aarhus**: vis `kunde`, `produkt`, `quantity` (INNER JOIN — inge
 ## Del 2
 
 Vis pr. `category`: `category` og `antal_ordrelinjer` (`COUNT` af ordrer på produkter i kategorien). Sorter på `category`.
+
+Skriv rapporterne i hvert sit svarfelt. Lav derefter en variant af første rapport for Viborg på egen hånd. Undersøg, om en kunde uden ordrer optræder. Kør den separate [C#-kundeliste](/learn/dapper-01-intro), og forklar, hvorfor Clara godt kan optræde dér.

@@ -78,8 +78,19 @@ Når listen indeholder en NULL-værdi, giver NOT IN **ukendt** for værdier, som
 >
 > "Aldrig købt" og "ikke købt i april" er forskellige spørgsmål. I det sidste tilfælde skal den indre søgning kun lede efter ordrer i den valgte periode. Forklar, hvor tidskravet skal stå, før du skriver mere SQL.
 
+```teach
+{
+  "question": "På caféens startdata mangler Clara ordrer, og to ordrer mangler kundenummer. Vil WHERE c.id NOT IN (SELECT customer_id FROM orders) finde Clara? Foreslå en robust test.",
+  "answer": "Nej. Listen indeholder NULL, så sammenligningen for Clara ender som ukendt. NOT EXISTS med betingelsen o.customer_id = c.id finder hende, fordi ingen ordre matcher hendes id."
+}
+```
+
 ## Hvornår bruger I det i projektet?
 
 - “Brugere uden ordrer” / “åbne tickets uden kommentarer”
 - Oprydning: “lookup-værdier der ikke bruges”
 - Rapporter: “produkter uden salg i perioden”
+
+Afprøv bagefter en relation mellem spor i [SQL-mysteriet](/murder). Sagen bruger sit eget SQLite-datasæt.
+
+Fordybelse i PostgreSQL · [NOT IN, NULL og EXISTS](https://www.postgresql.org/docs/16/functions-subquery.html).

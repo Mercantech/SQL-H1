@@ -3,6 +3,7 @@
   "assertions": [
     {
       "type": "sql_equals",
+      "columns": ["category", "antal"],
       "sql": "SELECT category, COUNT(*)::int AS antal FROM products GROUP BY category ORDER BY category",
       "expected": [
         ["Bagværk", 2],
@@ -13,6 +14,7 @@
     },
     {
       "type": "sql_equals",
+      "columns": ["name", "antal_linjer"],
       "sql": "SELECT p.name, COUNT(*)::int AS antal_linjer FROM products p JOIN orders o ON o.product_id = p.id GROUP BY p.name ORDER BY p.name",
       "expected": [
         ["Croissant", 3],

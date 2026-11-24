@@ -18,6 +18,52 @@
       "sql": "SELECT COUNT(*)::int FROM orders WHERE id = 8",
       "expected": [[0]],
       "message": "Del 3: Ordre 8 er slettet"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT id FROM orders ORDER BY id",
+      "expected": [
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          4
+        ],
+        [
+          5
+        ],
+        [
+          6
+        ],
+        [
+          7
+        ],
+        [
+          9
+        ],
+        [
+          10
+        ],
+        [
+          11
+        ],
+        [
+          12
+        ],
+        [
+          13
+        ],
+        [
+          14
+        ]
+      ],
+      "message": "Kun ordre 8 skal være fjernet"
     }
   ]
 }

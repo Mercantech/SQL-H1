@@ -12,13 +12,12 @@ sandbox:
   allowWrite: false
   checks: exercises/select-ex-02/checks.json
   starterSql: |
-    SELECT name, price
-    FROM products
-    WHERE category = 'Drikke'
-    ORDER BY price DESC;
+    -- Byg listen over drikke med pris og den ønskede sortering.
 ---
 
 # Opgave B — Sortering og filtre
+
+Skriv først de to sorteringsretninger, du har brug for til henholdsvis caféens dyreste og billigste varer.
 
 ## Del 1
 
@@ -31,3 +30,5 @@ Vis de **3 billigste** produkter (`name`, `price`) — uanset kategori.
 ## Del 3
 
 Vis kunder hvis navn ender på **sen** (`name`, `city`), sorteret på `name`.
+
+Se på den første og sidste række, når du har sorteret drikkevarerne. Byt retning og forudsig den nye første række, før du kører igen.

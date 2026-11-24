@@ -75,6 +75,17 @@ ORDER BY linje_total DESC;
 >
 > En kunde med tre ordrer kan optræde tre gange efter et JOIN. Undersøg først, hvad én resultatrække repræsenterer, før du forsøger at fjerne gentagelser med DISTINCT.
 
+```teach
+{
+  "question": "I caféens startdata er der 14 ordrer, hvoraf to har et tomt kundenummer. Hvor mange ordrelinjer vil en INNER JOIN til customers bevare?",
+  "answer": "Der kommer 12 ordrelinjer. De to walk-in-ordrer mangler et match. En kunde, der har bestilt flere gange, optræder med én række pr. matchende ordre."
+}
+```
+
 ## Prøv selv
 
 Vis alle ordrer med kundenavn og produktnavn for ordrer med `quantity >= 2`.
+
+Følg en kunde med to match i [minicaféens lektion om INNER JOIN](/forloeb/joins/lessons/0001-find-match.html).
+
+Fordybelse i PostgreSQL · [INNER JOIN i PostgreSQL](https://www.postgresql.org/docs/16/tutorial-join.html).

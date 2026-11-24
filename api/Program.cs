@@ -233,6 +233,7 @@ api.MapGet("/modules", (ContentService content) =>
         m.ScaffoldOnly,
         m.Objectives,
         m.GoalNumbers,
+        m.ReferenceMarkdown,
         items = content.GetModuleContents(m.Slug).Select(i => new
         {
             i.Slug,
@@ -263,6 +264,7 @@ api.MapGet("/content/{slug}", (string slug, ContentService content) =>
         item.Markdown,
         item.Html,
         item.Sandbox,
+        answerParts = content.GetAnswerParts(item),
         schema
     });
 });
@@ -271,7 +273,6 @@ api.MapPost("/sandbox/provision", async (HttpContext ctx, UserService users, San
 {
     var user = await users.EnsureUserAsync(ctx.User);
     var db = await sandbox.EnsureProvisionedAsync(user.Sub);
-    await sandbox.ResetAsync(user.Sub, null);
     return Results.Json(new { status = db.Status, dbName = db.DbName });
 }).RequireAuthorization();
 
@@ -352,7 +353,7 @@ api.MapPost("/sandbox/reset", async (HttpContext ctx, UserService users, Sandbox
 api.MapPost("/sandbox/check", async (HttpContext ctx, UserService users, SandboxService sandbox, CheckRequest body) =>
 {
     var user = await users.EnsureUserAsync(ctx.User);
-    var result = await sandbox.CheckAsync(user.Sub, body.ContentSlug);
+    var result = await sandbox.CheckAsync(user.Sub, body, ctx.RequestAborted);
     return Results.Json(result);
 }).RequireAuthorization();
 
@@ -382,9 +383,18 @@ api.MapGet("/progress/{slug}", async (string slug, HttpContext ctx, UserService 
     return Results.Json(rows);
 }).RequireAuthorization();
 
-api.MapPut("/progress/{slug}", async (string slug, ProgressUpsertRequest body, HttpContext ctx, UserService users, SandboxService sandbox) =>
+api.MapPut("/progress/{slug}", async (string slug, ProgressUpsertRequest body, HttpContext ctx, UserService users, SandboxService sandbox, ContentService content) =>
 {
     var user = await users.EnsureUserAsync(ctx.User);
+    var item = content.GetContent(slug);
+    if (item is null) return Results.NotFound();
+    if (body.Status is not ("started" or "completed") || body.PartIndex < 0)
+        return Results.BadRequest(new { error = "Ukendt fremskridt." });
+    // Older clients confirm a successful check here. Only the checker awards a pass.
+    if (item.Kind == "exercise" && body.Status == "completed")
+        return await sandbox.HasPassedAsync(user.Sub, slug, body.PartIndex)
+            ? Results.Ok(new { ok = true })
+            : Results.Conflict(new { error = "Brug Tjek svar for at bedømme denne opgave." });
     await sandbox.UpsertProgressAsync(user.Sub, slug, body.PartIndex, body.Status, body.Payload);
     return Results.Json(new { ok = true });
 }).RequireAuthorization();

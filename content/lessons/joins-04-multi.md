@@ -74,6 +74,17 @@ Det finder par af kunder i samme by. Raymond følger de to aliaser som to pladse
 >
 > En ordrelinje med quantity 3 er én linje, men tre solgte styk. Forklar forskellen på COUNT(*) og SUM(quantity) i topkunderapporten, inden du vælger, hvem der er "topkunde".
 
+```teach
+{
+  "question": "Du vil vise alle 14 ordrelinjer, også de to anonyme køb. Hvilke JOIN-typer vælger du fra orders til henholdsvis customers og products?",
+  "answer": "Brug LEFT JOIN til customers, da en ordre kan mangle en kunde. INNER JOIN til products bevarer alle 14 på caféens startdata, fordi product_id er obligatorisk og henviser til en gyldig vare."
+}
+```
+
 ## Prøv selv
 
 Vis kategori og samlet omsætning (`SUM(quantity * price)`) pr. `category`.
+
+Tegn en bon, og sammenlign med [minicaféens fire bonlinjer](/forloeb/joins/lessons/0003-foelg-en-ordre.html).
+
+Fordybelse i PostgreSQL · [Sammenkæd flere tabeller](https://www.postgresql.org/docs/16/queries-table-expressions.html).

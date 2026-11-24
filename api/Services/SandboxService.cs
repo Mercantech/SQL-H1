@@ -10,7 +10,7 @@ using SqlH1.Api.Options;
 
 namespace SqlH1.Api.Services;
 
-public class SandboxService(
+public partial class SandboxService(
     AppDbContext db,
     ContentService content,
     IOptions<SandboxOptions> options,
@@ -20,10 +20,15 @@ public class SandboxService(
 
     public async Task<StudentDatabase> EnsureProvisionedAsync(Guid userSub, CancellationToken ct = default)
     {
-        var existing = await db.StudentDatabases.FirstOrDefaultAsync(x => x.UserSub == userSub, ct);
+        var existing = await db.StudentDatabases.AsNoTracking().FirstOrDefaultAsync(x => x.UserSub == userSub, ct);
         if (existing is { Status: "ready" })
             return existing;
 
+        // Serialize first-time provisioning across tabs and API instances.
+        await using var provision = await db.Database.BeginTransactionAsync(ct);
+        await db.Database.ExecuteSqlInterpolatedAsync($"SELECT pg_advisory_xact_lock(hashtextextended({userSub.ToString()}, 0))", ct);
+        existing = await db.StudentDatabases.AsNoTracking().FirstOrDefaultAsync(x => x.UserSub == userSub, ct);
+        if (existing is { Status: "ready" }) return existing;
         var (dbName, role) = NamesFor(userSub);
         var password = existing?.DbPassword;
         if (string.IsNullOrEmpty(password))
@@ -33,7 +38,6 @@ public class SandboxService(
         await using var admin = new NpgsqlConnection(AdminConnection());
         await admin.OpenAsync(ct);
 
-        var wasReady = existing is { Status: "ready" };
         await EnsureRoleAndDatabaseAsync(admin, dbName, role, password, ct);
 
         if (existing is null)
@@ -51,6 +55,7 @@ public class SandboxService(
         }
         else
         {
+            db.StudentDatabases.Attach(existing);
             existing.DbName = dbName;
             existing.DbRole = role;
             existing.DbPassword = password;
@@ -58,10 +63,9 @@ public class SandboxService(
             existing.ProvisionedAt = DateTimeOffset.UtcNow;
         }
 
+        await ApplySeedAsync(existing, null, ct);
         await db.SaveChangesAsync(ct);
-
-        if (!wasReady)
-            await ApplySeedAsync(existing, null, ct);
+        await provision.CommitAsync(ct);
 
         return existing;
     }
@@ -75,7 +79,7 @@ public class SandboxService(
         {
             item = content.GetContent(request.ContentSlug);
             if (item?.Sandbox is not null)
-                allowWrite = item.Sandbox.AllowWrite;
+                allowWrite = item.Sandbox.AllowWrite && request.AllowWrite != false;
         }
 
         var guardError = SqlGuard.Validate(request.Sql, allowWrite);
@@ -88,6 +92,13 @@ public class SandboxService(
                          $"SET statement_timeout = '{_opt.StatementTimeoutSeconds}s'", conn))
         {
             await timeoutCmd.ExecuteNonQueryAsync(ct);
+        }
+
+        await using var readTransaction = allowWrite ? null : await conn.BeginTransactionAsync(ct);
+        if (readTransaction is not null)
+        {
+            await using var readOnly = new NpgsqlCommand("SET TRANSACTION READ ONLY", conn, readTransaction);
+            await readOnly.ExecuteNonQueryAsync(ct);
         }
 
         var statements = SqlGuard.SplitStatements(request.Sql);
@@ -108,7 +119,7 @@ public class SandboxService(
                 selectIndex++;
                 sets.Add(new ResultSet
                 {
-                    Label = $"SELECT {selectIndex}",
+                    Label = $"Resultat {selectIndex}",
                     Columns = last.Columns,
                     Rows = last.Rows,
                     Truncated = last.Truncated
@@ -411,91 +422,21 @@ public class SandboxService(
         return (result.Columns, rows, truncated);
     }
 
-    public async Task<CheckResult> CheckAsync(Guid userSub, string contentSlug, CancellationToken ct = default)
-    {
-        var item = content.GetContent(contentSlug);
-        if (item is null)
-            return new CheckResult { Passed = false, Messages = ["Opgave ikke fundet."] };
+    public Task<bool> HasPassedAsync(Guid userSub, string slug, int partIndex) =>
+        db.Progress.AnyAsync(p => p.UserSub == userSub && p.ContentSlug == slug && p.PartIndex == partIndex && p.Status == "completed");
 
-        var checks = content.LoadChecks(item);
-        if (checks is null || checks.Assertions.Count == 0)
-            return new CheckResult { Passed = false, Messages = ["Ingen checks defineret for denne opgave."] };
-
-        var studentDb = await EnsureProvisionedAsync(userSub, ct);
-        await using var conn = new NpgsqlConnection(StudentConnection(studentDb));
-        await conn.OpenAsync(ct);
-
-        var messages = new List<string>();
-        var passed = true;
-        foreach (var assertion in checks.Assertions)
-        {
-            if (assertion.Type != "sql_equals" || string.IsNullOrWhiteSpace(assertion.Sql))
-            {
-                messages.Add(assertion.Message ?? "Ukendt assertion-type.");
-                passed = false;
-                continue;
-            }
-
-            var result = await RunOneAsync(conn, assertion.Sql, ct);
-            if (!result.Ok)
-            {
-                messages.Add(assertion.Message ?? $"Check fejlede: {result.Error}");
-                passed = false;
-                continue;
-            }
-
-            var expected = assertion.Expected ?? [];
-            if (!RowsEqual(result, expected))
-            {
-                messages.Add(assertion.Message ?? "Resultatet matcher ikke det forventede.");
-                passed = false;
-            }
-            else
-            {
-                messages.Add(assertion.Message ?? "OK");
-            }
-        }
-
-        if (passed)
-        {
-            await UpsertProgressAsync(userSub, contentSlug, 0, "completed", null, ct);
-        }
-
-        return new CheckResult { Passed = passed, Messages = messages };
-    }
-
-    public async Task UpsertProgressAsync(
-        Guid userSub,
-        string slug,
-        int partIndex,
-        string status,
-        object? payload,
+    public Task UpsertProgressAsync(Guid userSub, string slug, int partIndex, string status, object? payload,
         CancellationToken ct = default)
     {
-        var entry = await db.Progress.FirstOrDefaultAsync(
-            x => x.UserSub == userSub && x.ContentSlug == slug && x.PartIndex == partIndex, ct);
-
+        var isProject = content.GetContent(slug)?.Kind == "project";
         var json = payload is null ? null : JsonSerializer.Serialize(payload);
-        if (entry is null)
-        {
-            db.Progress.Add(new ProgressEntry
-            {
-                UserSub = userSub,
-                ContentSlug = slug,
-                PartIndex = partIndex,
-                Status = status,
-                PayloadJson = json,
-                UpdatedAt = DateTimeOffset.UtcNow
-            });
-        }
-        else
-        {
-            entry.Status = status;
-            entry.PayloadJson = json;
-            entry.UpdatedAt = DateTimeOffset.UtcNow;
-        }
-
-        await db.SaveChangesAsync(ct);
+        return db.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO progress (user_sub, content_slug, part_index, status, payload_json, updated_at)
+            VALUES ({userSub}, {slug}, {partIndex}, {status}, CAST({json} AS jsonb), now())
+            ON CONFLICT (user_sub, content_slug, part_index) DO UPDATE
+            SET status = EXCLUDED.status, payload_json = EXCLUDED.payload_json, updated_at = EXCLUDED.updated_at
+            WHERE {isProject} OR progress.status <> 'completed' OR EXCLUDED.status = 'completed'
+            """, ct);
     }
 
     private async Task EnsureRoleAndDatabaseAsync(
@@ -557,17 +498,14 @@ public class SandboxService(
     {
         try
         {
-            await using var cmd = new NpgsqlCommand(sql, conn);
-            var isQuery = RegexStartsWithSelectOrWith(sql);
-
-            if (!isQuery)
-            {
-                var affected = await cmd.ExecuteNonQueryAsync(ct);
-                return new ExecuteResult { Ok = true, RowsAffected = affected };
-            }
-
-            await using var reader = await cmd.ExecuteReaderAsync(ct);
+            // One extended-protocol command per statement, including DML with RETURNING.
+            await using var batch = new NpgsqlBatch(conn);
+            batch.BatchCommands.Add(new NpgsqlBatchCommand(sql));
+            await using var reader = await batch.ExecuteReaderAsync(ct);
+            if (reader.FieldCount == 0)
+                return new ExecuteResult { Ok = true, RowsAffected = reader.RecordsAffected };
             var columns = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToArray();
+            var dateColumns = Enumerable.Range(0, reader.FieldCount).Select(i => reader.GetDataTypeName(i) == "date").ToArray();
             var rows = new List<object?[]>();
             var truncated = false;
             while (await reader.ReadAsync(ct))
@@ -580,7 +518,9 @@ public class SandboxService(
 
                 var row = new object?[reader.FieldCount];
                 for (var i = 0; i < reader.FieldCount; i++)
-                    row[i] = reader.IsDBNull(i) ? null : Normalize(reader.GetValue(i));
+                    row[i] = reader.IsDBNull(i) ? null : dateColumns[i]
+                        ? reader.GetFieldValue<DateOnly>(i).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)
+                        : Normalize(reader.GetValue(i));
                 rows.Add(row);
             }
 
@@ -607,76 +547,6 @@ public class SandboxService(
         }
     }
 
-    private static bool RowsEqual(ExecuteResult actual, List<List<object?>> expected)
-    {
-        if (actual.Rows.Count != expected.Count) return false;
-        for (var r = 0; r < expected.Count; r++)
-        {
-            var exp = expected[r];
-            var act = actual.Rows[r];
-            if (exp.Count != act.Length) return false;
-            for (var c = 0; c < exp.Count; c++)
-            {
-                if (!CellEqual(exp[c], act[c])) return false;
-            }
-        }
-
-        return true;
-    }
-
-    private static bool CellEqual(object? a, object? b)
-    {
-        if (a is null && b is null) return true;
-        if (a is null || b is null) return false;
-        if (a is JsonElement jeA) a = JsonElementToObject(jeA);
-        if (b is JsonElement jeB) b = JsonElementToObject(jeB);
-        if (TryToDecimal(a, out var da) && TryToDecimal(b, out var db))
-            return da == db;
-        return string.Equals(
-            Convert.ToString(a, System.Globalization.CultureInfo.InvariantCulture),
-            Convert.ToString(b, System.Globalization.CultureInfo.InvariantCulture),
-            StringComparison.Ordinal);
-    }
-
-    private static bool TryToDecimal(object? value, out decimal d)
-    {
-        switch (value)
-        {
-            case decimal dec:
-                d = dec;
-                return true;
-            case int i:
-                d = i;
-                return true;
-            case long l:
-                d = l;
-                return true;
-            case double dbl:
-                d = (decimal)dbl;
-                return true;
-            case float f:
-                d = (decimal)f;
-                return true;
-            case string s when decimal.TryParse(s, System.Globalization.NumberStyles.Any,
-                System.Globalization.CultureInfo.InvariantCulture, out var parsed):
-                d = parsed;
-                return true;
-            default:
-                d = 0;
-                return false;
-        }
-    }
-
-    private static object? JsonElementToObject(JsonElement je) => je.ValueKind switch
-    {
-        JsonValueKind.String => je.GetString(),
-        JsonValueKind.Number => je.TryGetInt64(out var l) ? l : je.GetDouble(),
-        JsonValueKind.True => true,
-        JsonValueKind.False => false,
-        JsonValueKind.Null => null,
-        _ => je.ToString()
-    };
-
     private static object? Normalize(object value) => value switch
     {
         DateTime dt => dt.ToString("O"),
@@ -684,12 +554,6 @@ public class SandboxService(
         decimal d => d,
         _ => value
     };
-
-    private static bool RegexStartsWithSelectOrWith(string sql) =>
-        System.Text.RegularExpressions.Regex.IsMatch(
-            sql.TrimStart(),
-            @"^(WITH|SELECT|EXPLAIN)\b",
-            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
 
     public static (string DbName, string Role) NamesFor(Guid sub)
     {

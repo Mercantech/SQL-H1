@@ -11,10 +11,7 @@ sandbox:
   allowWrite: false
   checks: exercises/drift-ex-01/checks.json
   starterSql: |
-    SELECT table_name
-    FROM information_schema.tables
-    WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
-    ORDER BY table_name;
+    -- Skriv din egen katalogforespørgsel til første del.
 ---
 
 # Opgave — Katalogforespørgsler
@@ -26,3 +23,5 @@ List alle **basistabeller** i `public` (`table_type = 'BASE TABLE'`). Returnér 
 ## Del 2
 
 Tæl antal indeks i `public` via `pg_indexes` (kolonne `antal`).
+
+Skriv begge svar i hvert sit svarfelt. Sammenhold de fundne navne med dit E/R-diagram. Genbrug skelnen mellem tabeller og indeks, når du i [restore-øvelsen](/learn/testing-project-01) skal forklare, hvad der er gendannet.

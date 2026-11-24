@@ -89,6 +89,13 @@ Derfor er den vigtigste vane i hele modulet:
 
 > **Læs først (`SELECT`), skriv bagefter (`INSERT`/`UPDATE`/`DELETE`), læs igen.**
 
+```teach
+{
+  "question": "Caféen skal rette byen for en eksisterende kunde. Vælg kommandoen og skriv, hvordan du kan vise, at præcis den rigtige række vil blive berørt.",
+  "answer": "Brug UPDATE på customers med kundens primærnøgle i WHERE. Kør SELECT med samme filter først og læs id og by. Efter ændringen kan RETURNING eller en ny SELECT vise den nye by."
+}
+```
+
 ## Tre vaner der redder dig
 
 1. **Preview** — skriv `SELECT` med samme `WHERE`, som du vil bruge i `UPDATE`/`DELETE`. Ser resultatet rigtigt ud?
@@ -126,3 +133,5 @@ Næste lektion: **INSERT** som Create i dybden.
 > [!RAYMOND:idea-notes] Forklar caféens næste ændring
 >
 > Vælg én handling: opret et produkt, ret en pris eller fjern en testordre. Sig først **kommando**, **mål-rækker** og **kontrol bagefter**. Kan en makker forklare planen tilbage til dig?
+
+Fordybelse i PostgreSQL · [Ændring af data](https://www.postgresql.org/docs/16/dml.html).

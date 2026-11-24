@@ -65,6 +65,13 @@ INSERT INTO customers (name, city, email) VALUES
 RETURNING id, name;
 ```
 
+```teach
+{
+  "question": "To varer i kategorien Bagværk ændrer pris. Hvor mange rækker forventer du fra UPDATE … RETURNING name, price, og hvilke værdier repræsenterer de?",
+  "answer": "I caféens startdata er der to bagværk, Croissant og Chokoladebolle. RETURNING giver én række pr. ændret produkt med produktets navn og nye pris. Uden sortering kan de komme i vilkårlig rækkefølge."
+}
+```
+
 ## Bro til ADO.NET / Dapper
 
 Raymond lader C# læse resultatkolonnerne fra `RETURNING` med en reader eller en passende Dapper-metode. Der kan komme nul, én eller flere rækker; vælg en metode, der passer til den forventede mængde.
@@ -77,3 +84,5 @@ Raymond lader C# læse resultatkolonnerne fra `RETURNING` med en reader eller en
 > [!RAYMOND:skeptical] En kørsel uden resultatrækker
 >
 > Din `UPDATE ... RETURNING` kører uden fejl, men returnerer ingen rækker. Hvad kan det fortælle om dit `WHERE`? Forklar hvorfor »SQL kørte« ikke alene betyder, at det ønskede produkt blev ændret.
+
+Fordybelse i PostgreSQL · [Læs data tilbage med RETURNING](https://www.postgresql.org/docs/16/dml-returning.html).

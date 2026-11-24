@@ -73,6 +73,15 @@ WHERE LOWER(city) = 'viborg';
 >
 > Jeg kan vise `(ingen e-mail)` uden at gemme den tekst som kundens adresse. Forklar forskellen på en beregnet resultatkolonne og en ændring af de gemte data. Hvornår ville en UPDATE være nødvendig?
 
+```teach
+{
+  "question": "Forudsig UPPER(name) for Espresso. Hvad står der i products.name, når du bagefter henter samme række med en almindelig SELECT?",
+  "answer": "Første resultat viser ESPRESSO. Den næste SELECT henter stadig Espresso. UPPER beregner teksten for den aktuelle visning."
+}
+```
+
 ## Prøv selv
 
 Vis produktnavne i store bogstaver og prisen afrundet til hele kroner for kategorien `Drikke`.
+
+Fordybelse i PostgreSQL · [PostgreSQLs tekstfunktioner](https://www.postgresql.org/docs/16/functions-string.html).

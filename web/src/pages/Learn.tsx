@@ -10,12 +10,14 @@ import {
   resetSandbox,
   type ContentDto,
   type ExecuteResult,
+  type ExerciseCheckResult,
   type ModuleDto,
 } from "../api";
 import { beginLogin, isLoggedIn } from "../auth";
 import { ExerciseSchema } from "../components/ExerciseSchema";
+import { ExerciseAnswers, type QueryPreview } from "../components/ExerciseAnswers";
 import { LearningObjectives } from "../components/LearningObjectives";
-import { contentKindLabel } from "../lib/course";
+import { collectQueryAnswers, contentKindLabel } from "../lib/course";
 import { appendCodeToEditor, Markdown } from "../components/Markdown";
 import { LearnPager, ModuleNav } from "../components/ModuleNav";
 import { SqlEditor } from "../components/SqlEditor";
@@ -32,8 +34,9 @@ export function Learn() {
   const [sql, setSql] = useState("");
   const [result, setResult] = useState<ExecuteResult | null>(null);
   const [running, setRunning] = useState(false);
-  const [checkMessages, setCheckMessages] = useState<string[] | null>(null);
-  const [checkPassed, setCheckPassed] = useState<boolean | null>(null);
+  const [check, setCheck] = useState<ExerciseCheckResult | null>(null);
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const [preview, setPreview] = useState<QueryPreview | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [projectStatus, setProjectStatus] = useState<string | null>(null);
   const [savingProject, setSavingProject] = useState(false);
@@ -43,11 +46,11 @@ export function Learn() {
   const split = useLearnSplit();
   useRaymondWork({
     contentSlug: item?.slug,
-    currentSql: sql,
-    lastError: error || result?.error || undefined,
-    resultSummary: describeSqlResult(result),
-    checkMessages: checkMessages ?? undefined,
-    checkPassed: checkPassed ?? undefined,
+    currentSql: preview?.sql ?? sql,
+    lastError: error || preview?.error || (preview ? preview.result?.error : result?.error) || undefined,
+    resultSummary: describeSqlResult(preview ? preview.result ?? null : result),
+    checkMessages: check?.messages,
+    checkPassed: check?.passed,
   }, item?.slug === slug);
 
   useEffect(() => {
@@ -66,8 +69,9 @@ export function Learn() {
         setItem(c);
         setSql(c.sandbox?.starterSql?.trim() || "SELECT 1;");
         setResult(null);
-        setCheckMessages(null);
-        setCheckPassed(null);
+        setCheck(null);
+        setDrafts({});
+        setPreview(null);
         setProjectStatus(null);
         setSavingProject(false);
         if (c.kind === "project" && isLoggedIn()) {
@@ -113,22 +117,26 @@ export function Learn() {
     return true;
   }
 
-  async function onRun(sqlToRun?: string) {
+  async function onRun(sqlToRun?: string, partId?: string) {
     if (!(await ensureReady()) || !item) return;
     const query = (sqlToRun ?? sql).trim();
     if (!query) return;
     const operation = ++operationRef.current;
     setRunning(true);
     setError(null);
-    setCheckMessages(null);
-    setCheckPassed(null);
+    setCheck(null);
+    setPreview(partId ? { partId, sql: query } : null);
     try {
-      const res = await executeSql(query, item.slug, item.sandbox?.allowWrite);
+      const res = await executeSql(query, item.slug, partId ? false : item.sandbox?.allowWrite);
       if (operation !== operationRef.current) return;
-      setResult(res);
-      await putProgress(item.slug, "started").catch(() => undefined);
+      if (partId) setPreview({ partId, sql: query, result: res });
+      else setResult(res);
+      if (item.kind === "exercise") await putProgress(item.slug, "started").catch(() => undefined);
     } catch (e) {
-      if (operation === operationRef.current) setError(e instanceof Error ? e.message : "Fejl");
+      if (operation !== operationRef.current) return;
+      const message = e instanceof Error ? e.message : "Forespørgslen kunne ikke køres.";
+      if (partId) setPreview({ partId, sql: query, error: message });
+      else setError(message);
     } finally {
       if (operation === operationRef.current) setRunning(false);
     }
@@ -140,12 +148,12 @@ export function Learn() {
     const operation = ++operationRef.current;
     setRunning(true);
     setError(null);
-    setCheckMessages(null);
-    setCheckPassed(null);
+    setCheck(null);
     try {
       await resetSandbox(item.slug);
       if (operation !== operationRef.current) return;
       setResult(null);
+      setPreview(null);
     } catch (e) {
       if (operation === operationRef.current) setError(e instanceof Error ? e.message : "Fejl");
     } finally {
@@ -158,17 +166,12 @@ export function Learn() {
     const operation = ++operationRef.current;
     setRunning(true);
     setError(null);
-    setCheckMessages(null);
-    setCheckPassed(null);
+    setCheck(null);
     setResult((previous) => previous && !previous.ok ? null : previous);
     try {
-      const res = await checkExercise(item.slug);
+      const res = await checkExercise(item.slug, collectQueryAnswers(item.answerParts, drafts));
       if (operation !== operationRef.current) return;
-      setCheckMessages(res.messages);
-      setCheckPassed(res.passed);
-      if (res.passed) {
-        await putProgress(item.slug, "completed").catch(() => undefined);
-      }
+      setCheck(res);
     } catch (e) {
       if (operation === operationRef.current) setError(e instanceof Error ? e.message : "Fejl");
     } finally {
@@ -197,6 +200,8 @@ export function Learn() {
 
   const showSandbox = Boolean(item.sandbox);
   const editorVisible = showSandbox && sandboxOpen;
+  const answerParts = item.kind === "exercise" ? item.answerParts ?? [] : [];
+  const reference = modules.find((module) => module.slug === item.module)?.referenceMarkdown;
 
   function openSandbox() {
     setSandboxOpen(true);
@@ -251,6 +256,7 @@ export function Learn() {
                 <Link to={`/modules/${item.module}`}>Modul</Link>
                 {" · "}
                 {contentKindLabel(item.kind)}
+                {reference && <> · <Link to={`/modules/${item.module}#opslag`}>Opslagsark</Link></>}
               </p>
               {item.kind === "theory" && (
                 <Link
@@ -280,6 +286,7 @@ export function Learn() {
             {item.kind === "exercise" && item.schema && <ExerciseSchema schema={item.schema} />}
             <div className="md">
               <Markdown
+                key={item.slug}
                 showRaymondArt={item.kind !== "exercise"}
                 onInsertCode={
                   showSandbox
@@ -302,6 +309,19 @@ export function Learn() {
                 {item.markdown}
               </Markdown>
             </div>
+            {answerParts.length > 0 && (
+              <ExerciseAnswers
+                parts={answerParts} drafts={drafts} busy={running} result={check}
+                preview={preview} onRun={(partId, value) => void onRun(value, partId)}
+                onLogin={isLoggedIn() ? undefined : () => beginLogin()}
+                onChange={(partId, value) => {
+                  setDrafts((previous) => ({ ...previous, [partId]: value }));
+                  setCheck(null);
+                  if (preview?.partId === partId) setPreview(null);
+                }}
+                onCheck={() => void onCheck()}
+              />
+            )}
             {error && <p className="error-text">{error}</p>}
             <LearnPager moduleSlug={item.module} currentSlug={item.slug} />
           </article>
@@ -327,13 +347,14 @@ export function Learn() {
                   onChange={setSql}
                   onRun={onRun}
                   onReset={onReset}
-                  onCheck={item.kind === "exercise" ? onCheck : undefined}
+                  onCheck={item.kind === "exercise" && !answerParts.length ? onCheck : undefined}
+                  answerSectionId={answerParts.length ? "svarfelter" : undefined}
                   onLogin={isLoggedIn() ? undefined : () => beginLogin()}
                   running={running}
                   error={error}
                   result={result}
-                  checkMessages={checkMessages}
-                  checkPassed={checkPassed}
+                  checkMessages={answerParts.length ? null : check?.messages}
+                  checkPassed={answerParts.length ? null : check?.passed}
                 />
               </aside>
             </>

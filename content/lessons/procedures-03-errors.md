@@ -30,6 +30,13 @@ sandbox:
 
 Raymond vil genbruge en funktion, som kun må modtage positive heltal. En tom værdi er også ugyldig. Nu undersøger I, hvordan funktionen siger fra, og hvilke rettigheder den arbejder med.
 
+```teach
+{
+  "question": "require_positive skal kun acceptere positive heltal. Vælg den mindste gyldige værdi og tre forskellige afvisninger, før du åbner PL/pgSQL-eksemplet.",
+  "answer": "1 skal returnere 1. Prøv 0, et negativt heltal og NULL som særskilte kald. Alle tre skal give den aftalte fejl. Sammenligningen p_n <= 0 alene fanger ikke NULL."
+}
+```
+
 ## RAISE EXCEPTION
 
 ```sql

@@ -115,6 +115,13 @@ Raymond vælger `VARCHAR(n)`, når en længdegrænse er et faktisk krav, eksempe
 
 Forkerte mappinger (fx `float` til penge) giver snigende bugs.
 
+```teach
+{
+  "question": "Caféen ønsker priser med præcis to decimaler og en separat regel om positive beløb. Hvilke dele af kolonnedefinitionen beskytter de to krav?",
+  "answer": "NUMERIC(10,2) lagrer et eksakt decimaltal med skala 2 og afrunder ved behov. CHECK (price > 0) afviser nul og negative beløb. Tilføj NOT NULL, hvis alle varer også skal have en pris."
+}
+```
+
 ## Prøv selv
 
 Opret `promo_codes`, indsæt 2 koder, og kør:
@@ -133,3 +140,5 @@ Argumentér: hvorfor `NUMERIC` til `discount_pct` og ikke `REAL`?
 > Undersøg `promo_codes` i metadataoversigten. Forklar én datatype, én default og én constraint hver for sig. Hvilken del ville afvise en dubletkode, og hvilken del ville udfylde tidspunktet?
 
 Kilde: [Npgsqls mapping af datoer, tidspunkter og UTC](https://www.npgsql.org/doc/types/datetime.html).
+
+Fordybelse i PostgreSQL · [Eksakte taltyper og skala](https://www.postgresql.org/docs/16/datatype-numeric.html).

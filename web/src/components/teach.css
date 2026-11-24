@@ -1,0 +1,154 @@
+.teach-checkpoint,
+.exercise-answers,
+.module-reference {
+  margin-block: 1.5rem;
+  scroll-margin-block-start: 1rem;
+}
+
+.teach-checkpoint {
+  border-inline-start: 3px solid var(--accent);
+  background: var(--panel);
+  padding: .8rem 1rem;
+  overflow-wrap: anywhere;
+}
+
+.teach-checkpoint > strong {
+  color: var(--accent);
+}
+
+.teach-checkpoint p {
+  white-space: pre-line;
+  margin-block: .35em .65em;
+}
+
+.teach-checkpoint summary {
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+  padding-block: .35em;
+}
+
+.teach-checkpoint details + details {
+  border-block-start: 1px solid var(--line);
+}
+
+.present-slide .teach-checkpoint summary {
+  position: relative;
+  z-index: 3;
+}
+
+.exercise-answers,
+.module-reference {
+  border-block-start: 1px solid var(--line);
+  padding-block-start: 1.2rem;
+}
+
+.exercise-answers h2,
+.reference-head h2 {
+  font: 700 1.5rem/1.25 var(--font-serif);
+  margin: 0;
+}
+
+.exercise-answers form > p,
+.exercise-answer p {
+  margin-block: .5rem 1rem;
+}
+
+.exercise-answer {
+  margin-block: 1rem;
+}
+
+.exercise-answer label {
+  display: block;
+  margin-block-end: .4rem;
+  font-weight: 600;
+}
+
+.exercise-answer textarea {
+  display: block;
+  width: 100%;
+  min-height: 5rem;
+  padding: .65rem .8rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font: 1rem/1.5 var(--font-mono);
+  color: var(--ink);
+  background: var(--panel);
+  resize: vertical;
+}
+
+.exercise-answer textarea[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.exercise-answer .answer-pass strong { color: var(--ok); }
+.exercise-answer .answer-retry strong { color: var(--danger); }
+.exercise-answer textarea + button { margin-block-start: .4rem; }
+.answer-preview .table-wrap { overflow: auto; max-height: 14rem; }
+
+.teach-checkpoint summary:focus-visible,
+.exercise-answer textarea:focus-visible,
+.module-reference:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.reference-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .6rem;
+}
+
+.module-reference .md {
+  max-width: 74ch;
+  overflow-wrap: anywhere;
+}
+
+@media print {
+  html:has(.module-reference),
+  body:has(.module-reference),
+  body:has(.module-reference) :is(#root, .app-shell, .main, .module-detail, .learn-body, .learn-main, .lesson) {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    margin: 0;
+    padding: 0;
+    background: white;
+    color: black;
+  }
+
+  body:has(.module-reference) #root > :not(.app-shell),
+  body:has(.module-reference) .topbar,
+  .module-detail :is(.module-nav-dock, .module-nav-backdrop),
+  .module-detail .lesson > :not(.module-reference),
+  .module-reference :is(button, .md-code-actions) {
+    display: none !important;
+  }
+
+  .module-reference {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 11pt;
+  }
+
+  .module-reference .md { max-width: none; }
+  .module-reference a[href^="https://"]::after {
+    content: " (" attr(href) ")";
+    font-size: .85em;
+    overflow-wrap: anywhere;
+  }
+  .module-reference :is(h2, h3) { break-after: avoid; }
+  .module-reference :is(tr, pre) { break-inside: avoid; }
+  .module-reference :is(.md-code, pre, code, .hljs, .hljs *) {
+    background: white;
+    color: black;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    overflow: visible;
+  }
+}

@@ -9,6 +9,7 @@
     },
     {
       "type": "sql_equals",
+      "columns": ["name", "antal"],
       "sql": "SELECT p.name, COUNT(o.id)::int AS antal FROM products p LEFT JOIN orders o ON o.product_id = p.id GROUP BY p.name ORDER BY antal, p.name",
       "expected": [
         ["Chokoladebolle", 0],

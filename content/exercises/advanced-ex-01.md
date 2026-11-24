@@ -12,9 +12,7 @@ sandbox:
   allowWrite: true
   checks: exercises/advanced-ex-01/checks.json
   starterSql: |
-    CREATE OR REPLACE VIEW v_menu AS
-    SELECT name, category, price FROM products WHERE in_stock = TRUE;
-    GRANT SELECT ON v_menu TO PUBLIC;
+    -- Skriv menuens SELECT, kontrollér resultatet og opret dernæst view og grant.
 ---
 
 # Opgave — View + GRANT
@@ -26,3 +24,5 @@ sandbox:
 2. Giv **`GRANT SELECT ON v_menu TO PUBLIC`**.
 
 Tryk **Tjek svar**.
+
+Forudsig om en ejer stadig kan læse products efter en tilbagekaldelse fra PUBLIC. Efter kontrollen kan du afprøve rolleforskellen i [GameHubs sikkerhedsprojekt](/learn/security-project-01), hvor samme læsning køres med en begrænset rolle.

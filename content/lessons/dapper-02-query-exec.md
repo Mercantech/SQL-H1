@@ -19,6 +19,13 @@ sandbox:
 
 Raymond har tre handlinger i caféens API: list drikkevarer, find én vare, og ændr en pris. Før han vælger Dapper-metode, beskriver han, om svaret skal være en samling, ét objekt eller et antal ændrede rækker.
 
+```teach
+{
+  "question": "Kunden skal oprettes, og skærmen skal vise det nye id. Hvad skal SQL returnere, og hvilket Dapper-kald vil du bruge til at læse værdien?",
+  "answer": "Lad INSERT returnere id med RETURNING id. QuerySingleAsync<int> læser den ene værdi. ExecuteAsync er velegnet til antal berørte rækker; det tal fortæller ikke, hvilket id databasen har tildelt."
+}
+```
+
 ## Query med parametre
 
 ```csharp
@@ -111,3 +118,5 @@ Nyttigt når I bygger WHERE dynamisk — stadig parametre, aldrig streng-konkat 
 > [!RAYMOND:testing] Hvordan ser “findes ikke” ud?
 >
 > Prøv et eksisterende og et opdigtet produktnavn i din lokale C#-kode. Vis forskellen på **`null` fra et opslag** og **`rows == 0` fra en UPDATE**. Beskriv, hvad API'en skal fortælle brugeren i hvert tilfælde.
+
+[Dappers dokumentation af Query og Execute](https://github.com/DapperLib/Dapper#readme).

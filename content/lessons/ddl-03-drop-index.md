@@ -120,6 +120,13 @@ Et partielt indeks omfatter færre rækker, men hjælper kun relevante forespør
 
 På små café-tabeller vælger planneren ofte seq scan — det er OK. Målet er at **kunne læse** planen og begrunde valget ud fra målinger.
 
+```teach
+{
+  "question": "En kollega opretter et indeks på orders.customer_id. EXPLAIN vælger fortsat Seq Scan på de 14 startordrer. Hvad er næste kontrol, og hvad kan du konkludere?",
+  "answer": "Kontrollér at indekset findes og passer til forespørgslens filter. Planlæggeren kan med god grund foretrække at læse hele en lille tabel. En undersøgelse af effekten kræver repræsentative data og sammenlignelige målinger."
+}
+```
+
 ## Prøv selv
 
 1. Opret `ix_orders_customer` hvis den ikke findes.
@@ -130,3 +137,5 @@ På små café-tabeller vælger planneren ofte seq scan — det er OK. Målet er
 > [!RAYMOND:skeptical] Seq Scan er ikke automatisk en fejl
 >
 > På caféens lille tabel kan en sekventiel læsning være billigst. Forklar, hvorfor dit indeks godt kan være oprettet korrekt uden at blive brugt. Hvilken større datamængde eller anden forespørgsel ville være relevant at undersøge?
+
+Fordybelse i PostgreSQL · [Hvordan PostgreSQL vælger at bruge et indeks](https://www.postgresql.org/docs/16/indexes-intro.html).

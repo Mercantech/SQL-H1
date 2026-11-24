@@ -100,6 +100,13 @@ Afleveringen bør kunne pege på:
 >
 > Skriv ét konkret behov, dit valgte design og én kontrol, der kan afsløre en fejl. Hvis argumentet er performance, vil jeg også se en sammenlignelig måling — ikke kun en fornemmelse af, at færre JOINs må være hurtigere.
 
+```teach
+{
+  "question": "Gårsdagens bon og et dashboard viser begge 28 kr. i dag. I morgen stiger menukortets pris til 30. Hvornår bør hver visning ændres?",
+  "answer": "Bonens aftalte købspris forbliver 28. Et dashboard med aktuelle menupriser skal vise 30 inden for den aftalte opdateringstid. Ved en lagret kopi skal nogen eje og kontrollere opdateringen."
+}
+```
+
 ## Prøv selv
 
 1. Skriv én sætning: “Vi denormaliserer ___ fordi ___ ; sandheden bor stadig i ___.”  

@@ -8,6 +8,7 @@ export type ModuleDto = {
   scaffoldOnly: boolean;
   objectives: string[];
   goalNumbers?: number[];
+  referenceMarkdown?: string | null;
   items: { slug: string; title: string; kind: string; order: number }[];
 };
 
@@ -55,7 +56,13 @@ export type ContentDto = {
     starterSql?: string;
   } | null;
   schema?: SeedSchema | null;
+  answerParts?: ExerciseAnswerPart[];
 };
+
+export type ExerciseAnswerPart = { id: string; label: string; starterSql?: string | null };
+export type QueryAnswer = { partId: string; sql: string };
+export type ExerciseCheckPart = { id: string; passed: boolean; message: string };
+export type ExerciseCheckResult = { passed: boolean; messages: string[]; parts?: ExerciseCheckPart[] };
 
 export type ResultSet = {
   label: string;
@@ -118,6 +125,7 @@ export async function executeSql(sql: string, contentSlug?: string, allowWrite?:
     method: "POST",
     body: JSON.stringify({ sql, contentSlug, allowWrite }),
   });
+  if (!res.ok) throw new Error("Forespørgslen kunne ikke køres. Prøv igen.");
   return (await res.json()) as ExecuteResult;
 }
 
@@ -130,12 +138,13 @@ export async function resetSandbox(contentSlug?: string) {
   return res.json();
 }
 
-export async function checkExercise(contentSlug: string) {
+export async function checkExercise(contentSlug: string, answers?: QueryAnswer[]): Promise<ExerciseCheckResult> {
   const res = await apiFetch("/sandbox/check", {
     method: "POST",
-    body: JSON.stringify({ contentSlug }),
+    body: JSON.stringify({ contentSlug, answers }),
   });
-  return (await res.json()) as { passed: boolean; messages: string[] };
+  if (!res.ok) throw new Error("Dine svar kunne ikke tjekkes. Prøv igen.");
+  return res.json();
 }
 
 export type InspectColumn = {

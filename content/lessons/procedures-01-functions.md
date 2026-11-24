@@ -29,6 +29,13 @@ sandbox:
 
 Raymond ser den samme beregning af ordrebeløb tre steder i caféens kode. Han vil samle den ét sted, men først skal du kunne forklare dens input, resultat og afhængighed af tabellerne.
 
+```teach
+{
+  "question": "En ordre har quantity 2 og pris 28. Hvilken type svar skal order_line_total give, og hvad ville du forvente for id'et på en ordre, der mangler, med lektionens SQL-funktion?",
+  "answer": "For en eksisterende ordre er svaret én numerisk værdi, 56. En skalar SQL-funktion, hvis afsluttende SELECT finder nul rækker, giver NULL. Prøv begge id'er."
+}
+```
+
 En **funktion** giver genbrugelig logik et navn. Raymond begynder med en almindelig SELECT, som du kan kontrollere, og giver derefter beregningen en parameter og en returtype.
 
 ## Skalar funktion (SQL-sprog)
@@ -144,3 +151,5 @@ SELECT name, price, add_vat(price) AS med_moms FROM products LIMIT 5;
 > [!RAYMOND:thinking] Forklar funktionen uden at læse op
 >
 > Beskriv input og returværdi for `order_line_total` og `top_products`. Hvorfor kaldes den ene i SELECT-listen og den anden i FROM? Peg på den del af definitionen, der understøtter dit svar.
+
+[PostgreSQL om SQL-funktioner](https://www.postgresql.org/docs/16/xfunc-sql.html).

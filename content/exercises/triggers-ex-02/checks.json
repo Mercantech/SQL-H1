@@ -4,20 +4,42 @@
     {
       "type": "sql_equals",
       "sql": "SELECT COUNT(*)::int FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'products' AND column_name = 'updated_at'",
-      "expected": [[1]],
+      "expected": [
+        [
+          1
+        ]
+      ],
       "message": "products.updated_at findes"
     },
     {
       "type": "sql_equals",
-      "sql": "SELECT COUNT(*)::int FROM pg_trigger t JOIN pg_class c ON c.oid = t.tgrelid JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relname = 'products' AND t.tgname = 'trg_products_touch' AND NOT t.tgisinternal",
-      "expected": [[1]],
-      "message": "Triggeren trg_products_touch findes"
+      "sql": "SELECT COUNT(*)::int FROM pg_trigger t WHERE t.tgrelid = 'public.products'::regclass AND t.tgname = 'trg_products_touch' AND t.tgfoid = to_regprocedure('public.touch_updated_at()') AND NOT t.tgisinternal AND t.tgtype = 19 AND t.tgenabled IN ('O','A')",
+      "expected": [
+        [
+          1
+        ]
+      ],
+      "message": "trg_products_touch kører touch_updated_at som en aktiv BEFORE UPDATE-trigger pr. række"
     },
     {
       "type": "sql_equals",
-      "sql": "SELECT COUNT(*)::int FROM products WHERE name = 'Te' AND updated_at IS NOT NULL",
-      "expected": [[1]],
-      "message": "Te har updated_at sat efter UPDATE"
+      "sql": "SELECT EXISTS (SELECT 1 FROM products WHERE updated_at IS NOT NULL)",
+      "expected": [
+        [
+          true
+        ]
+      ],
+      "message": "Mindst ét produkt har et gemt tidsstempel efter din opdatering"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "WITH changed AS (UPDATE products SET updated_at = TIMESTAMPTZ '2000-01-01 00:00:00+00' WHERE id = 1 RETURNING updated_at) SELECT updated_at >= transaction_timestamp() AND updated_at <= clock_timestamp() FROM changed",
+      "expected": [
+        [
+          true
+        ]
+      ],
+      "message": "En ny UPDATE får triggeren til at sætte et aktuelt tidsstempel"
     }
   ]
 }

@@ -23,6 +23,13 @@ sandbox:
 
 Raymond vil invitere EU-spillere med mindst 1.200 rating. Nu skal modellen levere et svar.
 
+```teach
+{
+  "question": "Et lokalt prøvedokument har settings.theme = dark og settings.language = da. Du skal ændre theme til light. Hvad sker der med language, hvis du erstatter hele settings med et dokument, der kun indeholder theme?",
+  "answer": "Feltet language forsvinder, når hele settings erstattes. Sæt kun settings.theme. Så skal prøvedokumentet bagefter indeholde både theme = light og language = da."
+}
+```
+
 ## MongoDB: samme spørgsmål, nyt sprog
 
 Disse kommandoer hører til **mongosh i Docker-labben**, ikke SQL-editoren:
@@ -55,6 +62,17 @@ Raymond vil vide, om indekset sparer arbejde, ikke blot om det findes. Undersøg
 ## PostgreSQL kan også gemme dokumenter
 
 PostgreSQL er stadig en relationel database, når en kolonne har typen `jsonb`. Vi kan kombinere normale nøgler og constraints med fleksible felter.
+
+Afprøv dit svar på stopspørgsmålet. Dette prøvedokument dannes i forespørgslen og kan køres i SQL-editoren med det samme.
+
+```sql
+WITH eksempel(profil) AS (
+    VALUES ('{"settings":{"theme":"dark","language":"da"}}'::jsonb)
+)
+SELECT jsonb_set(profil, '{settings}', '{"theme":"light"}') AS hele_settings,
+       jsonb_set(profil, '{settings,theme}', '"light"') AS kun_theme
+FROM eksempel;
+```
 
 **Skift først til GameHub-data med Nulstil database**, hvis du vil afprøve eksemplerne. Det erstatter dine aktuelle sandboxdata; gem SQL, du vil beholde, inden nulstilling.
 

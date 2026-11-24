@@ -27,6 +27,13 @@ sandbox:
 
 Raymond skal åbne caféen igen efter en udsolgt dag. Han vil markere et produkt som på lager og have handlingen kaldt tydeligt. Du hjælper ham med at vælge mellem en funktion og en procedure.
 
+```teach
+{
+  "question": "Du skal både beregne en værdi i en rapportkolonne og starte en rutine, der justerer priser. Skriv det første SQL-nøgleord til hvert kald.",
+  "answer": "Brug SELECT til at hente en funktionsværdi, fx SELECT order_line_total(1). Brug CALL til en procedure med de aftalte argumenter. Kontrollér bagefter de rækker, proceduren skulle ændre."
+}
+```
+
 Postgres har både **funktioner** og **procedures**. Raymond bruger især kaldemåden til at holde dem adskilt: en funktion kan indgå i en forespørgsel, mens en procedure kaldes med CALL.
 
 | | `FUNCTION` | `PROCEDURE` |
@@ -102,3 +109,5 @@ I mange kodebaser lever det meste stadig som **FUNCTION** + app-orchestration. P
 > [!RAYMOND:idea-notes] Vælg et formål før et objekt
 >
 > Forklar, hvorfor lagerhandlingen passer til CALL, og giv et eksempel på en beregning, du hellere vil bruge i SELECT. Vis derefter, hvordan proceduren kan ændres og slettes med sin signatur.
+
+[PostgreSQL om procedures](https://www.postgresql.org/docs/16/xproc.html).

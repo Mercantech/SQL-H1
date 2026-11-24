@@ -54,8 +54,17 @@ SELECT DISTINCT category FROM products;
 >
 > To kunder kan begge bo i Viborg. Hvorfor kan `SELECT DISTINCT city` samle dem, mens `SELECT DISTINCT name, city` normalt stadig viser to rækker? Forklar, hvilke værdier databasen sammenligner.
 
+```teach
+{
+  "question": "Tre kunder bor i Viborg. Hvor mange Viborg-rækker giver SELECT DISTINCT city fra customers, og hvad ændrer sig, hvis du også vælger name?",
+  "answer": "Med city alene giver Viborg én række. Med både city og name får du tre forskellige par. DISTINCT sammenligner alle valgte kolonner."
+}
+```
+
 ## Prøv selv
 
 1. Vis kun `name` og `price` fra `products`.
 2. Vis unikke kategorier fra `products`.
 3. Vis `name AS vare` og `price AS pris`.
+
+Fordybelse i PostgreSQL · [Kolonnelister og DISTINCT](https://www.postgresql.org/docs/16/queries-select-lists.html).

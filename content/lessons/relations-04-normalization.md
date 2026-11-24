@@ -53,6 +53,13 @@ LIMIT 12;
 
 Læg mærke til **redundans**: Annas by gentages; Espressos pris gentages på hver linje. Det er udgangspunktet for normalisering.
 
+```teach
+{
+  "question": "Anna har tre ordrer og flytter til Randers. Tegn hvor mange rækker du skal rette i et fladt ordreark og i caféens skema. Hvilken afhængighed anvender du?",
+  "answer": "I arket står hendes aktuelle by tre gange. I caféens skema rettes én customers-række, fordi customer_id bestemmer kundens aktuelle by. En leveringsby ved et bestemt køb kunne derimod høre til selve købet."
+}
+```
+
 ## Tre klassiske anomalier
 
 | Anomali | Problem i den flade tabel |
@@ -210,4 +217,4 @@ Start med den flade tabel (kunde, by, produkt, pris, antal, dato):
 
 Næste lektion: **designmønstre** (lookup, koblingstabel, soft delete, stjerne m.m.).
 
-Kilder: [Microsofts introduktion til normalisering](https://learn.microsoft.com/en-us/office/troubleshoot/access/database-normalization-description), [Griffith Universitys normaliseringsdefinitioner](https://www.ict.griffith.edu.au/normalization_tools/normalization/assets/Functional%20Dependencies%20and%20Normalization.pdf) og [PostgreSQLs nøgler og constraints](https://www.postgresql.org/docs/16/ddl-constraints.html).
+Kilder: [Microsofts introduktion til normalisering](https://learn.microsoft.com/en-us/office/troubleshoot/access/database-normalization-description), [funktionelle afhængigheder, BCNF og 3NF i kapitel 7 af Database System Concepts](https://db-book.com/slides-dir/PDF-dir/ch7.pdf) og [PostgreSQLs nøgler og constraints](https://www.postgresql.org/docs/16/ddl-constraints.html).

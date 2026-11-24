@@ -15,13 +15,13 @@
     },
     {
       "type": "sql_equals",
-      "sql": "SELECT COUNT(*)::int FROM information_schema.table_constraints WHERE table_schema = 'public' AND table_name = 'products' AND constraint_name = 'products_supplier_fk' AND constraint_type = 'FOREIGN KEY'",
+      "sql": "SELECT COUNT(*)::int FROM pg_constraint c JOIN pg_attribute a ON a.attrelid = c.conrelid AND c.conkey = ARRAY[a.attnum] JOIN pg_attribute b ON b.attrelid = c.confrelid AND c.confkey = ARRAY[b.attnum] WHERE c.contype = 'f' AND c.conname = 'products_supplier_fk' AND c.conrelid = 'products'::regclass AND a.attname = 'supplier_id' AND c.confrelid = 'suppliers'::regclass AND b.attname = 'id'",
       "expected": [[1]],
       "message": "FK products_supplier_fk findes"
     },
     {
       "type": "sql_equals",
-      "sql": "SELECT COUNT(*)::int FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ix_products_supplier'",
+      "sql": "SELECT COUNT(*)::int FROM pg_index i JOIN pg_class ix ON ix.oid = i.indexrelid JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = i.indkey[0] WHERE i.indrelid = 'products'::regclass AND ix.relname = 'ix_products_supplier' AND i.indnkeyatts = 1 AND i.indisvalid AND i.indpred IS NULL AND a.attname = 'supplier_id'",
       "expected": [[1]],
       "message": "Indeks ix_products_supplier findes"
     },

@@ -188,6 +188,13 @@ UI: "Ret pris på Latte"
 
 Næste lektion: **DELETE** — CRUD Delete og fremmednøgler.
 
+```teach
+{
+  "question": "Te koster 25.00 i startdata. Forudsig prisen efter to kørsler af henholdsvis SET price = 27 og SET price = price + 2. Regn fra samme startpris hver gang.",
+  "answer": "Den faste pris ender på 27.00 efter begge kørsler. Tillægget giver først 27.00 og derefter 29.00. Brug samme WHERE på Te, så du sammenligner den samme vare."
+}
+```
+
 ## Prøv selv
 
 1. Preview alle produkter i **`Mad`**.
@@ -197,3 +204,5 @@ Næste lektion: **DELETE** — CRUD Delete og fremmednøgler.
 > [!RAYMOND:idea-notes] Gør din ændring forklarlig
 >
 > Vis din makker filteret, den gamle værdi og den nye værdi. Forklar også, hvad endnu en kørsel ville gøre. Når du kan svare på alle tre ting, har du mere end en forespørgsel, der bare kører.
+
+Fordybelse i PostgreSQL · [Opdatér udvalgte rækker](https://www.postgresql.org/docs/16/dml-update.html).

@@ -41,11 +41,11 @@ Samme advarsel som ved Update:
 DELETE FROM orders;
 ```
 
-Altid preview:
+Eksemplerne tager hver især udgangspunkt i caféens startdata. Forudsig antallet af rækker, før du kører en sletning. Sådan sammenligner du filteret før og efter:
 
 ```sql
-SELECT * FROM orders WHERE quantity = 3;
-DELETE FROM orders WHERE quantity = 3;
+SELECT * FROM orders WHERE quantity = 2;
+DELETE FROM orders WHERE quantity = 2;
 ```
 
 ## Delete én række
@@ -168,9 +168,16 @@ Delete  DELETE   → annullér ordren
 3. Findes der barn-rækker (ordrer), der blokerer?
 4. Skal jeg slette børn først — eller slette noget andet?
 
+```teach
+{
+  "question": "På caféens startdata finder WHERE id = 14 en walk-in-ordre. Hvilket id bør DELETE med samme filter returnere første gang, og hvor mange rækker påvirker anden kørsel?",
+  "answer": "Første kørsel returnerer id 14, hvis du bruger RETURNING id. Anden kørsel berører nul rækker, fordi den valgte ordre er væk. En SELECT med samme filter viser derefter et tomt resultat."
+}
+```
+
 ## Prøv selv
 
-1. Find ordrer med `quantity = 3` via `SELECT` (join gerne kundenavn).
+1. Find ordrer med `quantity = 2` via `SELECT` (join gerne kundenavn).
 2. `DELETE` dem med `RETURNING`.
 3. Prøv (forstå fejlen) at slette en kunde der stadig har ordrer — og forklar hvorfor.
 
@@ -179,3 +186,5 @@ Næste lektion går i dybden: **cascading**, `ON DELETE`-regler og strategier fo
 > [!RAYMOND:question] Sletning eller en anden ændring?
 >
 > Menuen har et udsolgt produkt og databasen en overflødig testordre. Hvilken handling bør være `UPDATE`, og hvilken kan være `DELETE`? Forklar, hvilken historik der skal overleve i hvert tilfælde.
+
+Fordybelse i PostgreSQL · [Slet udvalgte rækker](https://www.postgresql.org/docs/16/dml-delete.html).

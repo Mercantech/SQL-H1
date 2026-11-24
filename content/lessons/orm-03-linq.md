@@ -16,6 +16,13 @@ objectives:
 
 Raymond siger: “Vis mig CS2-turneringerne og deres ledige pladser.” Du kan skrive SQL'en. Nu skal EF gøre det for dig, og du skal kunne kontrollere resultatet.
 
+```teach
+{
+  "question": "Du flytter ToListAsync foran et filter på turneringsspil. Hvor bør du kigge for at afgøre, om filtreringen stadig sker i PostgreSQL?",
+  "answer": "Se SQL'en for den forespørgsel, der materialiseres, eller brug loggen for det faktiske kald. Ligger filteret først i C# efter materialisering, hentes flere rækker end de ønskede."
+}
+```
+
 ## En bestilling, ikke en liste endnu
 
 ```csharp

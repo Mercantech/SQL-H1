@@ -77,6 +77,13 @@ PostgreSQL understøtter rekursive CTE’er til hierarkier. Caféens data har ik
 >
 > Peg på outputkolonnerne fra `linjer`, så fra `pr_kunde`, og til sidst i rapporten. Hvilket trin laver beløbet, og hvilket summerer det? Hvis du kan forklare de tre roller, er navngivningen begyndt at hjælpe dig.
 
+```teach
+{
+  "question": "Du vil vise det dyreste produkt i hver kategori. Hvad skal din CTE beregne, og hvad skal forespørgslen bagefter filtrere på?",
+  "answer": "CTE'en kan beregne ROW_NUMBER() pr. category med den højeste price først. Det ydre SELECT beholder nr = 1. Brug en ekstra sorteringsnøgle som id, hvis to produkter har samme pris og du skal vælge præcis ét."
+}
+```
+
 ## Prøv selv
 
 Lav en CTE `viborg` med kunder i Viborg, og join den med deres ordrer.

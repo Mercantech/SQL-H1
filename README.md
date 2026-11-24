@@ -113,7 +113,15 @@ Markdown under [`content/`](content/):
 
 - `modules.json` — modulkatalog
 - `lessons/` — teori
-- `exercises/` — opgaver + `checks.json` + `seeds/`
+- `exercises/` — SQL-opgaver, projekter og opgavernes `checks.json`
+- `seeds/` — startdata for elevens database
+- `references/<modulslug>.md` — modulets printvenlige opslag, som kan linkes med `/modules/<modulslug>#opslag`
+
+Samme teoritekst bruges i elevvisning og præsentation. En kodeblok med sproget `teach` indeholder JSON med `question`, `answer` og eventuelt `hint`. Eleven tager stilling til spørgsmålet og åbner selv forklaringen. Knyt aktiviteten til lektionens faglige kilde og genbrug et tidligere begreb i et senere eksempel. Caféens [JOIN-forløb](web/public/forloeb/joins/index.html) viser metoden fra [teach](https://github.com/mattpocock/skills/blob/main/skills/productivity/teach/SKILL.md).
+
+I læseopgaver bedømmes elevens egen forespørgsel for hver del. `ordered: false` tillader fri rækkefølge og bevarer dubletter. `columns` angiver eksplicit krævede kolonnenavne. I skriveopgaver tester `sql_equals` databasens tilstand, `sql_errors` afprøver en forventet SQLSTATE, og `answer_equals` giver et særskilt læsesvar. Hver kontrol kører i en transaktion, som rulles tilbage. Når en kontrol indsætter prøverækker, skal den give egne prøve-id'er for at skåne elevens sekvenser.
+
+Kør `dotnet run --project api.tests -- --exercises` for at efterprøve alle opgaver på PostgreSQL. Sæt `TEACH_TEST_CONNECTION` til en lokal testdatabase med navnet `teach_checks_test` og en bruger, der kan oprette midlertidige elevdatabaser og roller.
 
 Fuldt indhold: **SELECT** → **DML** → **JOIN** → **relationer** → **constraints** → **DDL/E/R** → **views** → **rettigheder/transaktioner** → **procedures** → **triggers** → **drift** → **ADO.NET** → **Dapper**.
 

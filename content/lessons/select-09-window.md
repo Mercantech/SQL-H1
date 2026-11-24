@@ -44,15 +44,28 @@ ORDER BY category, nr;
 
 ## RANK og DENSE_RANK
 
-```sql
-SELECT name, price,
-  RANK() OVER (ORDER BY price DESC) AS rang,
-  DENSE_RANK() OVER (ORDER BY price DESC) AS taet_rang
-FROM products
-ORDER BY price DESC;
+Caféen overvejer et tilbud på Espresso til samme pris som Te. De fem rækker herunder findes kun i forespørgslen. Menukortets gemte priser påvirkes ikke.
+
+```teach
+{
+  "question": "På kampagnelisten koster Espresso og Te begge 25. To varer er billigere, og Latte er den næste dyrere. Hvilke rangtal får Espresso, Te og Latte med RANK og DENSE_RANK, når billigste pris står først?",
+  "answer": "Med RANK får de 3, 3 og 5. Med DENSE_RANK får de 3, 3 og 4. Espresso og Te deler tredjepladsen. RANK tæller de to rækker med, når næste placering beregnes."
+}
 ```
 
-Ved samme sorteringsværdi giver begge samme rang. For priser med én delt førsteplads kan `RANK` give `1, 1, 3`, mens `DENSE_RANK` giver `1, 1, 2`. `ROW_NUMBER` giver derimod hver række sit eget nummer; ved lige priser kræves et ekstra sorteringskriterium, hvis valget skal være entydigt.
+```sql
+WITH tilbud(vare, pris) AS (
+  VALUES ('Chokoladebolle', 18.00), ('Croissant', 22.50),
+         ('Espresso', 25.00), ('Te', 25.00), ('Latte', 35.00)
+)
+SELECT vare, pris,
+       RANK() OVER (ORDER BY pris) AS rang,
+       DENSE_RANK() OVER (ORDER BY pris) AS taet_rang
+FROM tilbud
+ORDER BY pris, vare;
+```
+
+SQL'en sorterer på pris, når den beregner rang. Den yderste sortering på pris og varenavn bestemmer kun visningen. Prøv bagefter [kampagnen på alle otte varer](/learn/select-ex-05).
 
 ## Løbende sum
 
@@ -74,3 +87,5 @@ Vinduesfunktionerne her beregner rapportværdier uden at ændre tabellens data. 
 ## Prøv selv
 
 Vis de 2 dyreste produkter **i hver kategori** (hint: brug `ROW_NUMBER` i en ydre filtrering — eller se WITH-lektionen i JOIN-modulet).
+
+Fordybelse i PostgreSQL · [Vinduesfunktioner i PostgreSQL](https://www.postgresql.org/docs/16/tutorial-window.html).

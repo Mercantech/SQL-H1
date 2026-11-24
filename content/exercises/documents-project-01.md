@@ -71,3 +71,7 @@ Aflevér `solution.js`, `mission.md` med outputs/planudsnit og én tegning. I sk
 Kør MongoDB-kommandoerne lokalt i laboratoriet. Underviseren vurderer projektet ved gennemgangen.
 
 Stop uden at fjerne data med `docker compose down`. **Kun når I vil slette labdata:** `docker compose down -v`.
+
+## Nyt adgangsmønster
+
+Næste undervisningsgang skal profilen vise de seneste 20 af spillerens 10.000 tidligere kampe. Tegn den model, I nu foretrækker, og forklar hvordan I henter næste side. Sammenlign tegningen med jeres første profilmodel og peg på det krav, der ændrede eller fastholdt jeres valg.

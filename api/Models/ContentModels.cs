@@ -8,6 +8,7 @@ public class ModuleCatalogItem
     public int Order { get; set; }
     public bool ScaffoldOnly { get; set; }
     public string[] Objectives { get; set; } = [];
+    public string? ReferenceMarkdown { get; set; }
     public int[] GoalNumbers { get; set; } = [];
 }
 
@@ -76,6 +77,10 @@ public class ExerciseAssertion
     public string? Sql { get; set; }
     public List<List<object?>>? Expected { get; set; }
     public string? Message { get; set; }
+    public bool Ordered { get; set; } = true;
+    public string? SqlState { get; set; }
+    public string[]? Columns { get; set; }
+    public bool NeedsAnswer(ContentItem item) => Type == "answer_equals" || (Type == "sql_equals" && item.Sandbox?.AllowWrite == false);
 }
 
 public class ExecuteRequest
@@ -105,13 +110,19 @@ public class ExecuteResult
     public List<ResultSet> Sets { get; set; } = [];
 }
 
+public record AnswerPart(string Id, string Label);
+public record StudentAnswer(string PartId, string Sql);
+public record PartFeedback(string Id, bool Passed, string Message);
+
 public class CheckRequest
 {
+    public List<StudentAnswer> Answers { get; set; } = [];
     public string ContentSlug { get; set; } = "";
 }
 
 public class CheckResult
 {
+    public List<PartFeedback> Parts { get; set; } = [];
     public bool Passed { get; set; }
     public List<string> Messages { get; set; } = [];
 }

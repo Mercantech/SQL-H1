@@ -21,6 +21,41 @@
         ["Croissant", 24.00]
       ],
       "message": "Del 3: Bagværk +1.50"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "SELECT name, price FROM products WHERE category <> 'Bagværk' ORDER BY name",
+      "expected": [
+        [
+          "Espresso",
+          28
+        ],
+        [
+          "Kakao",
+          32
+        ],
+        [
+          "Latte",
+          35
+        ],
+        [
+          "Saladsandwich",
+          52
+        ],
+        [
+          "Sandwich",
+          48
+        ],
+        [
+          "Smoothie",
+          42
+        ],
+        [
+          "Te",
+          25
+        ]
+      ],
+      "message": "Priser uden for Bagværk skal bevares"
     }
   ]
 }

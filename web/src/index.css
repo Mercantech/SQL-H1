@@ -4004,6 +4004,8 @@ body.is-resizing-split .sql-result {
   align-items: center;
   gap: 1rem;
   padding: 0.65rem 1rem;
+  /* Raymond's fixed help button shares this row with the slide controls. */
+  padding-inline-end: calc(7rem + env(safe-area-inset-right, 0px));
   border-top: 1px solid var(--line);
   background: rgba(247, 250, 245, 0.95);
 }
@@ -4246,7 +4248,9 @@ body.is-resizing-split .sql-result {
   }
 
   .present-footer {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .5rem;
+    padding-inline-end: calc(6.25rem + env(safe-area-inset-right, 0px));
   }
 
   .present-hint {

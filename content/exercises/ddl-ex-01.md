@@ -13,12 +13,12 @@ sandbox:
   allowWrite: true
   checks: exercises/ddl-ex-01/checks.json
   starterSql: |
-    -- 1) Opret suppliers
-    -- 2) Tilføj products.supplier_id + FK
-    -- 3) Indeks på supplier_id
+    -- Skitsér leverandøren og den kolonne, som skal pege på den.
 ---
 
 # Opgave — Udvid caféen med leverandører
+
+Tegn først den nye tabel og pilen til den. Forudsig, om et produkt uden leverandør må findes.
 
 Start fra café-seed’en. Udfør trinnene, og tryk **Tjek svar**.
 
@@ -39,3 +39,5 @@ Start fra café-seed’en. Udfør trinnene, og tryk **Tjek svar**.
 5. Indsæt leverandøren **`Nordic Beans`** i byen **`Aarhus`**, og sæt **`Espresso`**.`supplier_id` til den nye leverandørs `id`.
 
 Tip: Brug `RETURNING id` på `INSERT INTO suppliers ...`, eller slå id op med `SELECT`.
+
+Find den nye FK på [Database-siden](/database). Få en makker til at følge Espresso til Nordic Beans og forklare, hvorfor et andet produkt stadig kan have en tom leverandørreference.

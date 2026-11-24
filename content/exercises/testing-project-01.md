@@ -46,3 +46,7 @@ Aflever testplan, kodeændringer, output fra før/efter en afsløret fejl og en 
 | Forklaring | Hvilke fejl dækker testene, og hvilke dækker de ikke? |
 
 Underviseren kan vælge en test fra planen og bede jer ændre input. Når I kan forudsige udfaldet og vise det, har I noget stærkere end en tilfældig grøn skærm.
+
+## Genbrug jeres restore-bevis
+
+Find nu den kendte række og det afviste forsøg fra [driftsmodulets gendannelse](/learn/drift-02-backup-explain). Få en makker til at vælge endnu en regel eller et forventet resultat i jeres aktuelle fixture. Forudsig udfaldet og kontrollér begge databaser. Notér den forskel, en kontrol af rækkeantal alene ville have overset.

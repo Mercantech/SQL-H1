@@ -14,6 +14,13 @@ objectives:
 
 **Mission · Målpind 23 · 20 minutter.** Raymond får et forslag til GameHubs supportflow: »Vi krypterer passwords, så supporten kan sende dem tilbage.« Han følger forslaget til dørs: hvem skulle have nøglen, og hvorfor skulle GameHub overhovedet kunne læse et password? Et sikkert login skal kunne kontrollere brugerens bevis uden at give supporten originalen tilbage.
 
+```teach
+{
+  "question": "En elev er logget ind og må se sin egen tilmelding. Hvilket lag beviser identiteten, hvilket lag kontrollerer ejerskabet, og hvilken konto læser tabellen?",
+  "answer": "Mercantec Auth udsteder tokenet; API'et validerer det og kontrollerer rettigheden til ressourcen ud fra brugerens stabile identitet. Databaseforbindelsens begrænsede rolle udfører læsningen."
+}
+```
+
 > [!RAYMOND:curious] Hvad skal systemet kunne svare på?
 >
 > Skal supporten kende brugerens gamle password, eller skal brugeren kunne få adgang igen gennem identitetsplatformens gendannelse? Det kræver forskellige muligheder. Start med **behovet**, før I vælger lagringsform.

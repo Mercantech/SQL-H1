@@ -32,6 +32,21 @@ docker compose build workshop
 
 Labrollen `workshop` er ejer/admin, fordi den skal oprette og ændre skemaer. Det er en undervisningsrolle til migration og scaffolding, ikke et mønster for en produktionsapps runtime-rettigheder.
 
+## Caférapport med ADO.NET og Dapper
+
+Brug samme database og workshop-service som i startafsnittet. Rapporten opretter de seks kendte cafékunder i en midlertidig tabel i forbindelse med hver kørsel. Du kan derfor også køre den før din første migration.
+
+```bash
+docker compose run --rm workshop dotnet run --project CafeReport -- ado Viborg
+docker compose run --rm workshop dotnet run --project CafeReport -- dapper Viborg
+docker compose run --rm workshop dotnet run --project CafeReport -- ado Aarhus
+docker compose run --rm workshop dotnet run --project CafeReport -- dapper Aarhus
+```
+
+Forudsig rækkefølgen før hver kørsel. Viborg giver Anna, Clara og Freja. Kun Clara mangler e-mail. Aarhus giver Bo og Eva med e-mail. Prøv også Randers, som giver nul rækker. Sammenhold de to adgangslag for den samme by.
+
+Åbn `CafeReport/Program.cs`. Find parameteren i begge kodeveje og følg Claras e-mail ind i `Customer.Email`. Tilføj dernæst by til SQL-resultat, record og begge mappinger. Kør de to Viborg-rapporter igen og vis, at samme by og samme manglende e-mail fremgår begge steder.
+
 ## 2. Code-first: model → migration → database
 
 Læs først `CodeFirst/Models.cs` og `GameHubContext.cs`. Tjek især 1:mange-relationen og det unikke indeks på turnering + spillertag.

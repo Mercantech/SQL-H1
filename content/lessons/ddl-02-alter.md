@@ -127,6 +127,13 @@ ALTER TABLE products ALTER COLUMN vat_pct SET NOT NULL;
 - At skifte PK-strategi uden plan  
 - At droppe kolonner appen stadig bruger  
 
+```teach
+{
+  "question": "To leverandører er allerede oprettet. Du tilføjer phone uden default. I hvilken rækkefølge kan du indføre kravet om, at begge har et telefonnummer?",
+  "answer": "Tilføj phone som tilladt NULL, udfyld de to eksisterende telefonnumre og kontrollér, at ingen række stadig har NULL. Gør derefter kolonnen NOT NULL. Ellers afvises ændringen af de eksisterende NULL-værdier."
+}
+```
+
 ## Prøv selv
 
 1. Tilføj `phone` på `suppliers`, indsæt data, sæt derefter `NOT NULL` (med backfill).  
@@ -136,3 +143,5 @@ ALTER TABLE products ALTER COLUMN vat_pct SET NOT NULL;
 > [!RAYMOND:reading] Gennemgå migrationen med en makker
 >
 > Forklar starttilstand, rækkefølge og sluttilstand for din ændring. Vis, hvilke gamle rækker der er bevaret, og hvilken ny ugyldig værdi databasen nu skal afvise.
+
+Fordybelse i PostgreSQL · [Tilføj kolonner og ændr regler](https://www.postgresql.org/docs/16/ddl-alter.html).

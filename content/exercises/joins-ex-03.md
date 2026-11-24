@@ -12,14 +12,12 @@ sandbox:
   allowWrite: false
   checks: exercises/joins-ex-03/checks.json
   starterSql: |
-    WITH dyre AS (
-      SELECT name, price FROM products
-      WHERE price > (SELECT AVG(price) FROM products)
-    )
-    SELECT name, price FROM dyre ORDER BY price DESC;
+    -- Hvilken lille forespørgsel leverer sammenligningsværdien?
 ---
 
 # Opgave C — Subquery og WITH
+
+Giv hver rapport et spørgsmål med almindelige ord. Marker hvilken del, der kræver et samlet tal eller en placering, før du kan vælge den endelige række.
 
 ## Del 1
 
@@ -32,3 +30,5 @@ Brug en CTE `ranked` med `ROW_NUMBER()` pr. kategori (dyreste først). Vis de pr
 ## Del 3
 
 Vis kundenavne for kunder hvis **samlede** `quantity` på tværs af ordrer er mindst **4**. Sorter på `name`.
+
+Flyt midlertidigt din CTE's indre SELECT ud i editoren. Læs en kategori igennem fra øverst til nederst, og forklar en makker, hvorfor vinderens placering er 1.

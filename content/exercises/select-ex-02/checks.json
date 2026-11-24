@@ -3,6 +3,7 @@
   "assertions": [
     {
       "type": "sql_equals",
+      "columns": ["name", "price"],
       "sql": "SELECT name, price FROM products WHERE category = 'Drikke' ORDER BY price DESC, name",
       "expected": [
         ["Smoothie", 42.00],
@@ -14,6 +15,7 @@
     },
     {
       "type": "sql_equals",
+      "columns": ["name", "price"],
       "sql": "SELECT name, price FROM products ORDER BY price ASC, name LIMIT 3",
       "expected": [
         ["Chokoladebolle", 18.00],
@@ -24,6 +26,7 @@
     },
     {
       "type": "sql_equals",
+      "columns": ["name", "city"],
       "sql": "SELECT name, city FROM customers WHERE name LIKE '%sen' ORDER BY name",
       "expected": [
         ["Anna Jensen", "Viborg"],

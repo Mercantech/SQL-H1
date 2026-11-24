@@ -16,6 +16,13 @@ objectives:
 
 Raymond vil åbne **GameHub**: et sted, hvor spillere finder turneringer og tilmelder sig. SQL kan du allerede. Nu skal din C#-kode tale med databasen uden at du manuelt flytter hver eneste kolonne ind i hvert eneste objekt.
 
+```teach
+{
+  "question": "Uden opslag: Du tilføjer en Tournament med Add, og en anden forbindelse tæller turneringerne. Hvornår kan tællingen stige?",
+  "answer": "Add markerer entiteten i den aktuelle DbContext. SaveChangesAsync sender indsættelsen. En anden forbindelse kan læse den, når ændringen er committed og synlig under dens transaktionsisolering."
+}
+```
+
 > [!RAYMOND:question] Hvem oversætter bestillingen?
 >
 > “Jeg bestilte en liste af turneringer. Hvorfor sidder jeg stadig og kalder `reader.GetString(1)`?” Følg én **titel** fra resultatkolonne til C#-objekt: hvilket arbejde vil du lade værktøjet overtage?

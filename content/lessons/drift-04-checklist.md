@@ -22,6 +22,13 @@ sandbox:
 
 Raymond overtager caféprojektet i morgen. Han beder om en kort driftsbeskrivelse, hvor hvert kryds kan underbygges med en fil, en forespørgsel eller en afprøvning. Brug tjeklisten til at finde de huller, en anden ellers ville opdage under drift.
 
+```teach
+{
+  "question": "Et hold kan starte deres database fra nul. Hvilket bevis vil du nu bede om for at se, om de også kan gendanne gårsdagens data?",
+  "answer": "Bed om et dump fra en kendt starttilstand og en gendannelse i en anden database. Sammenhold en kendt række og en regel med originalen. Notér database, kommando og faktisk resultat."
+}
+```
+
 ## 1) Hvad kører hvor?
 
 - [ ] Postgres-service i Compose har navn og image (`postgres:16` …)
@@ -90,3 +97,5 @@ Kopiér og udfyld:
 > [!RAYMOND:testing] Lad en makker kontrollere ét kryds
 >
 > Vælg et punkt, som kan efterprøves: fx **gendannelse** i en testdatabase eller app-rollens adgang. Giv din makker fremgangsmåde og forventet resultat. Beskriv også ærligt, hvad I endnu ikke har afprøvet.
+
+[PostgreSQL om brug af EXPLAIN](https://www.postgresql.org/docs/16/using-explain.html).

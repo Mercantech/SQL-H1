@@ -3,6 +3,7 @@
   "assertions": [
     {
       "type": "sql_equals",
+      "columns": ["name", "category", "price", "nr"],
       "sql": "SELECT name, category, price, ROW_NUMBER() OVER (PARTITION BY category ORDER BY price DESC)::int AS nr FROM products ORDER BY category, nr",
       "expected": [
         ["Croissant", "Bagværk", 22.50, 1],
@@ -18,18 +19,19 @@
     },
     {
       "type": "sql_equals",
-      "sql": "SELECT name, DENSE_RANK() OVER (ORDER BY price)::int AS rang FROM products ORDER BY rang, name",
+      "columns": ["name", "rang"],
+      "sql": "WITH kampagne AS (SELECT name, CASE WHEN name = 'Espresso' THEN 25.00 ELSE price END AS pris FROM products) SELECT name, DENSE_RANK() OVER (ORDER BY pris)::int AS rang FROM kampagne ORDER BY rang, name",
       "expected": [
         ["Chokoladebolle", 1],
         ["Croissant", 2],
+        ["Espresso", 3],
         ["Te", 3],
-        ["Espresso", 4],
-        ["Latte", 5],
-        ["Smoothie", 6],
-        ["Sandwich", 7],
-        ["Saladsandwich", 8]
+        ["Latte", 4],
+        ["Smoothie", 5],
+        ["Sandwich", 6],
+        ["Saladsandwich", 7]
       ],
-      "message": "Del 2: DENSE_RANK på pris"
+      "message": "Del 2: Delt placering for Espresso og Te på kampagnelisten"
     }
   ]
 }

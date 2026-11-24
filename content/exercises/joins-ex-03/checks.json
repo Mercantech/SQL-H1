@@ -3,6 +3,7 @@
   "assertions": [
     {
       "type": "sql_equals",
+      "columns": ["name", "price"],
       "sql": "SELECT name, price FROM products WHERE price > (SELECT AVG(price) FROM products) ORDER BY price DESC",
       "expected": [
         ["Saladsandwich", 52.00],
@@ -14,6 +15,7 @@
     },
     {
       "type": "sql_equals",
+      "columns": ["name", "category", "price"],
       "sql": "WITH ranked AS (SELECT name, category, price, ROW_NUMBER() OVER (PARTITION BY category ORDER BY price DESC) AS nr FROM products) SELECT name, category, price FROM ranked WHERE nr = 1 ORDER BY category",
       "expected": [
         ["Croissant", "Bagværk", 22.50],

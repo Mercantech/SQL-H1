@@ -16,6 +16,13 @@ objectives:
 
 Raymond får to demoer og hører: “Min løsning føles hurtigere.” Han beder først om at se, om de leverer det samme svar, og hvor stopuret starter og slutter. Fornemmelsen er en hypotese, som du nu skal gøre målbar.
 
+```teach
+{
+  "question": "To systemer returnerer hver 20 spillere på under 100 ms, men med forskellige id'er. Hvad skal du afklare før du bruger målingen til en anbefaling?",
+  "answer": "Kontrollér identiske data, filtre, felter, sortering og tie-breaker, og sammenlign id'erne. Gentag først målingen efter at opgaven giver samme resultat, og dokumentér målegrænsen."
+}
+```
+
 ## Aftal banen før løbet
 
 GameHub har et **øvelseskrav**: et EU-toplistekald skal kunne levere de samme 20 profiler på under 100 ms i den aftalte lokale test. Tallet er et projektkrav, ikke en garanti for dit udstyr.

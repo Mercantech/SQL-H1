@@ -1,17 +1,63 @@
 {
-  "description": "CHECK og UNIQUE constraints på café-tabeller.",
+  "description": "Kontrollér prisgrænser og e-mailunikhed på de krævede cafékolonner.",
   "assertions": [
     {
       "type": "sql_equals",
-      "sql": "SELECT COUNT(*)::int FROM information_schema.check_constraints WHERE constraint_schema = 'public' AND constraint_name = 'products_price_positive'",
-      "expected": [[1]],
-      "message": "CHECK products_price_positive findes"
+      "sql": "SELECT COUNT(*)::int FROM pg_constraint c JOIN pg_attribute a ON a.attrelid = c.conrelid AND c.conkey = ARRAY[a.attnum] WHERE c.conrelid = 'public.products'::regclass AND c.contype = 'c' AND a.attname = 'price' AND c.conname = 'products_price_positive'",
+      "expected": [
+        [
+          1
+        ]
+      ],
+      "message": "products_price_positive skal gælde for products.price"
     },
     {
       "type": "sql_equals",
-      "sql": "SELECT COUNT(*)::int FROM information_schema.table_constraints WHERE table_schema = 'public' AND constraint_name = 'customers_email_unique' AND constraint_type = 'UNIQUE'",
-      "expected": [[1]],
-      "message": "UNIQUE customers_email_unique findes"
+      "sql": "SELECT COUNT(*)::int FROM pg_constraint c JOIN pg_attribute a ON a.attrelid = c.conrelid AND c.conkey = ARRAY[a.attnum] WHERE c.conrelid = 'public.customers'::regclass AND c.contype = 'u' AND a.attname = 'email' AND c.conname = 'customers_email_unique'",
+      "expected": [
+        [
+          1
+        ]
+      ],
+      "message": "customers_email_unique skal gælde for customers.email"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "INSERT INTO products (id, name, category, price) SELECT COALESCE(MAX(id), 0) + 1, 'Kontrolvare', 'Mad', 0.01 FROM products RETURNING price",
+      "expected": [
+        [
+          0.01
+        ]
+      ],
+      "message": "Mindste positive ørepris skal kunne gemmes"
+    },
+    {
+      "type": "sql_errors",
+      "sql": "INSERT INTO products (id, name, category, price) SELECT COALESCE(MAX(id), 0) + 1, 'Kontrolvare', 'Mad', 0 FROM products RETURNING price",
+      "sqlState": "23514",
+      "message": "Prisen 0 skal afvises af CHECK"
+    },
+    {
+      "type": "sql_errors",
+      "sql": "INSERT INTO products (id, name, category, price) SELECT COALESCE(MAX(id), 0) + 1, 'Kontrolvare', 'Mad', -0.01 FROM products RETURNING price",
+      "sqlState": "23514",
+      "message": "Prisen -0.01 skal afvises af CHECK"
+    },
+    {
+      "type": "sql_errors",
+      "sql": "INSERT INTO customers (id, name, city, email) SELECT (SELECT COALESCE(MAX(id), 0) + 1 FROM customers), 'Kontrolkunde', 'Viborg', email FROM customers WHERE email IS NOT NULL ORDER BY id LIMIT 1",
+      "sqlState": "23505",
+      "message": "En eksisterende e-mail skal afvises som dublet"
+    },
+    {
+      "type": "sql_equals",
+      "sql": "INSERT INTO customers (id, name, city, email) SELECT COALESCE(MAX(id), 0) + 1, 'Kontrolkunde', 'Viborg', gen_random_uuid()::text || '@example.invalid' FROM customers RETURNING name",
+      "expected": [
+        [
+          "Kontrolkunde"
+        ]
+      ],
+      "message": "En ny kunde med en anden e-mail skal kunne indsættes"
     }
   ]
 }

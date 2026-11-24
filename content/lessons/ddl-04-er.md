@@ -125,6 +125,13 @@ I jeres projekt skal I kunne:
 
 I behøver ikke tegne perfekt UML — men pil/kardinalitet skal være entydig.
 
+```teach
+{
+  "question": "Tegn én streg fra produkter til leverandører. Et produkt kan være uden leverandør. Hvilken kolonne og hvilken egenskab skal din makker kunne finde på Database-siden?",
+  "answer": "products.supplier_id skal være en fremmednøgle til suppliers.id og tillade NULL. Én leverandør kan have flere produkter. Der kan også være en leverandør, som endnu ikke leverer et produkt."
+}
+```
+
 ## Prøv selv
 
 1. Tegn caféen med kardinalitet.  
@@ -134,3 +141,7 @@ I behøver ikke tegne perfekt UML — men pil/kardinalitet skal være entydig.
 > [!RAYMOND:idea-notes] Lad en anden læse modellen
 >
 > Giv en makker dit diagram uden at forklare det først. Kan de finde primærnøglen, mange-siden og en valgfri reference? Ret de steder, hvor tegningen kræver, at læseren gætter.
+
+Sammenlign tegningen med [din databases faktiske relationer](/database).
+
+Fordybelse i PostgreSQL · [Relationer med FOREIGN KEY](https://www.postgresql.org/docs/16/ddl-constraints.html).

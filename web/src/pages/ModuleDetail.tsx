@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { fetchModules, type ModuleDto } from "../api";
 import { LearningObjectives } from "../components/LearningObjectives";
 import { CourseMission } from "../components/CourseMission";
 import { contentKindLabel, courseMissions } from "../lib/course";
 import { ModuleNav } from "../components/ModuleNav";
+import { Markdown } from "../components/Markdown";
 import { useModuleNavOpen } from "../hooks/useModuleNavOpen";
 import { RaymondAvatar } from "../components/raymond/RaymondUI";
 import { getModuleReaction } from "../lib/moduleReactions";
@@ -12,19 +13,37 @@ import "../components/raymond/learning-reactions.css";
 
 export function ModuleDetail() {
   const { slug } = useParams();
+  const { hash } = useLocation();
+  const referenceRef = useRef<HTMLElement>(null);
   const [mod, setMod] = useState<ModuleDto | null>(null);
+  const [failure, setFailure] = useState<{ slug?: string; message: string } | null>(null);
   const [navOpen, setNavOpen] = useModuleNavOpen();
 
   useEffect(() => {
-    fetchModules().then((list) => setMod(list.find((m) => m.slug === slug) || null));
+    let active = true;
+    fetchModules().then((list) => {
+      if (!active) return;
+      const found = list.find((m) => m.slug === slug);
+      setMod(found ?? null);
+      setFailure(found ? null : { slug, message: "Modulet blev ikke fundet." });
+    }).catch(() => { if (active) setFailure({ slug, message: "Modulet kunne ikke hentes." }); });
+    return () => { active = false; };
   }, [slug]);
 
-  if (!mod) return <p className="muted learn-loading">Henter modul…</p>;
+  useEffect(() => {
+    if (hash === "#opslag" && mod?.slug === slug) {
+      referenceRef.current?.scrollIntoView({ block: "start" });
+      referenceRef.current?.focus({ preventScroll: true });
+    }
+  }, [hash, mod, slug]);
+
+  if (failure && failure.slug === slug) return <p className="error-text">{failure.message} <Link to="/modules">Se moduler</Link></p>;
+  if (!mod || mod.slug !== slug) return <p className="muted learn-loading">Henter modul…</p>;
 
   const first = mod.items[0];
 
   return (
-    <div className={`learn-shell ${navOpen ? "nav-open" : "nav-closed"}`}>
+    <div className={`learn-shell module-detail ${navOpen ? "nav-open" : "nav-closed"}`}>
       {navOpen && (
         <button
           type="button"
@@ -68,6 +87,7 @@ export function ModuleDetail() {
                     Læringsplan med Raymond
                   </a>
                 )}
+                {mod.referenceMarkdown && <a className="btn" href="#opslag">Opslagsark</a>}
               </p>
             )}
 
@@ -86,6 +106,15 @@ export function ModuleDetail() {
                 <li className="muted">Ingen lektioner endnu.</li>
               )}
             </ul>
+            {mod.referenceMarkdown && (
+              <section id="opslag" ref={referenceRef} tabIndex={-1} className="module-reference" aria-labelledby="reference-title">
+                <header className="reference-head">
+                  <h2 id="reference-title">Opslagsark <span>· {mod.title}</span></h2>
+                  <button type="button" className="btn" onClick={() => window.print()}>Udskriv arket</button>
+                </header>
+                <div className="md"><Markdown>{mod.referenceMarkdown}</Markdown></div>
+              </section>
+            )}
           </section>
         </div>
       </div>

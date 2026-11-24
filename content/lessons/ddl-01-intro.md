@@ -121,6 +121,13 @@ Når I `CREATE TABLE`, lover I API’en og hinanden en struktur. Ændringer sene
 | `syntax error` | manglende komma/parentes i kolonnelisten |
 | `type … does not exist` | stavefejl i datatype |
 
+```teach
+{
+  "question": "Du opretter suppliers med id, name og city, men indsætter ingen rækker. Hvilke to observationer på Database-siden kan vise, at tabellen eksisterer?",
+  "answer": "Tabellen er synlig med sine tre kolonner og et rækkeantal på 0. SELECT COUNT(*) FROM suppliers giver også 0. En eksisterende, tom tabel kan derfor skelnes fra en tabel, som mangler."
+}
+```
+
 ## Prøv selv
 
 1. Opret `suppliers` (eller et andet navn).
@@ -133,3 +140,5 @@ Når I `CREATE TABLE`, lover I API’en og hinanden en struktur. Ændringer sene
 > [!RAYMOND:reading] Læs kontrakten tilbage
 >
 > Vis din tabel i Database-oversigten. Forklar, hvordan en række identificeres, hvilke værdier der kræves, og hvilke databasen selv udfylder. Kan en makker indsætte en gyldig leverandør ud fra din forklaring?
+
+Fordybelse i PostgreSQL · [Definér en tabel med kolonner](https://www.postgresql.org/docs/16/ddl-basics.html).

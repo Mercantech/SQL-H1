@@ -19,6 +19,13 @@ sandbox:
 
 “Det virker på min maskine” er ikke nok til Raymonds overdragelse. Han skal kunne starte caféprojektet på en anden maskine og forstå, hvor data og konfiguration ligger. Docker Compose beskriver tjenesterne og forbindelserne mellem dem.
 
+```teach
+{
+  "question": "API'et og PostgreSQL kører i hver sin Compose-container. Databaseservicen hedder db. Hvilken host skal API'et bruge, og hvad peger localhost på inde i API-containeren?",
+  "answer": "På det fælles Compose-net bruger API'et servicenavnet db og databasens containerport, typisk 5432. localhost peger på API-containeren selv."
+}
+```
+
 ## Byggesten
 
 | Begreb | Betydning |
@@ -105,3 +112,5 @@ services:
 > [!RAYMOND:restore] Kan en anden overtage driften?
 >
 > Udpeg **service**, **volume**, **env** og **netværk** i jeres projekt. Beskriv derefter, hvordan en makker kan genskabe databasen i et separat testmiljø uden at overskrive den database, I arbejder i.
+
+[Docker om netværk i Compose](https://docs.docker.com/compose/how-tos/networking/).

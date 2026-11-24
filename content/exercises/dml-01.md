@@ -11,10 +11,12 @@ sandbox:
   allowWrite: true
   checks: exercises/dml-01/checks.json
   starterSql: |
-    INSERT INTO customers (name, city) VALUES ('Eva Møller', 'Aarhus');
+    -- Vælg kunder, produkter og ordrer med et præcist filter før ændringerne.
 ---
 
 # Opgave A — Grundlæggende DML
+
+Caféens testdatabase skal have tre ændringer. Forudsig før hver kommando, hvilken tabel og hvor mange rækker den berører.
 
 Udgangspunktet er café-databasen. Udfør ændringerne nedenfor, og tryk **Tjek svar**.
 
@@ -23,3 +25,5 @@ Udgangspunktet er café-databasen. Udfør ændringerne nedenfor, og tryk **Tjek 
 3. Slet ordren med `id = 8`.
 
 Tip: Brug `SELECT` undervejs for at kontrollere dine ændringer.
+
+Find Eva Møller, Te og ordre 8 enkeltvis efter kørslen. Vis en makker, hvordan resultatet af hver kontrol afslører, om du indsatte, opdaterede eller slettede.

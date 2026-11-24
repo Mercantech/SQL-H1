@@ -12,16 +12,12 @@ sandbox:
   allowWrite: false
   checks: exercises/select-ex-04/checks.json
   starterSql: |
-    SELECT name, price,
-      CASE
-        WHEN price >= 40 THEN 'premium'
-        ELSE 'standard'
-      END AS niveau
-    FROM products
-    ORDER BY name;
+    -- Beskriv prisgrænsen med et CASE-udtryk.
 ---
 
 # Opgave D — CASE og UNION
+
+Hvilket prisniveau skal en vare til præcis 40 få? Beslut dig, før du vælger sammenligningsoperatoren.
 
 ## Del 1
 
@@ -34,3 +30,5 @@ Sorter på `name`.
 ## Del 2
 
 Vis en kolonne `navn` med **alle produktnavne** samt kundenavnet **`'Testkunde'`** (brug `UNION`). Sorter på `navn`.
+
+Prøv efter tjekket at erstatte Testkunde med Espresso. Forudsig forskellen mellem `UNION` og `UNION ALL`, og afprøv begge i editoren.

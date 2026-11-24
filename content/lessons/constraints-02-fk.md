@@ -88,6 +88,13 @@ customers  ←──  orders  ──→  products
 
 Slet **fra bladene ind mod roden**, medmindre CASCADE er bevidst valgt.
 
+```teach
+{
+  "question": "I startdata har Espresso ordrelinjer, mens Chokoladebolle ingen har. Hvilken vares sletning afvises af fremmednøglen, og hvilken tabel kan forklare hvorfor?",
+  "answer": "Espresso er refereret fra orders.product_id og afvises. Chokoladebolle har ingen barnrækker, så FK'en blokerer ikke dens sletning. Slå begge produkter op mod orders før du ændrer noget."
+}
+```
+
 ## Prøv selv
 
 1. Prøv at slette **Espresso** uden at røre ordrer — se fejlen.  
@@ -99,3 +106,5 @@ Slet **fra bladene ind mod roden**, medmindre CASCADE er bevidst valgt.
 > [!RAYMOND:idea-notes] Fortæl historien bag fejlen
 >
 > Læs én FK-fejl højt for en makker. Udpeg barnet, forælderen og den reference, der ville blive ugyldig. Foreslå derefter en handling, der både overholder databasen og bevarer den historik, caféen har brug for.
+
+Fordybelse i PostgreSQL · [Fremmednøgler ved UPDATE og DELETE](https://www.postgresql.org/docs/16/ddl-constraints.html).

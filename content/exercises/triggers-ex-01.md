@@ -36,3 +36,5 @@ sandbox:
    (så check kan se en audit-række)
 
 Tryk **Tjek svar**.
+
+Notér antallet af auditposter før prisændringen. Kontrollér produkt-id samt gammel og ny pris bagefter. Vælg derpå en opdatering til samme pris og forklar, hvornår din audit skal springe over.

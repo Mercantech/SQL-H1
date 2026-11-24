@@ -32,3 +32,5 @@ sandbox:
    - `linjer` = `COUNT(*)`
 
 `v_sales_by_category` skal læse fra `v_order_lines` (ikke joine basistabellerne direkte).
+
+Læs først én kategori i detaljeviewet og læg selv dens linjebeløb sammen. Sammenlign med det nye aggregat. Kontrollen undersøger både rapportens tal og dens afhængighed af detaljeviewet.

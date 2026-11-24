@@ -81,6 +81,15 @@ En korreleret subquery bruger en værdi fra den ydre forespørgsel. Ofte kan den
 >
 > Find `o.customer_id = c.id` i kundeeksemplet. Hvad ville tællingen betyde, hvis betingelsen manglede? Brug samme tanke, når gennemsnittet skal gælde produktets egen kategori.
 
+```teach
+{
+  "question": "Du leder efter produkter over gennemsnittet i deres egen kategori. Hvilken sammenhæng skal det indre SELECT have med den produktrække, du undersøger?",
+  "answer": "Giv de to forekomster af products forskellige aliaser. Filtrér de indre produkter til samme kategori som det ydre produkt, og sammenlign dets price med indre AVG(price). Uden kategorifilter måler du mod hele caféen."
+}
+```
+
 ## Prøv selv
 
 Vis produkter med pris under gennemsnittet for **deres egen** kategori (correlated).
+
+Fordybelse i PostgreSQL · [Underforespørgsler og ydre referencer](https://www.postgresql.org/docs/16/functions-subquery.html).

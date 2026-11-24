@@ -49,3 +49,5 @@ Opret GIN-indekset **`ix_player_profiles_profile`** på kolonnen `profile`. Fork
 Tryk **Tjek svar**, når views, dataændring og indeks er på plads. Opgavekontrollen undersøger databasens tilstand; den mundtlige indeksforklaring vurderer I sammen med underviseren.
 
 **Bonus:** Find alle profiler, der indeholder spillet rocket, med `@>`. Sammenlign planen før og efter indeks. Fire profiler er for lidt til en meningsfuld hastighedskonkurrence.
+
+Inden næste [MongoDB-projekt](/learn/documents-project-01), så forklar fra hukommelsen, hvorfor den målrettede ændring bevarede Novas øvrige felter. Vis først bagefter det SQL-udtryk, der valgte stien.

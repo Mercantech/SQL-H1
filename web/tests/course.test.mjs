@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { progressLabel } from "../src/lib/course.ts";
+import { collectQueryAnswers, progressLabel } from "../src/lib/course.ts";
 
 const root = new URL("../../", import.meta.url);
 const field = (text, name) => new RegExp(`^${name}: (.+)$`, "m").exec(text)?.[1]?.trim();
@@ -45,4 +45,21 @@ test("project readiness is never presented as an automatically passed exercise",
   assert.equal(progressLabel("project", "completed"), "Klar til gennemgang");
   assert.equal(progressLabel("exercise", "completed"), "Bestået");
   assert.equal(progressLabel("theory", "completed"), "Teori åbnet");
+});
+
+test("query exercises submit exactly the visible fields, preserving cleared and unanswered parts", () => {
+  const parts = [
+    { id: "one", label: "Navne", starterSql: "SELECT name" },
+    { id: "two", label: "Byer", starterSql: "SELECT city" },
+    { id: "three", label: "Priser" },
+    { id: "four", label: "Ordrer" },
+  ];
+  const drafts = { one: "", three: "SELECT price FROM products", old: "SELECT 1" };
+  assert.deepEqual(collectQueryAnswers(parts, drafts), [
+    { partId: "one", sql: "" },
+    { partId: "two", sql: "SELECT city" },
+    { partId: "three", sql: drafts.three },
+    { partId: "four", sql: "" },
+  ]);
+  for (const stateOnly of [undefined, []]) assert.equal(collectQueryAnswers(stateOnly, drafts), undefined);
 });

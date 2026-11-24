@@ -23,6 +23,13 @@ sandbox:
 
 Raymond ser tabellen `orders` i to forbindelser. Er det samme database? Før han ændrer noget, beder han dig undersøge forbindelsen og læse dens metadata.
 
+```teach
+{
+  "question": "Uden at se på eksemplet: Hvor finder du navne på de almindelige tabeller i public, og hvordan holder du views ude af listen?",
+  "answer": "Vælg table_name fra information_schema.tables; filtrér på table_schema = 'public' og table_type = 'BASE TABLE'. Sortér på table_name for at gøre resultatet reproducerbart."
+}
+```
+
 En Postgres-instans kan indeholde mange **databaser**. Hver database indeholder **schemas** og objekter som tabeller og views. **Roller** hører til hele instansen og får rettigheder til de relevante databaser og objekter.
 
 På SQL-platformen:
@@ -117,3 +124,5 @@ WHERE table_schema = 'public' AND table_name = 'orders';
 > [!RAYMOND:thinking] Tegn forbindelsen
 >
 > Vis din makker vejen fra **server** til **database**, **schema** og **tabel**. Placér derefter rollen på tegningen, og brug `current_database()` og `current_user` til at dokumentere, hvor dine forespørgsler faktisk kører.
+
+[PostgreSQLs oversigt over information_schema](https://www.postgresql.org/docs/16/information-schema.html).

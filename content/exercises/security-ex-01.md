@@ -38,3 +38,5 @@ Seedet er bevidst fejlkonfigureret i din egen sandbox. Brug **Nulstil** for at i
 Forklar til din makker: Hvilke oplysninger mangler med vilje i viewet? Hvorfor skal tabeladgangen også fjernes? Hvad kan kryptering hjælpe med, som viewet ikke løser?
 
 Bonus: foreslå, hvordan en app kan vise den aktuelle spillers private profil uden at give alle spillere adgang til hinandens data.
+
+Hent en anden elevs forklaring af retten til basistabellen. Kan du udpege det resultat, der dokumenterer dens adgang? Gentag med en faktisk læserolle i [sikkerhedsprojektet](/learn/security-project-01).

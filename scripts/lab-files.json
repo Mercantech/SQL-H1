@@ -1,6 +1,7 @@
 {
   "orm": [
     ".config/dotnet-tools.json", ".dockerignore", ".env.example", ".gitattributes", ".gitignore",
+    "CafeReport/CafeReport.csproj", "CafeReport/Program.cs",
     "CodeFirst/CodeFirst.csproj", "CodeFirst/GameHubContext.cs", "CodeFirst/Models.cs", "CodeFirst/Program.cs",
     "DatabaseFirst/DatabaseFirst.csproj", "Dockerfile", "LegacyDemo/LegacyDemo.csproj", "LegacyDemo/Program.cs",
     "README.md", "compose.yml", "database/init.sql", "tools/Tournament.Display.cs.template", "tools/scaffold.sh"

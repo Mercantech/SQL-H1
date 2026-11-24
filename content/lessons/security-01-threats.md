@@ -16,6 +16,13 @@ objectives:
 
 **Mission · Målpind 23, med støtte til 14 · 25 minutter.** Raymond gør GameHubs leaderboard klar en time før turneringen. På skærmen skal der stå gamernavne og sejre. I databasen ligger også e-mailadresser. Han åbner søgefeltet og undersøger både, hvad inputtet kan ændre, og hvad appens databasekonto må læse. De to spørgsmål kræver hver deres beskyttelse.
 
+```teach
+{
+  "question": "Et medlem hedder O'Neil. Beskriv én test, der viser at søgningen bevarer navnet, og én der viser hvad læserollen må se.",
+  "answer": "Brug det uændrede navn som parameterværdi og kontrollér, at kun den forventede profil returneres. Kør separat en læsning af offentlige leaderboardfelter som læserollen og kræv, at direkte adgang til privat e-mail afvises."
+}
+```
+
 > [!RAYMOND:curious] Følg én oplysning hele vejen
 >
 > Et gamernavn må gerne være offentligt. En e-mail behøver ikke være det. Peg på det sted i **browser → API → database**, hvor I afgør, hvilke felter leaderboardet må vise.

@@ -16,6 +16,13 @@ objectives:
 
 **Mission · Målpind 24 · 25 minutter.** Raymond tester GameHubs finalebilletter, før dørene åbner. Først køber han to billetter. Så prøver han nul, og til sidst genbruger han den samme billetkode. Det gode første køb viser kun én vej gennem systemet; nu undersøger han, om databasen også holder reglerne, når inputtet ligger lige uden for det tilladte.
 
+```teach
+{
+  "question": "Billetantal skal være fra 1 til 4. Skriv fire tal og ét manglende input, der tester begge kanter. Hvad skal du se i databasen efter de afviste forsøg?",
+  "answer": "0 og 5 skal afvises, 1 og 4 skal kunne gemmes, og NULL skal afvises. Kontrollér efter hvert afvist forsøg, at der ikke er oprettet en billet. Hold de øvrige felter gyldige, så én regel prøves ad gangen."
+}
+```
+
 > [!RAYMOND:testing] Skriv forventningen før forsøget
 >
 > Der må købes **1–4 billetter**. Hvad skal ske ved `0`, `1`, `4`, `5` og `NULL`? Skriv både svaret til køberen og den forventede tilstand i databasen, før I prøver.

@@ -128,6 +128,13 @@ DELETE FROM customers WHERE name = 'Anna Jensen';
 
 Du **bevarer ordrerne** og fjerner netop denne kundereference. Raymond understreger, at det ikke i sig selv beviser fuld anonymisering: andre felter, logs eller kopier kan stadig identificere personen.
 
+```teach
+{
+  "question": "Anna har tre ordrer på startdata. Hvad bliver der af dem, hvis du gør deres customer_id tomt før du sletter Anna? Hvad hvis du sletter ordrerne først?",
+  "answer": "Ved at sætte customer_id til NULL bevarer du alle tre ordrer med produkt og antal. Ved at slette børnene først forsvinder de tre ordrer. Tæl ordrer og tomme kundereferencer før og efter hvert forsøg."
+}
+```
+
 ## Tre strategier du skal kunne vælge imellem
 
 ### 1) Blokér (RESTRICT) — “slet ikke kunden”
@@ -178,7 +185,7 @@ SET in_stock = FALSE
 WHERE name = 'Espresso';
 ```
 
-Det er soft-delete / status — ikke CASCADE.
+Her ændrer du lagerstatus. Et egentligt arkiv kræver eksempelvis et særskilt felt for, hvornår produktet udgik.
 
 ## Flere niveauer (tænk fremad)
 
@@ -228,3 +235,5 @@ Når du kan vælge mellem blokér / kaskade / anonymisér, forstår du hvorfor D
 > [!RAYMOND:idea-notes] Begrund det, der er tilbage
 >
 > Sammenlign de tre forsøg fra samme starttilstand. Beskriv både **kunden**, **ordrerne** og **referencerne** bagefter. En strategi er først tydelig, når du kan forklare de data, den bevarer, såvel som dem, den fjerner.
+
+Fordybelse i PostgreSQL · [Fremmednøgler og handlinger ved sletning](https://www.postgresql.org/docs/16/ddl-constraints.html).

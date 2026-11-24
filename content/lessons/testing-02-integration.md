@@ -14,6 +14,13 @@ objectives:
 
 **Mission · Målpind 24 · 25 minutter.** Raymond får vist en grøn test af GameHubs billetkøb med en liste af C#-objekter. Da samme køb rammer PostgreSQL, fejler det. Han undersøger først, hvad testen overhovedet kørte: en beregning i hukommelsen eller appens rigtige databasekald? En grøn test er et svar på det spørgsmål, den faktisk stillede.
 
+```teach
+{
+  "question": "En test af UNIQUE er grøn. Hvilket kort forsøg i en isoleret testdatabase viser, om testen faktisk opdager en manglende unikhedsregel?",
+  "answer": "Fjern midlertidigt den relevante regel i en lokal testfixture. Gentag dubletforsøget og se testen blive rød. Gendan reglen, kør testen igen, og kontrollér at den får den forventede SQLSTATE."
+}
+```
+
 > [!RAYMOND:skeptical] Hvilket lag har givet grønt lys?
 >
 > Jeres C#-test kan tilføje samme billetkode to gange til en liste. Siger det noget om en `UNIQUE`-regel i PostgreSQL? Peg på **den komponent, testen faktisk bruger**, før I fortolker resultatet.

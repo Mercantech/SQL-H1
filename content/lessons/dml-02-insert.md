@@ -173,6 +173,13 @@ UI: "Opret produkt"
 
 Næste lektion: **UPDATE** — CRUD Update.
 
+```teach
+{
+  "question": "Et nyt produkt får sit id fra databasen. Hvilke kolonner vil du bede INSERT om at returnere, så Raymond kan forbinde navnet med den rigtige nye række?",
+  "answer": "RETURNING id, name giver både det tildelte id og produktnavnet fra den indsatte række. Ved et batch med to produkter returneres en række pr. indsat produkt."
+}
+```
+
 ## Prøv selv
 
 Indsæt produktet **`Sockerkaka`** i kategorien **`Bagværk`** til **`24.00`**, og brug `RETURNING` så du ser `id`.
@@ -180,3 +187,5 @@ Indsæt produktet **`Sockerkaka`** i kategorien **`Bagværk`** til **`24.00`**, 
 > [!RAYMOND:eureka] To måder at lade et felt stå åbent
 >
 > Forklar forskellen på at **udelade en kolonne** og at skrive **`NULL`**. Find bagefter det `id`, databasen gav dit nye produkt, via `RETURNING`. Hvilken del af rækken valgte du, og hvilken del kom fra skemaet?
+
+Fordybelse i PostgreSQL · [Indsæt nye rækker](https://www.postgresql.org/docs/16/dml-insert.html).

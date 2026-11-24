@@ -20,6 +20,13 @@ sandbox:
 
 Raymond får to beskeder: En rapport er langsom, og en større skemaændring er på vej. Det første kræver en måling; det andet kræver en vej tilbage. Her øver du begge dele uden at forveksle et indeks med en backup.
 
+```teach
+{
+  "question": "Dit dump er gendannet i en separat database. Hvilke to kontroller viser, at den både har de rigtige data og stadig håndhæver reglerne?",
+  "answer": "Læs en kendt række i restoredatabasen og sammenlign dens værdier med kilden. Prøv også en ugyldig ændring, der skal afvises af en kendt constraint, og kontrollér bagefter, at rækken er bevaret."
+}
+```
+
 ## Backup og restore (værktøj uden for editoren)
 
 Raymond vil kunne genskabe både struktur og data efter en fejl. Derfor skal kopien ligge sikkert og faktisk kunne indlæses igen. Et Docker-volume bevarer data ved en container-genstart, men er ikke i sig selv en uafhængig backup.
@@ -34,7 +41,8 @@ Typisk lokalt (på host, ikke i elev-SQL):
 
 ```bash
 pg_dump -h localhost -U sqlh1 -d min_db -f backup.sql
-psql -h localhost -U sqlh1 -d min_db -f backup.sql
+createdb -h localhost -U sqlh1 min_db_restored
+psql -h localhost -U sqlh1 -d min_db_restored -v ON_ERROR_STOP=1 -f backup.sql
 ```
 
 På SQL-platformen er **Nulstil database** jeres “genindlæs seed” — ikke en erstatning for rigtig backup, men samme idé: kendt starttilstand.
@@ -105,3 +113,7 @@ Til afleveringen er det nok at kunne tage et `pg_dump` og genskabe databasen.
 > [!RAYMOND:performance] Er Seq Scan et problem her?
 >
 > Raymond får en `Seq Scan` efter at have oprettet et indeks. Forklar, hvorfor det kan være et fornuftigt valg på caféens få rækker. Hvilken større datamængde og hvilken selektiv forespørgsel ville give en mere nyttig test af indekset?
+
+Prøv [gendannelsen i GameHubs testlab](/downloads/security-testing-lab.zip). Følg afsnittet *Restore-øvelse i separat database* i README. Gem databasens navn, værdien `quantity = 2` og udfaldet af forsøget med `quantity = 0` til [testprojektet](/learn/testing-project-01).
+
+[PostgreSQLs vejledning til dump og restore](https://www.postgresql.org/docs/16/backup-dump.html).

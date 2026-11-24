@@ -66,6 +66,7 @@ internal static class Program
         }
         Console.WriteLine($"{tests.Length - failed}/{tests.Length} Raymond backend regressions passed.");
         if (failed != 0) return 1;
+        if (args.Contains("--exercises", StringComparer.Ordinal)) return await ExerciseGradingTests.Run(ContentRoot);
         return args.Contains("--live", StringComparer.Ordinal) ? await LiveServiceCheck() : 0;
     }
 
@@ -468,6 +469,8 @@ internal static class Program
 
     private static string FindContentRoot()
     {
+        var workingContent = Path.GetFullPath("content");
+        if (File.Exists(Path.Combine(workingContent, "modules.json"))) return workingContent;
         for (var directory = new DirectoryInfo(AppContext.BaseDirectory); directory is not null; directory = directory.Parent)
         {
             var candidate = Path.Combine(directory.FullName, "content");

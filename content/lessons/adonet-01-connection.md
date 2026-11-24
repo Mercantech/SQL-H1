@@ -19,6 +19,13 @@ sandbox:
 
 Raymond har læst caféens tabeller i elevdatabasen. Nu skal en lokal C#-applikation læse de samme data. Første opgave er at åbne den rigtige database med den rigtige rolle og frigive forbindelsen efter brug.
 
+```teach
+{
+  "question": "Caféens API bruger pooling. En request er færdig med sin NpgsqlConnection. Hvad skal koden gøre nu, og hvem afgør, om den fysiske forbindelse genbruges?",
+  "answer": "Frigiv forbindelsen, fx med await using. Ved pooling afleverer Npgsql normalt den fysiske forbindelse til puljen, som kan bruge den til en senere request."
+}
+```
+
 **ADO.NET** giver .NET fælles begreber som connections, commands og readers. **Npgsql** er provideren, der forbinder dem med PostgreSQL.
 
 > [!RAYMOND:reading] To arbejdssteder

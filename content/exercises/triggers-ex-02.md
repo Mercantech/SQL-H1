@@ -25,4 +25,6 @@ sandbox:
 
 3. Opret triggeren **`trg_products_touch`**: `BEFORE UPDATE ON products FOR EACH ROW`.
 
-4. Kør en `UPDATE` på mindst ét produkt (fx Te), så `updated_at` bliver sat.
+4. Kør en `UPDATE` på mindst ét produkt, så `updated_at` bliver sat.
+
+Forudsig hvad en ekstra UPDATE med et gammelt tidsstempel vil efterlade. Kontrollen prøver ændringen, aflæser den gemte værdi og ruller sit forsøg tilbage. Kontrollér selv at din trigger kører pr. række.

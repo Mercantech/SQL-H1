@@ -18,6 +18,13 @@ objectives:
 
 Du får **eksisterende tabeller og data**. Du skal bygge C#-adgang til dem uden at opfinde skemaet igen. Det er database-first og **reverse engineering**, også kaldet scaffolding.
 
+```teach
+{
+  "question": "En DBA har allerede tilføjet Platform til legacy-databasen. Hvilken vej skal ændringen bevæge sig nu, og hvor skal din egen beregnede visningstekst bo?",
+  "answer": "Generér modellen fra det eksisterende skema igen. Hold egen kode i en separat partial-klasse uden for de genererede filer. Kontrollér både Platform og din visningstekst efter regenerationen."
+}
+```
+
 ```text
 Eksisterende PostgreSQL-skema → EF-scaffolding → entiteter og DbContext → C#-forespørgsler
 ```

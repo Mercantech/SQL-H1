@@ -61,3 +61,7 @@ Aflever projektets kildekode og migrationer uden `.env`, `bin` eller `obj`, et E
 | Genererede forespørgsler #19 | Rapporten køres fra C#, og du kan forklare den genererede SQL |
 
 Underviseren gennemgår din løsning. En markering af “klar til gennemgang” er din egen status og erstatter ikke en faglig vurdering.
+
+## Ved næste møde
+
+Uden at åbne migrationsfilerne, så forklar en makker, hvordan du ville tilføje en valgfri kasserer til eksisterende hold. Vælg én før/efter-kontrol, som viser at tidligere hold stadig er intakte. Tjek bagefter dit forslag mod den første migration.

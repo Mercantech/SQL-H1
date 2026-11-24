@@ -12,13 +12,12 @@ sandbox:
   allowWrite: false
   checks: exercises/select-ex-06/checks.json
   starterSql: |
-    SELECT name, COALESCE(email, '(ingen e-mail)') AS email_visning
-    FROM customers
-    WHERE city = 'Viborg'
-    ORDER BY name;
+    -- Vælg en læsbar tekst, når e-mailen mangler.
 ---
 
 # Opgave F — NULL og COALESCE
+
+Hvor mange gange optræder henholdsvis en manglende e-mail og en anonym ordre i resultaterne? Undersøg de to tabeller hver for sig.
 
 ## Del 1
 
@@ -27,3 +26,5 @@ Vis kunder i **Viborg** med kolonnerne `name` og `email_visning`, hvor `email_vi
 ## Del 2
 
 Tæl hvor mange ordrer der er **walk-in** (`customer_id IS NULL`). Returnér én kolonne `antal`.
+
+En anden dag kan du bruge filtre i [SQL-mysteriet](/murder). Start med én tabel, vælg to kolonner og forklar, hvad én resultatrække repræsenterer. Spillet har sit eget SQLite-datasæt.

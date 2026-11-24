@@ -39,6 +39,13 @@ SELECT * FROM customers;
 
 Kør SQL’en i editoren. Raymond foreslår, at du først læser kolonnenavnene og derefter én hel række. Prøv også `products` og `orders`: Kan du se, at en række betyder noget forskelligt i hver tabel?
 
+```teach
+{
+  "question": "Du skal finde beløbet på prisskiltet til Espresso. Hvilken tabel og hvilke to kolonner skal din første SELECT hente?",
+  "answer": "Hent name og price fra products. I caféens startdata viser rækken Espresso og 28.00. Hvis du hentede quantity, ville du læse et antal fra en ordre."
+}
+```
+
 ## Tip
 
 Brug `SELECT *` til at **udforske** en tabel. Når du kender kolonnerne, vælger du dem eksplicit. Det gør resultatets indhold tydeligt og kan spare overførsel af unødvendige data; det er ikke i sig selv en garanti for en hurtigere forespørgsel.
@@ -46,3 +53,5 @@ Brug `SELECT *` til at **udforske** en tabel. Når du kender kolonnerne, vælger
 > [!RAYMOND:question] Vis mig, at du kan læse svaret
 >
 > Åbn `orders`, og peg på én række. Hvilke oplysninger kan du allerede forstå, og hvilke id’er kræver et opslag i en anden tabel? Det sidste spørgsmål følger vi op på i JOIN-modulet.
+
+Fordybelse i PostgreSQL · [Læs en tabel med SELECT](https://www.postgresql.org/docs/16/tutorial-select.html).
